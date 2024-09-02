@@ -1,0 +1,17 @@
+export const playlists = [
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+    "Running playlist",
+];
