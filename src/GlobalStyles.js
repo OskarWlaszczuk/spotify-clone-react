@@ -11,7 +11,7 @@ export const GlobalStyles = createGlobalStyle`
 
   body {
     margin: 0;
-    padding: 5px 10px;
+    padding: 8px 10px;
     color: ${({ theme }) => theme.colors.white};
     background-color: ${({ theme }) => theme.colors.codGray};
     font-family: "Roboto", sans-serif;
