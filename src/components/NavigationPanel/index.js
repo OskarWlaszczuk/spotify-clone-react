@@ -1,4 +1,3 @@
-import { playlists } from "./playlists";
 import {
     NavBox,
     NavFrame,
@@ -6,55 +5,30 @@ import {
     NavPanel,
     StyledHomeIcon,
     StyledSearchIcon,
-    StyledMyLibraryIcon,
-    IconContainer,
-    StyledLikedIcon,
-    StyledAddIcon
 } from "./styled";
+import { useNavigationToPage } from "../../useNavigationToPage";
+import { toHome, toSearch } from "../../routes";
 
 export const NavigationPanel = () => {
+    const navigateToPage = useNavigationToPage();
+
     return (
         <NavPanel>
             <NavFrame>
-                <NavBox>
+                <NavBox onClick={() => navigateToPage(toHome)}>
                     <StyledHomeIcon />
                     <NavItem>Home</NavItem>
                 </NavBox>
-                <NavBox>
+                <NavBox onClick={() => navigateToPage(toSearch)}>
                     <StyledSearchIcon />
-                    <NavItem>Search</NavItem>
-                </NavBox>
-                <NavBox>
-                    <StyledMyLibraryIcon />
-                    <NavItem>My library</NavItem>
-                </NavBox>
-            </NavFrame>
-            <NavFrame underlined>
-                <NavBox>
-                    <IconContainer
-                        background="rgb(69,10,245) linear-gradient(131deg, rgba(69,10,245,1) 0%, rgba(196,239,217,1) 100%)"
-                    >
-                        <StyledLikedIcon />
-                    </IconContainer>
-                    <NavItem>Home</NavItem>
-                </NavBox>
-                <NavBox>
-                    <IconContainer
-                        background="#B3B3B3"
-                    >
-                        <StyledAddIcon />
-                    </IconContainer>
                     <NavItem>Search</NavItem>
                 </NavBox>
             </NavFrame>
             <NavFrame>
-                {
-                    playlists.map(playlist => (
-                        <NavBox>
-                            <NavItem thick>{playlist}</NavItem>
-                        </NavBox>
-                    ))
-                }
+            <NavBox onClick={() => navigateToPage(toHome)}>
+                    <StyledHomeIcon />
+                    <NavItem>Home</NavItem>
+                </NavBox>
             </NavFrame>
         </NavPanel>
     );
