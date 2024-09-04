@@ -4,11 +4,13 @@ import { toAlbum, toHome, toSearch } from "../routes";
 import { Home } from "./features/Home";
 import { Search } from "./features/Search";
 import { Album } from "./features/Album";
+import { Library } from "./features/Library";
 
 export const App = () => {
   return (
     <HashRouter>
       <NavigationPanel />
+      <Library />
       <Routes>
         <Route path={toHome()} element={<Home />} />
         <Route path={toSearch()} element={<Search />} />
