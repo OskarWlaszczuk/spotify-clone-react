@@ -9,5 +9,6 @@ export const theme = {
         mellowYellow: "#F6C874",
         nobel: "#B3B3B3",
         mineShaft: "#282828",
+        brightMineShaft: "#28282891",
     },
 };
