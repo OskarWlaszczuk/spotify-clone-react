@@ -5,25 +5,27 @@ import { SectionContainer } from "../common/SectionContainer";
 import { IconBox } from "../common/IconBox";
 import { ReactComponent as HomeIcon } from "./icons/Home.svg";
 import { ReactComponent as SearchIcon } from "./icons/Search.svg";
+import { IconBoxList } from "../common/IconBoxList";
 
 export const NavigationPanel = () => {
     const navigateToPage = useNavigationToPage();
 
     return (
-        <SectionContainer>
-            <NavPanel>
-                <IconBox
-                    navigateTo={() => navigateToPage(toHome)}
-                    Icon={HomeIcon}
-                    content="Home"
-                />
-                <IconBox
-                    navigateTo={() => navigateToPage(toSearch)}
-                    Icon={SearchIcon}
-                    content="Search"
-                    extraContent="+"
-                />
-            </NavPanel>
-        </SectionContainer>
+        <NavPanel>
+            <SectionContainer>
+                <IconBoxList>
+                    <IconBox
+                        navigateTo={() => navigateToPage(toHome)}
+                        Icon={HomeIcon}
+                        content="Home"
+                    />
+                    <IconBox
+                        navigateTo={() => navigateToPage(toSearch)}
+                        Icon={SearchIcon}
+                        content="Search"
+                    />
+                </IconBoxList>
+            </SectionContainer>
+        </NavPanel>
     );
 };
