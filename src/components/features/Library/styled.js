@@ -1,4 +1,5 @@
 import styled from "styled-components";
-import { ReactComponent as MyLibrary } from "./icons/MyLibrary.svg";
 
-export const StyledMyLibraryIcon = styled(MyLibrary)``;
+export const AsidePanel = styled.aside`
+    grid-area: aside;
+`;
