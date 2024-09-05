@@ -18,7 +18,6 @@ export const GlobalStyles = createGlobalStyle`
       "aside main main main";
     grid-gap: 8px;
     margin: 0;
-    height: 100vh;
     padding: 8px 10px;
     word-break: break-word;
     color: ${({ theme }) => theme.colors.white};
