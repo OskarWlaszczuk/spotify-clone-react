@@ -98,6 +98,501 @@
       "popularity": 67,
       "type": "artist",
       "uri": "spotify:artist:6EB8VE9f7Ut6NOgviN6gDW"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0iBTVnJ1Sff92zCDujfvyJ"
+      },
+      "followers": {
+        "href": null,
+        "total": 457340
+      },
+      "genres": ["polish hip hop", "polish pop"],
+      "href": "https://api.spotify.com/v1/artists/0iBTVnJ1Sff92zCDujfvyJ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "0iBTVnJ1Sff92zCDujfvyJ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebcf62fadf9af04e2b4a5dff4c",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174cf62fadf9af04e2b4a5dff4c",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178cf62fadf9af04e2b4a5dff4c",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Young Leosia",
+      "popularity": 69,
+      "type": "artist",
+      "uri": "spotify:artist:0iBTVnJ1Sff92zCDujfvyJ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5NmRijhUHZnaADekOLcOyl"
+      },
+      "followers": {
+        "href": null,
+        "total": 272660
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/5NmRijhUHZnaADekOLcOyl?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "5NmRijhUHZnaADekOLcOyl",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb0e08275c4d133e2c5c359ac",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174b0e08275c4d133e2c5c359ac",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178b0e08275c4d133e2c5c359ac",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Avi",
+      "popularity": 62,
+      "type": "artist",
+      "uri": "spotify:artist:5NmRijhUHZnaADekOLcOyl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1T4HxOYolAEb5PadIVKdWZ"
+      },
+      "followers": {
+        "href": null,
+        "total": 534500
+      },
+      "genres": ["polish hip hop"],
+      "href": "https://api.spotify.com/v1/artists/1T4HxOYolAEb5PadIVKdWZ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "1T4HxOYolAEb5PadIVKdWZ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebaa0e11923588488662c7e4cf",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174aa0e11923588488662c7e4cf",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178aa0e11923588488662c7e4cf",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Gibbs",
+      "popularity": 71,
+      "type": "artist",
+      "uri": "spotify:artist:1T4HxOYolAEb5PadIVKdWZ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7CJgLPEqiIRuneZSolpawQ"
+      },
+      "followers": {
+        "href": null,
+        "total": 1580981
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/7CJgLPEqiIRuneZSolpawQ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "7CJgLPEqiIRuneZSolpawQ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc7b954414587e659d048d826",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174c7b954414587e659d048d826",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178c7b954414587e659d048d826",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Taco Hemingway",
+      "popularity": 72,
+      "type": "artist",
+      "uri": "spotify:artist:7CJgLPEqiIRuneZSolpawQ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6QfFTZJHFSe9Xyes6DkAli"
+      },
+      "followers": {
+        "href": null,
+        "total": 1062935
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/6QfFTZJHFSe9Xyes6DkAli?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "6QfFTZJHFSe9Xyes6DkAli",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc8045877024fa0bd6c050489",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174c8045877024fa0bd6c050489",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178c8045877024fa0bd6c050489",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "ReTo",
+      "popularity": 64,
+      "type": "artist",
+      "uri": "spotify:artist:6QfFTZJHFSe9Xyes6DkAli"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6EB8VE9f7Ut6NOgviN6gDW"
+      },
+      "followers": {
+        "href": null,
+        "total": 2153363
+      },
+      "genres": ["polish pop", "talent show"],
+      "href": "https://api.spotify.com/v1/artists/6EB8VE9f7Ut6NOgviN6gDW?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "6EB8VE9f7Ut6NOgviN6gDW",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebab7ca7407de17dac995573d5",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174ab7ca7407de17dac995573d5",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178ab7ca7407de17dac995573d5",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Dawid Podsiadło",
+      "popularity": 67,
+      "type": "artist",
+      "uri": "spotify:artist:6EB8VE9f7Ut6NOgviN6gDW"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0iBTVnJ1Sff92zCDujfvyJ"
+      },
+      "followers": {
+        "href": null,
+        "total": 457340
+      },
+      "genres": ["polish hip hop", "polish pop"],
+      "href": "https://api.spotify.com/v1/artists/0iBTVnJ1Sff92zCDujfvyJ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "0iBTVnJ1Sff92zCDujfvyJ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebcf62fadf9af04e2b4a5dff4c",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174cf62fadf9af04e2b4a5dff4c",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178cf62fadf9af04e2b4a5dff4c",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Young Leosia",
+      "popularity": 69,
+      "type": "artist",
+      "uri": "spotify:artist:0iBTVnJ1Sff92zCDujfvyJ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5NmRijhUHZnaADekOLcOyl"
+      },
+      "followers": {
+        "href": null,
+        "total": 272660
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/5NmRijhUHZnaADekOLcOyl?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "5NmRijhUHZnaADekOLcOyl",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb0e08275c4d133e2c5c359ac",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174b0e08275c4d133e2c5c359ac",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178b0e08275c4d133e2c5c359ac",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Avi",
+      "popularity": 62,
+      "type": "artist",
+      "uri": "spotify:artist:5NmRijhUHZnaADekOLcOyl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1T4HxOYolAEb5PadIVKdWZ"
+      },
+      "followers": {
+        "href": null,
+        "total": 534500
+      },
+      "genres": ["polish hip hop"],
+      "href": "https://api.spotify.com/v1/artists/1T4HxOYolAEb5PadIVKdWZ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "1T4HxOYolAEb5PadIVKdWZ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebaa0e11923588488662c7e4cf",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174aa0e11923588488662c7e4cf",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178aa0e11923588488662c7e4cf",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Gibbs",
+      "popularity": 71,
+      "type": "artist",
+      "uri": "spotify:artist:1T4HxOYolAEb5PadIVKdWZ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/7CJgLPEqiIRuneZSolpawQ"
+      },
+      "followers": {
+        "href": null,
+        "total": 1580981
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/7CJgLPEqiIRuneZSolpawQ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "7CJgLPEqiIRuneZSolpawQ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc7b954414587e659d048d826",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174c7b954414587e659d048d826",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178c7b954414587e659d048d826",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Taco Hemingway",
+      "popularity": 72,
+      "type": "artist",
+      "uri": "spotify:artist:7CJgLPEqiIRuneZSolpawQ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6QfFTZJHFSe9Xyes6DkAli"
+      },
+      "followers": {
+        "href": null,
+        "total": 1062935
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/6QfFTZJHFSe9Xyes6DkAli?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "6QfFTZJHFSe9Xyes6DkAli",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebc8045877024fa0bd6c050489",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174c8045877024fa0bd6c050489",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178c8045877024fa0bd6c050489",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "ReTo",
+      "popularity": 64,
+      "type": "artist",
+      "uri": "spotify:artist:6QfFTZJHFSe9Xyes6DkAli"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/6EB8VE9f7Ut6NOgviN6gDW"
+      },
+      "followers": {
+        "href": null,
+        "total": 2153363
+      },
+      "genres": ["polish pop", "talent show"],
+      "href": "https://api.spotify.com/v1/artists/6EB8VE9f7Ut6NOgviN6gDW?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "6EB8VE9f7Ut6NOgviN6gDW",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebab7ca7407de17dac995573d5",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174ab7ca7407de17dac995573d5",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178ab7ca7407de17dac995573d5",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Dawid Podsiadło",
+      "popularity": 67,
+      "type": "artist",
+      "uri": "spotify:artist:6EB8VE9f7Ut6NOgviN6gDW"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/0iBTVnJ1Sff92zCDujfvyJ"
+      },
+      "followers": {
+        "href": null,
+        "total": 457340
+      },
+      "genres": ["polish hip hop", "polish pop"],
+      "href": "https://api.spotify.com/v1/artists/0iBTVnJ1Sff92zCDujfvyJ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "0iBTVnJ1Sff92zCDujfvyJ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebcf62fadf9af04e2b4a5dff4c",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174cf62fadf9af04e2b4a5dff4c",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178cf62fadf9af04e2b4a5dff4c",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Young Leosia",
+      "popularity": 69,
+      "type": "artist",
+      "uri": "spotify:artist:0iBTVnJ1Sff92zCDujfvyJ"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/5NmRijhUHZnaADekOLcOyl"
+      },
+      "followers": {
+        "href": null,
+        "total": 272660
+      },
+      "genres": ["polish hip hop", "polish trap"],
+      "href": "https://api.spotify.com/v1/artists/5NmRijhUHZnaADekOLcOyl?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "5NmRijhUHZnaADekOLcOyl",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebb0e08275c4d133e2c5c359ac",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174b0e08275c4d133e2c5c359ac",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178b0e08275c4d133e2c5c359ac",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Avi",
+      "popularity": 62,
+      "type": "artist",
+      "uri": "spotify:artist:5NmRijhUHZnaADekOLcOyl"
+    },
+    {
+      "external_urls": {
+        "spotify": "https://open.spotify.com/artist/1T4HxOYolAEb5PadIVKdWZ"
+      },
+      "followers": {
+        "href": null,
+        "total": 534500
+      },
+      "genres": ["polish hip hop"],
+      "href": "https://api.spotify.com/v1/artists/1T4HxOYolAEb5PadIVKdWZ?locale=pl-PL%2Cpl%3Bq%3D0.9%2Cen-US%3Bq%3D0.8%2Cen%3Bq%3D0.7",
+      "id": "1T4HxOYolAEb5PadIVKdWZ",
+      "images": [
+        {
+          "url": "https://i.scdn.co/image/ab6761610000e5ebaa0e11923588488662c7e4cf",
+          "height": 640,
+          "width": 640
+        },
+        {
+          "url": "https://i.scdn.co/image/ab67616100005174aa0e11923588488662c7e4cf",
+          "height": 320,
+          "width": 320
+        },
+        {
+          "url": "https://i.scdn.co/image/ab6761610000f178aa0e11923588488662c7e4cf",
+          "height": 160,
+          "width": 160
+        }
+      ],
+      "name": "Gibbs",
+      "popularity": 71,
+      "type": "artist",
+      "uri": "spotify:artist:1T4HxOYolAEb5PadIVKdWZ"
     }
   ]
 }
