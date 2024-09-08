@@ -3,8 +3,7 @@ import { toPopularList } from "../../../routes";
 import { useNavigationToPage } from "../../../useNavigationToPage";
 import { Main } from "../../common/Main"
 import { TilesList } from "../../common/TilesList";
-import { artistsList } from "../../common/TilesList/artists";
-import { fetchArtists, selectArtists, selectArtistsState, selectArtistsFetchStatus } from "../../../slices/artistsSlice";
+import { fetchArtists, selectArtists, selectArtistsFetchStatus } from "../../../slices/artistsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { loading, success } from "../../../fetchStatuses";
 import { Tile } from "../../common/Tile";
