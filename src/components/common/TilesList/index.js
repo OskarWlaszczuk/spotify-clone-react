@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Tile } from "../Tile";
-import { List, HeaderContent, Header, PopularListLink } from "./styled";
+import { List, TitleContent, Title, PopularListLink } from "./styled";
 
-export const TilesList = ({ header, hideRestListPart, toPopularList, artistsList, list }) => {
+export const TilesList = ({ header, hideRestListPart, toPopularList, artistsList, list, listType }) => {
+
     const [tilesPerRow, setTilesPerRow] = useState(0);
     const containerRef = useRef(null);
 
@@ -26,10 +27,10 @@ export const TilesList = ({ header, hideRestListPart, toPopularList, artistsList
 
     return (
         <>
-            <HeaderContent>
-                <Header as={hideRestListPart ? "h2" : "h1"}>{header}</Header>
-                {hideRestListPart && <PopularListLink onClick={toPopularList}>Pokaż więcej</PopularListLink>}
-            </HeaderContent>
+            <TitleContent>
+                {header && <Title as={hideRestListPart ? "h2" : "h1"}>{header}</Title>}
+                {hideRestListPart && <PopularListLink onClick={toPopularList}>Show more</PopularListLink>}
+            </TitleContent>
             <List ref={containerRef}>
                 {
                     hideRestListPart ?
@@ -43,7 +44,7 @@ export const TilesList = ({ header, hideRestListPart, toPopularList, artistsList
                         )) :
                         list.map(({ name, image, job }) => (
                             <Tile
-                            useArtistLayout={artistsList}
+                                useArtistLayout={artistsList}
                                 title={name}
                                 picture={image}
                                 subInfo={job}
