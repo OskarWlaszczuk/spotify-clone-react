@@ -26,7 +26,7 @@ export const Picture = styled.div
     border-radius: 8px;
     padding-top: calc(100% *585/ 537);
     
-    ${({ artistLayout }) => artistLayout && css`
+    ${({ artistPictureStyle }) => artistPictureStyle && css`
         border-radius: 50%;
     `};
 
