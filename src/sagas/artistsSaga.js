@@ -6,7 +6,6 @@ import { fetchApi } from '../fetchApi';
 function* fetchArtistsHandler() {
     try {
         const response = yield call(fetchApi, "artists.json");
-        console.log(response)
         yield put(fetchArtistsSuccess(response));
     } catch {
         yield put(fetchArtistsError());
