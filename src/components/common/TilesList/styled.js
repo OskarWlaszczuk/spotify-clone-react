@@ -10,7 +10,7 @@ export const Title = styled.header`
 
 `
 
-export const PopularListLink = styled.a`
+export const ExtraContent = styled.a`
     color: ${({ theme }) => theme.colors.nobel};
     font-size: 13px;
     cursor: pointer;
