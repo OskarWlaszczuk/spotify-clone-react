@@ -8,6 +8,7 @@ import { fetchArtists, selectArtists, selectArtistsState, selectArtistsFetchStat
 import { useDispatch, useSelector } from "react-redux";
 import { loading, success } from "../../../fetchStatuses";
 import { Tile } from "../../common/Tile";
+import { setPopularListTitle } from "../../../slices/popularListSlice";
 
 export const Home = () => {
     const navigateToPage = useNavigationToPage();
@@ -15,13 +16,14 @@ export const Home = () => {
     const artistsFetchStatus = useSelector(selectArtistsFetchStatus);
     const { artists } = useSelector(selectArtists);
 
+
     const [tilesPerRow, setTilesPerRow] = useState(0);
     const containerRef = useRef(null);
 
     const calculateTilesPerRow = () => {
         const containerWidth = containerRef.current.offsetWidth;
         const tileWidth = 150;
-        console.log(containerWidth)
+
         const effectiveTileWidth = tileWidth + 10;
         const count = Math.floor(containerWidth / effectiveTileWidth);
         setTilesPerRow(count);
@@ -69,7 +71,11 @@ export const Home = () => {
                             hideRestListPart
                             artistsList
                             extraContentText="Show more"
-                            extraContentLink={() => navigateToPage(toPopularList)}
+                            extraContentLink={() => {
+                                navigateToPage(toPopularList)
+                                dispatch(setPopularListTitle("Popular artists"))
+                            }
+                            }
                         />
                         <TilesList
                             title="Popular artists"
