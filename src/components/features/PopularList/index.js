@@ -9,7 +9,7 @@ export const PopularList = () => {
             <Main
                 content={
                     <TilesList
-                        header="Popular artists"
+                        title="Popular artists"
                         list={artistsList}
                         artistsList
                     />
