@@ -1,49 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { toPopularList } from "../../../routes";
-import { useNavigationToPage } from "../../../useNavigationToPage";
 import { Main } from "../../common/Main"
 import { TilesList } from "../../common/TilesList";
 import { fetchArtists, selectArtists, selectArtistsFetchStatus } from "../../../slices/artistsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { loading, success } from "../../../fetchStatuses";
 import { Tile } from "../../common/Tile";
-import { setPopularListTitle } from "../../../slices/popularListSlice";
+import { useNavigate } from "react-router-dom";
+import { fetchAlbums, selectAlbums, selectAlbumsFetchStatus } from "../../../slices/albumsSlice";
 
 export const Home = () => {
-    const navigateToPage = useNavigationToPage();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const artistsFetchStatus = useSelector(selectArtistsFetchStatus);
+    const albumsFetchStatus = useSelector(selectAlbumsFetchStatus);
+
     const { artists } = useSelector(selectArtists);
+    const { albums } = useSelector(selectAlbums);
 
-
-    const [tilesPerRow, setTilesPerRow] = useState(0);
-    const containerRef = useRef(null);
-
-    const calculateTilesPerRow = () => {
-        const containerWidth = containerRef.current.offsetWidth;
-        const tileWidth = 150;
-
-        const effectiveTileWidth = tileWidth + 10;
-        const count = Math.floor(containerWidth / effectiveTileWidth);
-        setTilesPerRow(count);
-
-    };
-
-    useEffect(() => {
-        if (artistsFetchStatus === success) {
-            calculateTilesPerRow();
-            window.addEventListener('resize', calculateTilesPerRow);
-        }
-
-        return () => {
-            window.removeEventListener('resize', calculateTilesPerRow);
-        };
-    }, [artistsFetchStatus]);
+    const isLoading = artistsFetchStatus === loading || albumsFetchStatus === loading;
+    const isSucces = artistsFetchStatus === success && albumsFetchStatus === success;
 
     useEffect(() => {
         const fetchDelayId = setTimeout(() => {
             dispatch(fetchArtists());
-        }, 1000);
+            dispatch(fetchAlbums());
+        }, 500);
 
         return () => clearTimeout(fetchDelayId);
     }, [dispatch])
@@ -51,42 +34,52 @@ export const Home = () => {
     return (
         <Main
             content={
-                artistsFetchStatus === loading ?
-                    <>Ładowanie</> :
+                isLoading ?
+                    <>Ładowanie...</> :
                     <>
                         <TilesList
-                            title="Popular artists"
-                            ref={containerRef}
-                            listContent={
-                                artists.slice(0, tilesPerRow).map(({ name, type, images }) => (
+                            title="Popular albums"
+                            list={albums}
+                            renderItem={
+                                (({ images, name, artists }) => (
                                     <Tile
                                         picture={images[0].url}
                                         title={name}
-                                        subInfo={type}
-                                        useArtistPictureStyle
+                                        subInfo={artists.map(({ name }) => name).join(",")}
                                     />
                                 ))
                             }
                             hideRestListPart
-                            artistsList
                             extraContentText="Show more"
-                            extraContentLink={() => {
-                                navigateToPage(toPopularList)
-                                dispatch(setPopularListTitle("Popular artists"))
-                            }
-                            }
+                            extraContentLink={() => toPopularList(navigate, {
+                                state: {
+                                    title: "Popular albums",
+                                    list: albums,
+                                    isArtistsList: false,
+                                }
+                            })}
                         />
                         <TilesList
                             title="Popular artists"
-                            listContent={
-                                artists.map(({ name, type, images }) => (
-                                    <Tile
-                                        picture={images[0].url}
-                                        title={name}
-                                        subInfo={type}
-                                    />
-                                ))
-                            }
+                            list={artists}
+                            renderItem={({ images, name, type }) => (
+                                <Tile
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={type}
+                                    useArtistPictureStyle
+                                />
+                            )}
+                            hideRestListPart
+                            artistsList
+                            extraContentText="Show more"
+                            extraContentLink={() => toPopularList(navigate, {
+                                state: {
+                                    title: "Popular artists",
+                                    list: artists,
+                                    isArtistsList: true,
+                                }
+                            })}
                         />
                     </>
             }
