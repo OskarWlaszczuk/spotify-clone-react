@@ -6,10 +6,6 @@ export const TitleContent = styled.header`
   justify-content: space-between;
 `;
 
-export const Title = styled.header`
-
-`
-
 export const ExtraContent = styled.a`
     color: ${({ theme }) => theme.colors.nobel};
     font-size: 13px;
