@@ -1,20 +1,29 @@
-import { useSelector } from "react-redux";
 import { Main } from "../../common/Main";
+import { Tile } from "../../common/Tile";
 import { TilesList } from "../../common/TilesList";
-import { artistsList } from "../../common/TilesList/artists";
-import { selectPopularListTitle } from "../../../slices/popularListSlice";
+import { useLocation } from "react-router-dom";
 
 export const PopularList = () => {
-    const popularListTitle = useSelector(selectPopularListTitle);
+
+    const location = useLocation();
+    const { title, list, isArtistsList } = location.state;
 
     return (
         <>
             <Main
                 content={
                     <TilesList
-                        title={popularListTitle}
-                        list={artistsList}
-                        artistsList
+                        title={title}
+                        list={list}
+                        artistsList={isArtistsList}
+                        renderItem={({ images, name, type, artists }) => (
+                            <Tile
+                                picture={images[0].url}
+                                title={name}
+                                subInfo={isArtistsList ? type : artists.map(({ name }) => name).join(",")}
+                                useArtistPictureStyle={isArtistsList}
+                            />
+                        )}
                     />
                 }
             />
