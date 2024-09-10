@@ -24,7 +24,7 @@ export const Picture = styled.div
     background-size: cover;
     background-position: center;
     border-radius: 8px;
-    padding-top: calc(100% *585/ 537);
+    padding-top: calc(100%* 585 / 582);
     
     ${({ artistPictureStyle }) => artistPictureStyle && css`
         border-radius: 50%;
