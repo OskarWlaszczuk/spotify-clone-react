@@ -1,6 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NavigationPanel } from "./NavigationPanel";
-import { toAlbum, toHome, toPopularList, toSearch } from "../routes";
+import { toAlbum, toHome, popularListPathname, toSearch } from "../routes";
 import { Home } from "./features/Home";
 import { Search } from "./features/Search";
 import { Album } from "./features/Album";
@@ -16,7 +16,7 @@ export const App = () => {
         <Route path={toHome()} element={<Home />} />
         <Route path={toSearch()} element={<Search />} />
         <Route path={toAlbum()} element={<Album />} />
-        <Route path={toPopularList()} element={<PopularList />} />
+        <Route path={popularListPathname()} element={<PopularList />} />
         <Route path="*" element={<Navigate to={toHome()} />} />
       </Routes>
     </HashRouter>
