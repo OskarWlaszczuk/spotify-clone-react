@@ -13,7 +13,7 @@ export const GlobalStyles = createGlobalStyle`
     display: grid;
     grid-template-rows: auto 1fr;
     grid-template-areas: 
-      "nav main main main"
+      "nav nav nav nav"
       "aside main main main"
       "aside main main main";
     grid-gap: 8px;
