@@ -9,7 +9,7 @@ export const Library = () => {
       <SectionContainer>
         <IconBox
           Icon={MyLibrary}
-          content="My library"
+          text="My library"
           extraContent="+"
         />
       </SectionContainer>
