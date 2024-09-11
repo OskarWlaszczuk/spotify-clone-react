@@ -6,6 +6,7 @@ import { Search } from "./features/Search";
 import { Album } from "./features/Album";
 import { Library } from "./features/Library";
 import { PopularList } from "./features/PopularList";
+import { Artist } from "./features/Artist";
 
 export const App = () => {
   return (
@@ -16,6 +17,7 @@ export const App = () => {
         <Route path={toHome()} element={<Home />} />
         <Route path={toSearch()} element={<Search />} />
         <Route path={toAlbum()} element={<Album />} />
+        <Route path="/artist/:id" element={<Artist />} />
         <Route path={popularListPathname()} element={<PopularList />} />
         <Route path="*" element={<Navigate to={toHome()} />} />
       </Routes>
