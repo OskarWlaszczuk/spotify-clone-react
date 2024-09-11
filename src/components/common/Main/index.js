@@ -1,10 +1,11 @@
 import { MainContent } from "./styled"
 import { SectionContainer } from "../SectionContainer";
 
-export const Main = ({ content }) => {
+export const Main = ({ content, banner }) => {
     return (
         <MainContent>
-            <SectionContainer>
+            {banner}
+            <SectionContainer main bannerAvailable={banner}>
                 {content}
             </SectionContainer>
         </MainContent>
