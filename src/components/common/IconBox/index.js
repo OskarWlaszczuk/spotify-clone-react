@@ -1,12 +1,12 @@
 import { Container, Content, ContentWrapper, ExtraContent } from "./styled";
 
-export const IconBox = ({ Icon, content, navigateTo, extraContent }) => {
+export const IconBox = ({ Icon, text, navigateTo, extraContent, noText }) => {
 
     return (
         <Container onClick={navigateTo}>
-            <ContentWrapper>
+            <ContentWrapper withoutText={noText}>
                 <Icon />
-                <Content>{content}</Content>
+                <Content>{text}</Content>
             </ContentWrapper>
             {extraContent && (<ExtraContent>{extraContent}</ExtraContent>)}
         </Container>
