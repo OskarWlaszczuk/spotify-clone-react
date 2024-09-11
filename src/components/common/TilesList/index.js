@@ -12,7 +12,7 @@ export const TilesList = ({ title, hideRestListPart, list, renderItem, extraCont
 
     const calculateTilesPerRow = () => {
         const containerWidth = containerRef.current.offsetWidth;
-        const tileWidth = 180;
+        const tileWidth = 160;
 
         const effectiveTileWidth = tileWidth + 10;
         const count = Math.floor(containerWidth / effectiveTileWidth);
