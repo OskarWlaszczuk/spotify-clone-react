@@ -18,7 +18,7 @@ export const ExtraContent = styled.a`
 
 export const List = styled.ul`
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     grid-gap: 15px 0;
     margin-bottom: 50px;
     padding: 0;
