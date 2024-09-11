@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const Container = styled.a`
     display: flex;
@@ -10,6 +10,13 @@ export const ContentWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 18px;
+
+   ${({ withoutText }) => withoutText && css`
+   background-color: ${({ theme }) => theme.colors.brightMineShaft};
+        padding: 10px;
+        gap: 0px;
+        border-radius: 50%;
+   `};
 `;
 
 export const Content = styled.p`
