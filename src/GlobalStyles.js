@@ -12,6 +12,7 @@ export const GlobalStyles = createGlobalStyle`
   body {
     display: grid;
     grid-template-rows: auto 1fr;
+    grid-template-columns: 0.3fr 1fr;
     grid-template-areas: 
       "nav nav nav nav"
       "aside main main main"
