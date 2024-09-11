@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { toPopularList } from "../../../routes";
+import { toArtist, toPopularList } from "../../../routes";
 import { Main } from "../../common/Main"
 import { TilesList } from "../../common/TilesList";
 import { fetchArtists, selectArtists, selectArtistsFetchStatus } from "../../../slices/artistsSlice";
@@ -38,11 +38,36 @@ export const Home = () => {
                     <>Ładowanie...</> :
                     <>
                         <TilesList
+                            title="Popular artists"
+                            list={artists}
+                            renderItem={({ images, name, type, id }) => (
+                                <Tile
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={type}
+                                    useArtistPictureStyle
+                                    navigateTo={() => navigate(toArtist({ id }))}
+                                />
+                            )}
+                            hideRestListPart
+                            artistsList
+                            extraContentText="Show more"
+                            extraContentLink={() => toPopularList(navigate, {
+                                state: {
+                                    title: "Popular artists",
+                                    list: artists,
+                                    isArtistsList: true,
+                                }
+                            })}
+                        />
+                        <TilesList
                             title="Popular albums"
                             list={albums}
                             renderItem={
-                                (({ images, name, artists }) => (
+                                (({ images, name, artists, id }) => (
                                     <Tile
+                                        id={id}
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={artists.map(({ name }) => name).join(",")}
@@ -56,28 +81,6 @@ export const Home = () => {
                                     title: "Popular albums",
                                     list: albums,
                                     isArtistsList: false,
-                                }
-                            })}
-                        />
-                        <TilesList
-                            title="Popular artists"
-                            list={artists}
-                            renderItem={({ images, name, type }) => (
-                                <Tile
-                                    picture={images[0].url}
-                                    title={name}
-                                    subInfo={type}
-                                    useArtistPictureStyle
-                                />
-                            )}
-                            hideRestListPart
-                            artistsList
-                            extraContentText="Show more"
-                            extraContentLink={() => toPopularList(navigate, {
-                                state: {
-                                    title: "Popular artists",
-                                    list: artists,
-                                    isArtistsList: true,
                                 }
                             })}
                         />
