@@ -8,38 +8,32 @@ export const Table = () => {
     const [hideRestTracks, setHideRestTracks] = useState(true);
 
     return (
-        <>
+        <StyledTable>
+            <Caption>Popular</Caption>
             {
-                tracks && (
-                    <StyledTable>
-                        <Caption>Popular</Caption>
-                        {
-                            tracks
-                                .filter((_, index) => (
-                                    hideRestTracks ? index < 5 : index <= 10
-                                ))
-                                .map(({ album, name, popularity, duration_ms }, index) => (
-                                    <Row key={index}>
-                                        <TrackOverview>
-                                            <RowHeader scope="row">{index + 1}</RowHeader>
-                                            <td><Image src={album.images[0].url} /></td>
-                                            <TrackName>{name}</TrackName>
-                                        </TrackOverview>
-                                        <TrackStats>
-                                            <TrackStat>{popularity}/100</TrackStat>
-                                            <TrackStat>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</TrackStat>
-                                        </TrackStats>
-                                    </Row>
-                                ))
-                        }
-                        <button
-                            onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}
-                        >
-                            {hideRestTracks ? <>Show more</> : <>Show less</>}
-                        </button>
-                    </StyledTable>
-                )
+                tracks
+                    .filter((_, index) => (
+                        hideRestTracks ? index < 5 : index <= 10
+                    ))
+                    .map(({ album, name, popularity, duration_ms }, index) => (
+                        <Row key={index}>
+                            <TrackOverview>
+                                <RowHeader scope="row">{index + 1}</RowHeader>
+                                <td><Image src={album.images[0].url} /></td>
+                                <TrackName>{name}</TrackName>
+                            </TrackOverview>
+                            <TrackStats>
+                                <TrackStat>{popularity}/100</TrackStat>
+                                <TrackStat>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</TrackStat>
+                            </TrackStats>
+                        </Row>
+                    ))
             }
-        </>
-    )
-}
+            <button
+                onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}
+            >
+                {hideRestTracks ? <>Show more</> : <>Show less</>}
+            </button>
+        </StyledTable>
+    );
+};
