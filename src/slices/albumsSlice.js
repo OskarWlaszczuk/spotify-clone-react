@@ -4,7 +4,7 @@ import { error, loading, success } from "../fetchStatuses";
 export const albumsSlice = createSlice({
     name: "albums",
     initialState: {
-        albums: [],
+        albums: null,
         albumsFetchStatus: loading,
     },
     reducers: {
