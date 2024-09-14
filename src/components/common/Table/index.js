@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { selectArtistTopTracks } from "../../../slices/artistTopTracksSlice"
-import { Picture } from "./styled";
+import { Image, Row, StyledTable, Caption, TrackOverview, TrackStats, RowHeader, TrackName, TrackStat } from "./styled";
 import { useState } from "react";
 
 export const Table = () => {
@@ -11,21 +11,25 @@ export const Table = () => {
         <>
             {
                 tracks && (
-                    <table>
-                        <caption>The most popular</caption>
+                    <StyledTable>
+                        <Caption>Popular</Caption>
                         {
                             tracks
                                 .filter((_, index) => (
                                     hideRestTracks ? index < 5 : index <= 10
                                 ))
                                 .map(({ album, name, popularity, duration_ms }, index) => (
-                                    <tr key={index}>
-                                        <th scope="row">{index + 1}</th>
-                                        <td><Picture src={album.images[0].url} /></td>
-                                        <td>{name}</td>
-                                        <td>{popularity}/100</td>
-                                        <td>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</td>
-                                    </tr>
+                                    <Row key={index}>
+                                        <TrackOverview>
+                                            <RowHeader scope="row">{index + 1}</RowHeader>
+                                            <td><Image src={album.images[0].url} /></td>
+                                            <TrackName>{name}</TrackName>
+                                        </TrackOverview>
+                                        <TrackStats>
+                                            <TrackStat>{popularity}/100</TrackStat>
+                                            <TrackStat>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</TrackStat>
+                                        </TrackStats>
+                                    </Row>
                                 ))
                         }
                         <button
@@ -33,7 +37,7 @@ export const Table = () => {
                         >
                             {hideRestTracks ? <>Show more</> : <>Show less</>}
                         </button>
-                    </table>
+                    </StyledTable>
                 )
             }
         </>
