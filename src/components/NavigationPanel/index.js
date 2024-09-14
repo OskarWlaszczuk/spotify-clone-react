@@ -3,8 +3,6 @@ import { useNavigationToPage } from "../../useNavigationToPage";
 import { toHome, toSearch } from "../../routes";
 import { IconBox } from "../common/IconBox";
 import { ReactComponent as HomeIcon } from "./icons/Home.svg";
-import { ReactComponent as SearchIcon } from "./icons/Search.svg";
-import { IconBoxList } from "../common/IconBoxList";
 import { Input } from "./Input";
 
 export const NavigationPanel = () => {
