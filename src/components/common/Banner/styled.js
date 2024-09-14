@@ -39,6 +39,7 @@ export const Details = styled.div`
 export const Title = styled.h1`
     margin: 12px 0;
     font-size: 64px;
+    font-weight: 900;
 `;
 
 export const Caption = styled.p`
