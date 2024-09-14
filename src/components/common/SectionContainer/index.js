@@ -6,7 +6,7 @@ export const SectionContainer = styled.section`
     height: 100%;
     background-color: ${({theme}) => theme.colors.black};
 
-    ${({ main }) => main && css`
+    ${({ gradient }) => gradient && css`
         background: linear-gradient(0deg, rgba(24, 20, 20, 1) 52%, rgb(39 39 39) 100%);
     `};
 
