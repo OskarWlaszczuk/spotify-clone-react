@@ -16,11 +16,10 @@ export const Home = () => {
     const artistsFetchStatus = useSelector(selectArtistsFetchStatus);
     const albumsFetchStatus = useSelector(selectAlbumsFetchStatus);
 
-    const { artists } = useSelector(selectArtists);
-    const { albums } = useSelector(selectAlbums);
+    const artists = useSelector(selectArtists);
+    const albums = useSelector(selectAlbums);
 
     const isLoading = artistsFetchStatus === loading || albumsFetchStatus === loading;
-    const isSucces = artistsFetchStatus === success && albumsFetchStatus === success;
 
     useEffect(() => {
         const fetchDelayId = setTimeout(() => {
@@ -33,13 +32,14 @@ export const Home = () => {
 
     return (
         <Main
+            gradientAvailable
             content={
                 isLoading ?
                     <>Ładowanie...</> :
                     <>
                         <TilesList
                             title="Popular artists"
-                            list={artists}
+                            list={artists.artists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
                                     id={id}
@@ -63,7 +63,7 @@ export const Home = () => {
                         />
                         <TilesList
                             title="Popular albums"
-                            list={albums}
+                            list={albums.albums}
                             renderItem={
                                 (({ images, name, artists, id }) => (
                                     <Tile
