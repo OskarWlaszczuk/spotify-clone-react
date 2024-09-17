@@ -3,7 +3,6 @@ import styled, { css } from "styled-components";
 export const SectionContainer = styled.section`
     padding: 15px 20px;
     border-radius: 10px;
-    height: 100%;
     background-color: ${({theme}) => theme.colors.black};
 
     ${({ gradient }) => gradient && css`
