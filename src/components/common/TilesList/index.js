@@ -15,13 +15,13 @@ export const TilesList = ({ title, hideRestListPart, list, renderItem, moreItems
     };
 
     useEffect(() => {
-        calculateTilesPerRow();
         window.addEventListener('resize', calculateTilesPerRow);
+        calculateTilesPerRow();
 
         return () => {
             window.removeEventListener('resize', calculateTilesPerRow);
         };
-    }, []);
+    });
 
     const previewList = list.slice(0, tilesPerRow);
     const wholeList = list;
