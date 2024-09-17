@@ -1,12 +1,14 @@
 import axios from "axios"
 import { fetchAccessToken } from "./fetchAccessToken";
+import { BASE_URL } from "./config";
 
-export const fetchApi = async url => {
+export const fetchFromAPI = async ({ params }) => {
+
     const accessToken = await fetchAccessToken();
     try {
         const response = await axios
             .get(
-                url, {
+                `${BASE_URL}${params}`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
                 }
@@ -14,6 +16,7 @@ export const fetchApi = async url => {
             );
         return response.data;
     } catch (error) {
+        console.log(error)
         throw new Error(error);
     }
-}
+};
