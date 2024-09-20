@@ -22,7 +22,7 @@ export const HomePage = () => {
 
     const albums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const artists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
-    console.log(albums, artists);
+
     const isInitial = checkFetchStatuses([albumsStatus, artistsStatus], initial);
     const isLoading = checkFetchStatuses([albumsStatus, artistsStatus], loading);
     const isError = checkFetchStatuses([albumsStatus, artistsStatus], error);
