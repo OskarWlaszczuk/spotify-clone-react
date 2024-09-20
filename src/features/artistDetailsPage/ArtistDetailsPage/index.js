@@ -13,8 +13,28 @@
 // import { fetchArtistRelatedArtists, selectArtistRelatedArtists, selectArtistRelatedArtistsFetchStatus } from "../../../../slices/artistRelatedArtistsSlice";
 // import { toArtist } from "../../../../routes";
 
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { artistDetailsActions, artistDetailsSelectors } from "../artistDetails/artistDetailsSlice";
+import { useEffect } from "react";
+
 export const ArtistDetailsPage = () => {
-    // const { id } = useParams();
+    const { id } = useParams();
+
+    const dispatch = useDispatch()
+
+    const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
+
+    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
+    const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
+
+    const name = details?.name;
+    const followers = details?.followers;
+    const images = details?.images;
+
+
+    
+    console.log(detailsStatus);
 
     // const dispatch = useDispatch();
     // const navigate = useNavigate();
@@ -32,27 +52,20 @@ export const ArtistDetailsPage = () => {
     // const isSuccess = fetchArtistStatus === success
     //     && fetchArtistRelatedArtistsStatus === success;
 
-    // const name = artist?.name;
-    // const followers = artist?.followers;
-    // const images = artist?.images;
+    useEffect(() => {
+        const fetchDelayId = setTimeout(() => {
+            dispatch(fetchArtistDetails({ id }))
+        }, 500);
 
-    // useEffect(() => {
-    //     const fetchDelayId = setTimeout(() => {
-    //         dispatch(fetchArtist(id));
-    //         dispatch(fetchArtistTopTracks(id));
-    //         dispatch(actions.fetch(id));
-    //         dispatch(fetchArtistRelatedArtists(id));
-    //     }, 500);
-
-    //     return () => {
-    //         clearTimeout(fetchDelayId);
-    //         actions.clear();
-    //     };
-    // }, [dispatch, id]);
+        return () => {
+            clearTimeout(fetchDelayId);
+            clearArtistDetails();
+        };
+    }, [dispatch, fetchArtistDetails, clearArtistDetails, id]);
 
     return (
         <>
-  
+
         </>
     );
 };
