@@ -7,10 +7,12 @@ import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
 import { checkFetchStatuses } from "../../../common/functions/checkFetchStatuses";
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
+import { useNavigate } from "react-router-dom";
+import { toArtist } from "../../../common/functions/routes";
 
 export const HomePage = () => {
-
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { fetch: fetchAlbums, clear: clearAlbums } = albumsActions;
     const { fetch: fetchArtists, clear: clearArtists } = artistsActions;
@@ -20,11 +22,13 @@ export const HomePage = () => {
 
     const albums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const artists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
-
+    console.log(albums, artists);
     const isInitial = checkFetchStatuses([albumsStatus, artistsStatus], initial);
     const isLoading = checkFetchStatuses([albumsStatus, artistsStatus], loading);
     const isError = checkFetchStatuses([albumsStatus, artistsStatus], error);
-    const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true) && Boolean(artists) && Boolean(albums);
+    const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true)
+        && Boolean(artists)
+        && Boolean(albums);
 
     useEffect(() => {
 
@@ -81,6 +85,7 @@ export const HomePage = () => {
                                     title={name}
                                     subInfo={type}
                                     useArtistPictureStyle
+                                    navigateTo={() => navigate(toArtist({ id: id }))}
                                 />
                             )}
                             hideRestListPart
