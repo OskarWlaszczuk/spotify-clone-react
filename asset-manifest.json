@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/Spotify-react/static/css/main.f855e6bc.css",
-    "main.js": "/Spotify-react/static/js/main.5afb6766.js",
-    "static/js/453.3ea199fe.chunk.js": "/Spotify-react/static/js/453.3ea199fe.chunk.js",
-    "static/media/logo.svg": "/Spotify-react/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
-    "index.html": "/Spotify-react/index.html",
-    "main.f855e6bc.css.map": "/Spotify-react/static/css/main.f855e6bc.css.map",
-    "main.5afb6766.js.map": "/Spotify-react/static/js/main.5afb6766.js.map",
-    "453.3ea199fe.chunk.js.map": "/Spotify-react/static/js/453.3ea199fe.chunk.js.map"
+    "main.js": "/spotify-clone-react/static/js/main.b883838b.js",
+    "static/js/453.3ea199fe.chunk.js": "/spotify-clone-react/static/js/453.3ea199fe.chunk.js",
+    "static/media/Home.svg": "/spotify-clone-react/static/media/Home.535d78df767fcbc5ab2b3ae270c2ff7f.svg",
+    "index.html": "/spotify-clone-react/index.html",
+    "static/media/MyLibrary.svg": "/spotify-clone-react/static/media/MyLibrary.21607f1b065d5be092e17383cde5a4f5.svg",
+    "static/media/Search.svg": "/spotify-clone-react/static/media/Search.5cc6eaadf4786c48f09bf9c7e13be307.svg",
+    "main.b883838b.js.map": "/spotify-clone-react/static/js/main.b883838b.js.map",
+    "453.3ea199fe.chunk.js.map": "/spotify-clone-react/static/js/453.3ea199fe.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f855e6bc.css",
-    "static/js/main.5afb6766.js"
+    "static/js/main.b883838b.js"
   ]
 }
