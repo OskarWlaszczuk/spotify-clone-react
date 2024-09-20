@@ -9,7 +9,6 @@ export function* createSaga({ getDatas, actions }) {
             yield put(actions.fetchSuccess({
                 datas: response
             }));
-
         } catch {
             yield put(actions.fetchError());
         }
