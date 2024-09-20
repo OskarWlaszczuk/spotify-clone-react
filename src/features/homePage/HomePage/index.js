@@ -7,7 +7,6 @@ import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
 import { checkFetchStatuses } from "../../../common/functions/checkFetchStatuses";
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
-// import { useFetchAPI } from "../../../../useFetchAPI";
 
 export const HomePage = () => {
 
@@ -27,13 +26,17 @@ export const HomePage = () => {
     const isError = checkFetchStatuses([albumsStatus, artistsStatus], error);
     const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true) && Boolean(artists) && Boolean(albums);
 
-    // useFetchAPI(1000, [fetchAlbums, fetchArtists], [clearAlbums, clearArtists]);
-
     useEffect(() => {
 
         const fetchDelayID = setTimeout(() => {
-            dispatch(fetchAlbums());
-            dispatch(fetchArtists());
+            dispatch(fetchAlbums({
+                id:
+                    "382ObEPsp2rxGrnsizN5TX%2C1A2GTWGtFfWp7KSQTwWOyo%2C2noRn2Aes5aoNVsU6iWThc"
+            }));
+            dispatch(fetchArtists({
+                id:
+                    "6EB8VE9f7Ut6NOgviN6gDW%2C6QfFTZJHFSe9Xyes6DkAli%2C2CIMQHirSU0MQqyYHq0eOx%2C57dN52uHvrHOxijzpIgu3E%2C1vCWHaC5f2uS3yhpwWbIA6%2C4Z8W4fKeB5YxbusRsdQVPb%2C7CJgLPEqiIRuneZSolpawQ"
+            }));
         }, 1000);
 
         return () => {
@@ -88,5 +91,5 @@ export const HomePage = () => {
                 }
             />
         );
-    }
+    };
 };
