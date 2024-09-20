@@ -1,5 +1,5 @@
 import { all } from "redux-saga/effects";
-import { watchFetchArtistSaga } from "../features/homePage/artists/artistsSaga";
+import { watchFetchArtistsSaga } from "../features/homePage/artists/artistsSaga";
 import { watchFetchAlbumsSaga } from "../features/homePage/albums/albumsSaga";
 import { watchFetchArtistDetails } from "../features/artistDetailsPage/artistDetails/artistDetailsSaga";
 import { artistTopTracksSaga } from "../features/artistDetailsPage/topTracks/artistTopTracksSaga";
@@ -8,7 +8,7 @@ import { artistRelatedArtistsSaga } from "../features/artistDetailsPage/relatedA
 
 export function* rootSaga() {
     yield all([
-        watchFetchArtistSaga(),
+        watchFetchArtistsSaga(),
         watchFetchAlbumsSaga(),
         watchFetchArtistDetails(),
         artistTopTracksSaga(),
