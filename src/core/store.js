@@ -6,7 +6,7 @@ import { albumsReducer } from '../features/homePage/albums/albumsSlice';
 import { artistDetailsReducer } from '../features/artistDetailsPage/artistDetails/artistDetailsSlice';
 import { artistTopTracksReducer } from '../features/artistDetailsPage/topTracks/artistTopTracksSlice';
 import { artistAlbumsReducer } from '../features/artistDetailsPage/albums/artistAlbumsSlice';
-import { artistRelatedArtistsReducer } from '../features/artistDetailsPage/relatedArtists/artistRelatedArtistsSlice';
+import { artistRelatedArtistsReducer } from '../features/artistDetailsPage/relatedArtists/relatedArtistsSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
