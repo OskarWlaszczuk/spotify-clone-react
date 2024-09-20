@@ -17,6 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { artistDetailsActions, artistDetailsSelectors } from "../artistDetails/artistDetailsSlice";
 import { useEffect } from "react";
+import { artistAlbumsSelectors, artistAlbumsActions } from "../albums/artistAlbumsSlice";
+import { relatedArtistsActions, relatedArtistsSelectors } from "../relatedArtists/relatedArtistsSlice";
+import { artistTopTracksActions, artistTopTracksSelectors } from "../topTracks/artistTopTracksSlice";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -24,17 +27,27 @@ export const ArtistDetailsPage = () => {
     const dispatch = useDispatch()
 
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
+    const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
+    const { fetch: fetchRelatedArtists, clear: clearRelatedArtists } = relatedArtistsActions;
+    const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
 
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
     const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
+
+    const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas;
+    const albumsStatus = useSelector(artistAlbumsSelectors.selectStatus);
+
+    const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
+    const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
+
+    const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
+    const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
 
     const name = details?.name;
     const followers = details?.followers;
     const images = details?.images;
 
-
-    
-    console.log(detailsStatus);
+    console.log(topTracks,topTracksStatus);
 
     // const dispatch = useDispatch();
     // const navigate = useNavigate();
@@ -54,14 +67,32 @@ export const ArtistDetailsPage = () => {
 
     useEffect(() => {
         const fetchDelayId = setTimeout(() => {
-            dispatch(fetchArtistDetails({ id }))
+            dispatch(fetchArtistDetails({ id }));
+            dispatch(fetchArtistAlbums({ id }));
+            dispatch(fetchRelatedArtists({ id }));
+            dispatch(fetchTopTracks({ id }));
         }, 500);
 
         return () => {
             clearTimeout(fetchDelayId);
+
             clearArtistDetails();
+            clearArtistAlbums();
+            clearRelatedArtists();
+            clearTopTracks()
         };
-    }, [dispatch, fetchArtistDetails, clearArtistDetails, id]);
+    }, [
+        dispatch,
+        fetchArtistDetails,
+        fetchArtistAlbums,
+        fetchRelatedArtists,
+        fetchTopTracks,
+        clearArtistDetails,
+        clearRelatedArtists,
+        clearArtistAlbums,
+        clearTopTracks,
+        id,
+    ]);
 
     return (
         <>
