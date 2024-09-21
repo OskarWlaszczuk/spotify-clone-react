@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { List, TitleContent, ExtraContent } from "./styled";
 
-export const TilesList = ({ title, hideRestListPart, list, renderItem, moreItems, extraContentText, extraContentLink }) => {
+export const TilesList = ({ title, subContent, hideRestListPart, list, renderItem, moreItems, extraContentText, extraContentLink }) => {
     const [tilesPerRow, setTilesPerRow] = useState(0);
     const containerRef = useRef(null);
 
@@ -39,6 +39,7 @@ export const TilesList = ({ title, hideRestListPart, list, renderItem, moreItems
                 {headerElement}
                 {hideRestListPart && <ExtraContent onClick={extraContentLink}>{extraContentText}</ExtraContent>}
             </TitleContent>
+            {subContent}
             <List ref={containerRef} moreItems={moreItems}>
                 {iterateOnList(hideRestListPart ? previewList : wholeList)}
             </List>
