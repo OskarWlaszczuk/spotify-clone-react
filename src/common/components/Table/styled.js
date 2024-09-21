@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const StyledTable = styled.table`
     width: 100%;
@@ -34,6 +34,7 @@ export const TrackOverview = styled.div`
     display: flex;
     align-items: center;
     gap: 15px;
+    width: 100%;
 `;
 
 export const RowHeader = styled.th`
@@ -46,13 +47,21 @@ export const RowHeader = styled.th`
 
 export const TrackStats = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    justify-items: end;
+    grid-template-columns: repeat(2, auto);
+    justify-items: center;
 `;
 
 export const TrackName = styled.td`
     font-weight: 350;
     font-size: 14px;
+    max-width: 530px;
+    width: 100%;
+ 
+    /* ${({ $ellipsis }) => $ellipsis && css`
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    `}; */
 `;
 
 export const TrackStat = styled.td`
