@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { artistDetailsActions, artistDetailsSelectors } from "../artistDetails/artistDetailsSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { artistAlbumsSelectors, artistAlbumsActions } from "../albums/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../relatedArtists/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../topTracks/artistTopTracksSlice";
@@ -13,7 +13,10 @@ import { Tile } from "../../../common/components/Tile";
 import { Banner } from "../../../common/components/Banner";
 import { Table } from "../../../common/components/Table";
 import { toArtist, toPopularList } from "../../../common/functions/routes";
+import { ListToggleButton } from "../../../common/components/ListToggleButton";
+import { ItemsList } from "../../../common/components/ItemsList";
 import { artistSinglesActions, artistSinglesSelectors } from "../artistSingles/artistSinglesSlice";
+import { artistCompilationActions, artistCompilationSelectors } from "../artistCompilation/artistCompilationSlice";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -21,11 +24,18 @@ export const ArtistDetailsPage = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
+    const albumsGroup = "albums";
+    const singlesGroup = "singles";
+    const compilationsGroup = "compilations";
+
+    const [albumTypeGroup, setAlbumTypeGroup] = useState(albumsGroup);
+
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
     const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
     const { fetch: fetchRelatedArtists, clear: clearRelatedArtists } = relatedArtistsActions;
     const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
     const { fetch: fetchArtistSingles, clear: clearArtistSingles } = artistSinglesActions;
+    const { fetch: fetchArtistCompilation, clear: clearArtistCompilation } = artistCompilationActions;
 
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
     const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
@@ -33,36 +43,41 @@ export const ArtistDetailsPage = () => {
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
     const albumsStatus = useSelector(artistAlbumsSelectors.selectStatus);
 
+    const compilations = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
+    const compilationsStatus = useSelector(artistCompilationSelectors.selectStatus);
+
+    const singles = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
+    const singlesStatus = useSelector(artistSinglesSelectors.selectStatus);
+    console.log(singles);
     const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
 
     const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
     const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
 
-    const singles = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
-    const singlesStatus = useSelector(artistSinglesSelectors.selectStatus);
-
     const name = details?.name;
     const followers = details?.followers;
     const images = details?.images;
 
-    const isInitial = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus], initial);
-    const isLoading = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus], loading);
-    const isError = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus], error);
-    const isSucces = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus], success, true)
+    const isInitial = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus], initial);
+    const isLoading = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus], loading);
+    const isError = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus], error);
+    const isSucces = checkFetchStatuses([detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus], success, true)
         && Boolean(details)
         && Boolean(albums)
         && Boolean(relatedArtists)
         && Boolean(topTracks)
-        && Boolean(singles);
+        && Boolean(singles)
+        && Boolean(compilations);
 
     useEffect(() => {
         const fetchDelayId = setTimeout(() => {
             dispatch(fetchArtistDetails({ id }));
-            dispatch(fetchArtistAlbums({ id }));
             dispatch(fetchRelatedArtists({ id }));
             dispatch(fetchTopTracks({ id }));
+            dispatch(fetchArtistAlbums({ id }));
             dispatch(fetchArtistSingles({ id }));
+            dispatch(fetchArtistCompilation({ id }));
         }, 500);
 
         return () => {
@@ -72,6 +87,7 @@ export const ArtistDetailsPage = () => {
             clearArtistAlbums();
             clearRelatedArtists();
             clearTopTracks();
+            clearArtistCompilation();
             clearArtistSingles();
         };
     }, [
@@ -79,15 +95,26 @@ export const ArtistDetailsPage = () => {
         fetchArtistDetails,
         fetchArtistAlbums,
         fetchRelatedArtists,
-        fetchTopTracks,
         fetchArtistSingles,
+        fetchArtistCompilation,
+        fetchTopTracks,
         clearArtistDetails,
         clearRelatedArtists,
         clearArtistAlbums,
         clearTopTracks,
         clearArtistSingles,
+        clearArtistCompilation,
         id,
     ]);
+
+    const isAlbumGroupMatch = group => albumTypeGroup === group;
+    const isListEmpty = list => list.length > 0;
+
+    const findMatchingGroup = () => {
+        if (isAlbumGroupMatch(albumsGroup)) return { group: albums, title: "Albums" };
+        if (isAlbumGroupMatch(singlesGroup)) return { group: singles, title: "Singles" };
+        if (isAlbumGroupMatch(compilationsGroup)) return { group: compilations, title: "Compilations" };
+    };
 
     if (isLoading) return <Main content={<>loading</>} />;
     if (isError) return <Main content={<>error</>} />;
@@ -101,22 +128,57 @@ export const ArtistDetailsPage = () => {
                         picture={images ? images[0]?.url : ''}
                         title={name}
                         caption="Verified artist"
-                        metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                        metaDatas={`${followers?.total?.toLocaleString()}`}
                     />
                 }
                 content={
                     <>
                         <Table />
                         <TilesList
-                            title="Albums"
-                            list={albums}
+                            title="Discography"
+                            subContent={
+                                <ItemsList
+                                    items={
+                                        <>
+                                            {
+                                                isListEmpty(albums) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setAlbumTypeGroup(albumsGroup)}
+                                                        text="Albums"
+                                                        isActive={isAlbumGroupMatch(albumsGroup)}
+                                                    />
+                                                )
+                                            }
+                                            {
+                                                isListEmpty(singles) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setAlbumTypeGroup(singlesGroup)}
+                                                        text="Singles"
+                                                        isActive={isAlbumGroupMatch(singlesGroup)}
+                                                    />
+                                                )
+                                            }
+                                            {
+                                                isListEmpty(compilations) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setAlbumTypeGroup(compilationsGroup)}
+                                                        text="Compilations"
+                                                        isActive={isAlbumGroupMatch(compilationsGroup)}
+                                                    />
+                                                )
+                                            }
+                                        </>
+                                    }
+                                />
+                            }
+                            list={findMatchingGroup().group}
                             renderItem={
-                                (({ images, name, release_date, type, id }) => (
+                                (({ images, name, release_date, album_group, id }) => (
                                     <Tile
                                         id={id}
                                         picture={images[0].url}
                                         title={name}
-                                        subInfo={`${release_date} ${type}`}
+                                        subInfo={`${release_date} ${album_group.slice(0, 1).toUpperCase() + album_group.slice(1)}`}
                                     />
                                 ))
                             }
@@ -125,40 +187,13 @@ export const ArtistDetailsPage = () => {
                             extraContentText="Discography"
                             extraContentLink={() => toPopularList(navigate, {
                                 state: {
-                                    title: "Discography",
-                                    list: albums,
+                                    title: findMatchingGroup().title,
+                                    list: findMatchingGroup().group,
                                     isArtistsList: false,
                                 }
                             }
                             )}
                         />
-
-                        <TilesList
-                            title="Singles"
-                            list={singles}
-                            renderItem={
-                                (({ images, name, release_date, type, id }) => (
-                                    <Tile
-                                        id={id}
-                                        picture={images[0].url}
-                                        title={name}
-                                        subInfo={`${release_date} ${type}`}
-                                    />
-                                ))
-                            }
-                            hideRestListPart
-                            artistsList
-                            extraContentText="Discography"
-                            extraContentLink={() => toPopularList(navigate, {
-                                state: {
-                                    title: "Discography",
-                                    list: singles,
-                                    isArtistsList: false,
-                                }
-                            }
-                            )}
-                        />
-
                         <TilesList
                             title="Fans like it too"
                             list={relatedArtists}
