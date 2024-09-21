@@ -33,14 +33,8 @@ export const HomePage = () => {
     useEffect(() => {
 
         const fetchDelayID = setTimeout(() => {
-            dispatch(fetchAlbums({
-                id:
-                    "382ObEPsp2rxGrnsizN5TX%2C1A2GTWGtFfWp7KSQTwWOyo%2C2noRn2Aes5aoNVsU6iWThc"
-            }));
-            dispatch(fetchArtists({
-                id:
-                    "3hteYQFiMFbJY7wS0xDymP,6EB8VE9f7Ut6NOgviN6gDW%2C6QfFTZJHFSe9Xyes6DkAli%2C2CIMQHirSU0MQqyYHq0eOx%2C57dN52uHvrHOxijzpIgu3E%2C1vCWHaC5f2uS3yhpwWbIA6%2C4Z8W4fKeB5YxbusRsdQVPb%2C7CJgLPEqiIRuneZSolpawQ"
-            }));
+            dispatch(fetchAlbums());
+            dispatch(fetchArtists());
         }, 1000);
 
         return () => {
