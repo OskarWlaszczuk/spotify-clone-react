@@ -6,6 +6,7 @@ import { watchFetchArtistTopTracks } from "../features/artistDetailsPage/topTrac
 import { watchFetchArtistAlbums } from "../features/artistDetailsPage/albums/artistAlbumsSaga";
 import { watchFetchRelatedArtists } from "../features/artistDetailsPage/relatedArtists/relatedArtistsSaga";
 import { watchFetchArtistSinglesSaga } from "../features/artistDetailsPage/artistSingles/artistSinglesSaga";
+import { watchFetchArtistCompilationSaga } from "../features/artistDetailsPage/artistCompilation/artistCompilationSaga";
 
 export function* rootSaga() {
     yield all([
@@ -16,5 +17,6 @@ export function* rootSaga() {
         watchFetchArtistAlbums(),
         watchFetchRelatedArtists(),
         watchFetchArtistSinglesSaga(),
+        watchFetchArtistCompilationSaga(),
     ]);
 };
