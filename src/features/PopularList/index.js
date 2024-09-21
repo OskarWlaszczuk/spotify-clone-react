@@ -4,7 +4,6 @@ import { TilesList } from "../../common/components/TilesList";
 import { useLocation } from "react-router-dom";
 
 export const PopularList = () => {
-
     const location = useLocation();
     const { title, list, isArtistsList } = location.state;
 
