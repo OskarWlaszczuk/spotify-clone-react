@@ -5,7 +5,7 @@ export const Main = ({ content, banner, gradientAvailable }) => {
     return (
         <MainContent>
             {banner}
-            <SectionContainer gradient={gradientAvailable} bannerAvailable={banner}>
+            <SectionContainer $gradient={gradientAvailable} $bannerAvailable={banner}>
                 {content}
             </SectionContainer>
         </MainContent>
