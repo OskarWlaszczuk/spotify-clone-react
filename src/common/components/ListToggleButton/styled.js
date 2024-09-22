@@ -15,6 +15,10 @@ export const Button = styled.button`
         cursor: pointer;
     };
 
+    &:active{
+        filter: brightness(70%);
+    };
+
     ${({ $active }) => $active && css`
         color: ${({ theme }) => theme.colors.black};
         background-color: ${({ theme }) => theme.colors.white};
@@ -22,6 +26,10 @@ export const Button = styled.button`
 
         &:hover{
             filter: brightness(85%);
+        };
+
+        &:active{
+            filter: brightness(70%);
         };
     `};
 `;
