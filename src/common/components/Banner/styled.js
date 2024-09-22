@@ -44,6 +44,9 @@ export const Title = styled.h1`
 
 export const Caption = styled.p`
     margin: 0;
+    font-weight: 350;
+    font-size: 13px;
+
 `;
 
 export const MetaDatas = styled.p`
