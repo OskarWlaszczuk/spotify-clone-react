@@ -8,7 +8,7 @@ export const Banner = ({ picture, metaDatas, title, caption }) => {
             <Details>
                 <Caption>{caption}</Caption>
                 <Title>{title}</Title>
-                <MetaDatas>{metaDatas} followers</MetaDatas>
+                <MetaDatas>{metaDatas}</MetaDatas>
             </Details>
         </Container>
     );
