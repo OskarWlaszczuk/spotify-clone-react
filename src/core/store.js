@@ -9,6 +9,7 @@ import { artistAlbumsReducer } from '../features/artistDetailsPage/albums/artist
 import { artistRelatedArtistsReducer } from '../features/artistDetailsPage/relatedArtists/relatedArtistsSlice';
 import { artistSinglesReducer } from '../features/artistDetailsPage/artistSingles/artistSinglesSlice';
 import { artistCompilationReducer } from '../features/artistDetailsPage/artistCompilation/artistCompilationSlice';
+import { listReducer } from '../features/ListPage/listSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -16,12 +17,15 @@ export const store = configureStore({
     reducer: {
         artists: artistsReducer,
         albums: albumsReducer,
+
         artistDetails: artistDetailsReducer,
         artistTopTracks: artistTopTracksReducer,
         artistAlbums: artistAlbumsReducer,
         artistRelatedArtists: artistRelatedArtistsReducer,
         artistSingles: artistSinglesReducer,
         artistCompilation: artistCompilationReducer,
+
+        list: listReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(sagaMiddleware),
