@@ -8,7 +8,9 @@ import { checkFetchStatuses } from "../../../common/functions/checkFetchStatuses
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
 import { useNavigate } from "react-router-dom";
-import { toArtist } from "../../../common/functions/routes";
+import { toArtist, toListPage } from "../../../common/functions/routes";
+import { areAllDatasExists } from "../../../common/functions/areAllDatasExists";
+import { setList } from "../../ListPage/listSlice";
 
 export const HomePage = () => {
     const dispatch = useDispatch();
@@ -26,9 +28,7 @@ export const HomePage = () => {
     const isInitial = checkFetchStatuses([albumsStatus, artistsStatus], initial);
     const isLoading = checkFetchStatuses([albumsStatus, artistsStatus], loading);
     const isError = checkFetchStatuses([albumsStatus, artistsStatus], error);
-    const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true)
-        && Boolean(artists)
-        && Boolean(albums);
+    const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true) && areAllDatasExists([albums, artists]);
 
     useEffect(() => {
 
@@ -60,6 +60,7 @@ export const HomePage = () => {
                             list={albums}
                             renderItem={({ images, name, artists, id }) => (
                                 <Tile
+                                    key={id}
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
@@ -68,12 +69,17 @@ export const HomePage = () => {
                             )}
                             hideRestListPart
                             extraContentText="Show more"
+                            extraContentAction={() => dispatch(setList(
+                                { title: "Popular albums", list: albums, isArtistsList: false }
+                            ))}
+                            extraContentLink={() => navigate(toListPage())}
                         />
                         <TilesList
                             title="Popular artists"
                             list={artists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
+                                    key={id}
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
@@ -85,6 +91,8 @@ export const HomePage = () => {
                             hideRestListPart
                             artistsList
                             extraContentText="Show more"
+                            extraContentAction={() => dispatch(setList({ title: "Popular artists", list: artists, isArtistsList: true }))}
+                            extraContentLink={() => navigate(toListPage())}
                         />
                     </>
                 }
