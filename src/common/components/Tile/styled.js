@@ -6,11 +6,14 @@ export const Container = styled.li`
     gap: 10px;
     padding: 8px;
     border-radius: 5px;
-    transition: 0.5s;
-    cursor: pointer;
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
+      cursor: pointer;
+    };
+
+    &:active {
+      background-color: ${({ theme }) => theme.colors.codGray};
     };
 `;
 
