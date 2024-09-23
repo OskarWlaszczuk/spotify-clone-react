@@ -22,8 +22,4 @@ export const List = styled.ul`
     grid-gap: 15px 0;
     margin-bottom: 50px;
     padding: 0;
-
-    ${({ moreItems }) => moreItems && css`
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    `};
 `;
