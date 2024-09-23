@@ -1,0 +1,1 @@
+export const areAllDatasExists = (datas=[]) => datas.every(data => Boolean(data));
