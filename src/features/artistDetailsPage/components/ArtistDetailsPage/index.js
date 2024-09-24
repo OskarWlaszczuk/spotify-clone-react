@@ -74,7 +74,7 @@ export const ArtistDetailsPage = () => {
     const followers = details?.followers;
     const images = details?.images;
 
-    const { matchedGroup, currentGroupType, setAlbumTypeGroup } = useAlbumTypeGroup(popularReleasesGroup, {
+    const { matchedGroup, currentGroupType, setCurrentGroupType } = useAlbumTypeGroup(popularReleasesGroup, {
         albums, singles, compilations, sortedPopularReleasesWithNewestFirst
     });
 
@@ -189,7 +189,7 @@ export const ArtistDetailsPage = () => {
                                             {
                                                 isListEmpty(popularReleases) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setAlbumTypeGroup(popularReleasesGroup)}
+                                                        toggleList={() => setCurrentGroupType(popularReleasesGroup)}
                                                         text="Popular releases"
                                                         isActive={isAlbumGroupMatch(popularReleasesGroup, currentGroupType)}
                                                     />
@@ -198,7 +198,7 @@ export const ArtistDetailsPage = () => {
                                             {
                                                 isListEmpty(albums) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setAlbumTypeGroup(albumsGroup)}
+                                                        toggleList={() => setCurrentGroupType(albumsGroup)}
                                                         text="Albums"
                                                         isActive={isAlbumGroupMatch(albumsGroup, currentGroupType)}
                                                     />
@@ -207,7 +207,7 @@ export const ArtistDetailsPage = () => {
                                             {
                                                 isListEmpty(singles) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setAlbumTypeGroup(singlesGroup)}
+                                                        toggleList={() => setCurrentGroupType(singlesGroup)}
                                                         text="Singles"
                                                         isActive={isAlbumGroupMatch(singlesGroup, currentGroupType)}
                                                     />
@@ -216,7 +216,7 @@ export const ArtistDetailsPage = () => {
                                             {
                                                 isListEmpty(compilations) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setAlbumTypeGroup(compilationsGroup)}
+                                                        toggleList={() => setCurrentGroupType(compilationsGroup)}
                                                         text="Compilations"
                                                         isActive={isAlbumGroupMatch(compilationsGroup, currentGroupType)}
                                                     />
