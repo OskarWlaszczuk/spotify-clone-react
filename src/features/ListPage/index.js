@@ -26,7 +26,7 @@ export const ListPage = () => {
                                 title={name}
                                 subInfo={isArtistsList ? type : artists.map(({ name }) => name).join(",")}
                                 useArtistPictureStyle={isArtistsList}
-                                navigateTo={() => navigate(isArtistsList ? toArtist({ id }) : toAlbum({ id}))}
+                                navigateTo={isArtistsList ? toArtist({ id }) : toAlbum({ id })}
                             />
                         )}
                     />

@@ -228,7 +228,7 @@ export const ArtistDetailsPage = () => {
                                     title={name}
                                     subInfo={type}
                                     useArtistPictureStyle
-                                    navigateTo={() => navigate(toArtist({ id }))}
+                                    navigateTo={toArtist({ id })}
                                 />
                             )}
                             hideRestListPart
@@ -248,7 +248,7 @@ export const ArtistDetailsPage = () => {
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}
-                                    navigateTo={() => navigate(toArtist({ id }))}
+                                // navigateTo={navigate(toArtist({ id }))}
                                 />
                             )}
                             hideRestListPart

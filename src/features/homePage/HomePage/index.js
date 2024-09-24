@@ -83,7 +83,7 @@ export const HomePage = () => {
                                     title={name}
                                     subInfo={type}
                                     useArtistPictureStyle
-                                    navigateTo={() => navigate(toArtist({ id: id }))}
+                                    navigateTo={toArtist({ id: id })}
                                 />
                             )}
                             hideRestListPart
