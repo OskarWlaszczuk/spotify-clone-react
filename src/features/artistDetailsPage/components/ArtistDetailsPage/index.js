@@ -26,6 +26,7 @@ import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
 import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
 import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
+import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -39,9 +40,13 @@ export const ArtistDetailsPage = () => {
     const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
     const { fetch: fetchArtistSingles, clear: clearArtistSingles } = artistSinglesActions;
     const { fetch: fetchArtistCompilation, clear: clearArtistCompilation } = artistCompilationActions;
+    const { fetch: fetchArtistAppearsOn, clear: clearArtistAppearsOn } = artistAppearsOnActions;
 
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
     const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
+
+    const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
+    const appearsOnStatus = useSelector(artistAppearsOnSelectors.selectStatus);
 
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
     const albumsStatus = useSelector(artistAlbumsSelectors.selectStatus);
@@ -73,8 +78,8 @@ export const ArtistDetailsPage = () => {
     });
 
     const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
-        [detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus],
-        [details, albums, relatedArtists, topTracks, singles, compilations],
+        [detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus, appearsOnStatus],
+        [details, albums, relatedArtists, topTracks, singles, compilations, appearsOn],
     );
 
     useEffect(() => {
@@ -85,6 +90,7 @@ export const ArtistDetailsPage = () => {
             dispatch(fetchArtistAlbums({ id }));
             dispatch(fetchArtistSingles({ id }));
             dispatch(fetchArtistCompilation({ id }));
+            dispatch(fetchArtistAppearsOn({ id }));
         }, 500);
 
         return () => {
@@ -96,6 +102,7 @@ export const ArtistDetailsPage = () => {
             clearTopTracks();
             clearArtistCompilation();
             clearArtistSingles();
+            clearArtistAppearsOn();
         };
     }, [
         dispatch,
@@ -105,12 +112,14 @@ export const ArtistDetailsPage = () => {
         fetchArtistSingles,
         fetchArtistCompilation,
         fetchTopTracks,
+        fetchArtistAppearsOn,
         clearArtistDetails,
         clearRelatedArtists,
         clearArtistAlbums,
         clearTopTracks,
         clearArtistSingles,
         clearArtistCompilation,
+        clearArtistAppearsOn,
         id,
     ]);
 
@@ -200,7 +209,6 @@ export const ArtistDetailsPage = () => {
                                 })
                             }
                             hideRestListPart
-                            artistsList
                             extraContentText="Show all"
                             extraContentAction={
                                 () => dispatch(
@@ -224,10 +232,29 @@ export const ArtistDetailsPage = () => {
                                 />
                             )}
                             hideRestListPart
-                            artistsList
                             extraContentText="Show all"
                             extraContentAction={
                                 () => dispatch(setList({ title: "Fans also like", list: relatedArtists, isArtistsList: true }))
+                            }
+                            extraContentLink={() => navigate(toListPage())}
+                        />
+                        <TilesList
+                            title="Appears on"
+                            list={appearsOn}
+                            renderItem={({ images, name, type, id }) => (
+                                <Tile
+                                    key={id}
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={type}
+                                    navigateTo={() => navigate(toArtist({ id }))}
+                                />
+                            )}
+                            hideRestListPart
+                            extraContentText="Show all"
+                            extraContentAction={
+                                () => dispatch(setList({ title: "Appears on", list: appearsOn }))
                             }
                             extraContentLink={() => navigate(toListPage())}
                         />
