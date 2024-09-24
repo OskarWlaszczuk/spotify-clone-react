@@ -1,11 +1,14 @@
+import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 
-export const Container = styled.li`
+export const Container = styled(Link)`
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding: 8px;
     border-radius: 5px;
+    color: ${({ theme }) => theme.colors.white};
+    text-decoration: none;
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
