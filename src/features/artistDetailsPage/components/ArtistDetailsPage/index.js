@@ -22,6 +22,10 @@ import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { setList } from "../../../ListPage/listSlice";
 import { removeDuplicates } from "../../functions/removeDuplicates"
+import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
+import { isLatestReleased } from "../../functions/isLatestReleased";
+import { isListEmpty } from "../../functions/isListEmpty";
+import { useAlbumTypeGroup } from "../../hooks/useAlbumTypeGroup";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -34,7 +38,7 @@ export const ArtistDetailsPage = () => {
     const singlesGroup = "singles";
     const compilationsGroup = "compilations";
 
-    const [albumTypeGroup, setAlbumTypeGroup] = useState(popularReleasesGroup);
+    const { albumTypeGroup, setAlbumTypeGroup } = useAlbumTypeGroup(popularReleasesGroup);
 
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
     const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
@@ -157,16 +161,7 @@ export const ArtistDetailsPage = () => {
         id,
     ]);
 
-    const replaceReleaseDateIfCurrentYear = album => {
-        return isLatestReleased(album) ?
-            { ...album, release_date: "Latest Release" } :
-            album;
-    };
-
-    const isLatestReleased = object => new Date(object?.release_date).getFullYear() === new Date().getFullYear();
-
     const isAlbumGroupMatch = group => albumTypeGroup === group;
-    const isListEmpty = list => list.length > 0;
 
     const findMatchingGroup = () => {
         if (isAlbumGroupMatch(albumsGroup)) return { group: albums, title: "Albums" };
@@ -176,7 +171,7 @@ export const ArtistDetailsPage = () => {
     };
 
     const listToDisplay = removeDuplicates(findMatchingGroup().group);
-    console.log(listToDisplay)
+
     if (isLoading) return <Main content={<>loading</>} />;
     if (isError) return <Main content={<>error</>} />;
     if (isInitial) return <Main content={<>Initial</>} />;
