@@ -25,7 +25,7 @@ import { removeDuplicates } from "../../functions/removeDuplicates"
 import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
 import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
-import { useAlbumTypeGroup } from "../../hooks/useAlbumTypeGroup";
+import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
 import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
 
@@ -74,7 +74,7 @@ export const ArtistDetailsPage = () => {
     const followers = details?.followers;
     const images = details?.images;
 
-    const { matchedGroup, currentGroupType, setCurrentGroupType } = useAlbumTypeGroup(popularReleasesGroup, {
+    const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, {
         albums, singles, compilations, sortedPopularReleasesWithNewestFirst
     });
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../constants/groups";
 import { isAlbumGroupMatch } from "../functions/isAlbumGroupMatch";
 
-export const useAlbumTypeGroup = (newAlbumTypeGroup, groups = {}) => {
+export const useCurrentGroupType = (newAlbumTypeGroup, groups = {}) => {
     const [currentGroupType, setCurrentGroupType] = useState(newAlbumTypeGroup);
     const { albums, singles, compilations, sortedPopularReleasesWithNewestFirst } = groups;
 
