@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { Image, Row, StyledTable, Caption, TrackOverview, TrackStats, RowHeader, TrackName, TrackStat } from "./styled";
 import { useEffect, useRef, useState } from "react";
-import { artistTopTracksSelectors } from "../../../features/artistDetailsPage/topTracks/artistTopTracksSlice";
+import { artistTopTracksSelectors } from "../../../features/artistDetailsPage/slices/artistTopTracksSlice";
 
 export const Table = () => {
     const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;

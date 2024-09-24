@@ -1,5 +1,5 @@
 import { getArtistTopTracks } from "../API/getArtistTopTracks";
-import { artistTopTracksActions } from "./artistTopTracksSlice";
+import { artistTopTracksActions } from "../slices/artistTopTracksSlice";
 import { createSaga } from "../../../common/functions/createSaga";
 
 export function* watchFetchArtistTopTracks() {

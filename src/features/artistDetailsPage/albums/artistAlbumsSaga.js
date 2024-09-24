@@ -1,5 +1,5 @@
 import { getArtistAlbums } from "../API/getArtistAlbums"
-import { artistAlbumsActions } from "./artistAlbumsSlice";
+import { artistAlbumsActions } from "../slices/artistAlbumsSlice";
 import { createSaga } from "../../../common/functions/createSaga";
 
 export function* watchFetchArtistAlbums() {
