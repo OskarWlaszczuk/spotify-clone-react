@@ -67,7 +67,7 @@ export const ArtistDetailsPage = () => {
 
     const sortedPopularReleasesWithNewestFirst = [
         { ...(newestPopularRelease ?? {}) },
-        ...(popularReleases?.slice(1) ?? []),
+        ...(popularReleases?.slice() ?? []),
     ];
 
     const name = details?.name;
@@ -156,13 +156,21 @@ export const ArtistDetailsPage = () => {
         id,
     ]);
 
-    const removeDuplicates = (array = []) => {
+    const removeDuplicates = (albums = []) => {
         const caughtDuplicates = new Set();
-        return array.filter(item => {
-            const keyValue = item.id;
+        return albums.filter(({ name }) => {
+            const keyValue = name;
             return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
         });
     };
+
+    const replaceReleaseDateIfCurrentYear = album => {
+        return isLatestReleased(album) ?
+            { ...album, release_date: "Latest Release" } :
+            album;
+    };
+
+    const isLatestReleased = object => new Date(object?.release_date).getFullYear() === new Date().getFullYear();
 
     const isAlbumGroupMatch = group => albumTypeGroup === group;
     const isListEmpty = list => list.length > 0;
@@ -175,7 +183,7 @@ export const ArtistDetailsPage = () => {
     };
 
     const listToDisplay = removeDuplicates(findMatchingGroup().group);
-
+    console.log(listToDisplay)
     if (isLoading) return <Main content={<>loading</>} />;
     if (isError) return <Main content={<>error</>} />;
     if (isInitial) return <Main content={<>Initial</>} />;
@@ -242,17 +250,22 @@ export const ArtistDetailsPage = () => {
                             }
                             list={listToDisplay}
                             renderItem={
-                                (({ images, name, release_date, album_group = '', album_type = '', id }) => (
-                                    <Tile
+                                ((item, index) => {
+                                    const { id, name, release_date, images, album_group = "", album_type = "" } = item;
+
+                                    return <Tile
                                         id={id}
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={`
-                                            ${getYear(release_date)} 
-                                            ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}`
-                                        }
+                                            ${index === 0 && isLatestReleased(item)
+                                                ? replaceReleaseDateIfCurrentYear(item).release_date
+                                                : getYear(release_date)
+                                            }
+                                            ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
+                                        `}
                                     />
-                                ))
+                                })
                             }
                             hideRestListPart
                             artistsList
