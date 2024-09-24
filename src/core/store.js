@@ -10,6 +10,7 @@ import { artistRelatedArtistsReducer } from '../features/artistDetailsPage/slice
 import { artistSinglesReducer } from '../features/artistDetailsPage/slices/artistSinglesSlice';
 import { artistCompilationReducer } from '../features/artistDetailsPage/slices/artistCompilationSlice';
 import { listReducer } from '../features/ListPage/listSlice';
+import { artistAppearsOnReducer } from '../features/artistDetailsPage/slices/artistAppearsOnSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -24,6 +25,7 @@ export const store = configureStore({
         artistRelatedArtists: artistRelatedArtistsReducer,
         artistSingles: artistSinglesReducer,
         artistCompilation: artistCompilationReducer,
+        artistAppearsOn: artistAppearsOnReducer,
 
         list: listReducer,
     },
