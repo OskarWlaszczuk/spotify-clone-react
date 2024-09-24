@@ -1,18 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { List, TitleContent, ExtraContent } from "./styled";
 
-export const TilesList = (
-    {
-        title,
-        subContent,
-        hideRestListPart,
-        list,
-        renderItem,
-        extraContentText,
-        extraContentAction,
-        extraContentLink
-    }
-) => {
+export const TilesList = ({
+    title,
+    subContent,
+    hideRestListPart,
+    list,
+    renderItem,
+    extraContentText,
+    extraContentAction,
+    extraContentLink
+}) => {
 
     const [tilesPerRow, setTilesPerRow] = useState(0);
     const containerRef = useRef(null);
@@ -39,8 +37,8 @@ export const TilesList = (
     const wholeList = list;
 
     const iterateOnList = list => {
-        return list.map((item) => (
-            renderItem(item)
+        return list.map((item, index) => (
+            renderItem(item, index)
         ))
     };
 
