@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { artistAlbumsSelectors, artistAlbumsActions } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
@@ -26,19 +26,14 @@ import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseD
 import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
 import { useAlbumTypeGroup } from "../../hooks/useAlbumTypeGroup";
+import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
+import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch()
     const navigate = useNavigate();
-
-    const popularReleasesGroup = "popularReleases";
-    const albumsGroup = "albums";
-    const singlesGroup = "singles";
-    const compilationsGroup = "compilations";
-
-    const { albumTypeGroup, setAlbumTypeGroup } = useAlbumTypeGroup(popularReleasesGroup);
 
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
     const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
@@ -78,6 +73,10 @@ export const ArtistDetailsPage = () => {
     const name = details?.name;
     const followers = details?.followers;
     const images = details?.images;
+
+    const { matchedGroup, currentGroupType, setAlbumTypeGroup } = useAlbumTypeGroup(popularReleasesGroup, {
+        albums, singles, compilations, sortedPopularReleasesWithNewestFirst
+    });
 
     const isInitial = checkFetchStatuses(
         [
@@ -161,16 +160,7 @@ export const ArtistDetailsPage = () => {
         id,
     ]);
 
-    const isAlbumGroupMatch = group => albumTypeGroup === group;
-
-    const findMatchingGroup = () => {
-        if (isAlbumGroupMatch(albumsGroup)) return { group: albums, title: "Albums" };
-        if (isAlbumGroupMatch(singlesGroup)) return { group: singles, title: "Singles" };
-        if (isAlbumGroupMatch(compilationsGroup)) return { group: compilations, title: "Compilations" };
-        if (isAlbumGroupMatch(popularReleasesGroup)) return { group: sortedPopularReleasesWithNewestFirst, title: "Popular releases" };
-    };
-
-    const listToDisplay = removeDuplicates(findMatchingGroup().group);
+    const groupToDisplay = removeDuplicates(matchedGroup.group);
 
     if (isLoading) return <Main content={<>loading</>} />;
     if (isError) return <Main content={<>error</>} />;
@@ -201,7 +191,7 @@ export const ArtistDetailsPage = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setAlbumTypeGroup(popularReleasesGroup)}
                                                         text="Popular releases"
-                                                        isActive={isAlbumGroupMatch(popularReleasesGroup)}
+                                                        isActive={isAlbumGroupMatch(popularReleasesGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -210,7 +200,7 @@ export const ArtistDetailsPage = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setAlbumTypeGroup(albumsGroup)}
                                                         text="Albums"
-                                                        isActive={isAlbumGroupMatch(albumsGroup)}
+                                                        isActive={isAlbumGroupMatch(albumsGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -219,7 +209,7 @@ export const ArtistDetailsPage = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setAlbumTypeGroup(singlesGroup)}
                                                         text="Singles"
-                                                        isActive={isAlbumGroupMatch(singlesGroup)}
+                                                        isActive={isAlbumGroupMatch(singlesGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -228,7 +218,7 @@ export const ArtistDetailsPage = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setAlbumTypeGroup(compilationsGroup)}
                                                         text="Compilations"
-                                                        isActive={isAlbumGroupMatch(compilationsGroup)}
+                                                        isActive={isAlbumGroupMatch(compilationsGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -236,7 +226,7 @@ export const ArtistDetailsPage = () => {
                                     }
                                 />
                             }
-                            list={listToDisplay}
+                            list={groupToDisplay}
                             renderItem={
                                 ((item, index) => {
                                     const { id, name, release_date, images, album_group = "", album_type = "" } = item;
@@ -260,7 +250,7 @@ export const ArtistDetailsPage = () => {
                             extraContentText="Show all"
                             extraContentAction={
                                 () => dispatch(
-                                    setList({ title: findMatchingGroup().title, list: listToDisplay, isArtistsList: false })
+                                    setList({ title: matchedGroup.title, list: groupToDisplay, isArtistsList: false })
                                 )
                             }
                             extraContentLink={() => navigate(toListPage())}
