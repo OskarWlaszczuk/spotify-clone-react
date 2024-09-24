@@ -5,8 +5,6 @@ import { useEffect } from "react";
 import { artistAlbumsSelectors, artistAlbumsActions } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
-import { checkFetchStatuses } from "../../../../common/functions/checkFetchStatuses";
-import { error, initial, loading, success } from "../../../../common/constants/fetchStatuses";
 import { Main } from "../../../../common/components/Main";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
@@ -17,7 +15,6 @@ import { ListToggleButton } from "../../../../common/components/ListToggleButton
 import { ItemsList } from "../../../../common/components/ItemsList";
 import { artistSinglesActions, artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationActions, artistCompilationSelectors } from "../../slices/artistCompilationSlice";
-import { areAllDatasExists } from "../../../../common/functions/areAllDatasExists";
 import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { setList } from "../../../ListPage/listSlice";
@@ -28,6 +25,7 @@ import { isListEmpty } from "../../functions/isListEmpty";
 import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
 import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
+import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -70,57 +68,13 @@ export const ArtistDetailsPage = () => {
         ...(popularReleases?.slice() ?? []),
     ];
 
-    const name = details?.name;
-    const followers = details?.followers;
-    const images = details?.images;
-
     const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, {
         albums, singles, compilations, sortedPopularReleasesWithNewestFirst
     });
 
-    const isInitial = checkFetchStatuses(
-        [
-            detailsStatus,
-            albumsStatus,
-            relatedArtistsStatus,
-            topTracksStatus,
-            singlesStatus,
-            compilationsStatus
-        ],
-        initial
-    );
-    const isLoading = checkFetchStatuses(
-        [
-            detailsStatus,
-            albumsStatus,
-            relatedArtistsStatus,
-            topTracksStatus,
-            singlesStatus,
-            compilationsStatus
-        ], loading
-    );
-    const isError = checkFetchStatuses(
-        [
-            detailsStatus,
-            albumsStatus,
-            relatedArtistsStatus,
-            topTracksStatus,
-            singlesStatus,
-            compilationsStatus
-        ], error
-    );
-    const isSucces = (
-        checkFetchStatuses(
-            [
-                detailsStatus,
-                albumsStatus,
-                relatedArtistsStatus,
-                topTracksStatus,
-                singlesStatus,
-                compilationsStatus
-            ], success, true
-        )
-        && areAllDatasExists([details, albums, relatedArtists, topTracks, singles, compilations])
+    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
+        [detailsStatus, albumsStatus, relatedArtistsStatus, topTracksStatus, singlesStatus, compilationsStatus],
+        [details, albums, relatedArtists, topTracks, singles, compilations],
     );
 
     useEffect(() => {
@@ -171,10 +125,10 @@ export const ArtistDetailsPage = () => {
                 gradientAvailable
                 banner={
                     <Banner
-                        picture={images ? images[0]?.url : ''}
-                        title={name}
+                        picture={details.images ? details.images[0]?.url : ''}
+                        title={details.name}
                         caption="Verified artist"
-                        metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                        metaDatas={`${details.followers?.total?.toLocaleString()} followers`}
                     />
                 }
                 content={

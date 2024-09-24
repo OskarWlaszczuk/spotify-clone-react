@@ -1,16 +1,14 @@
 import { useEffect } from "react";
 import { Main } from "../../../common/components/Main";
 import { useDispatch, useSelector } from "react-redux";
-import { error, initial, loading, success } from "../../../common/constants/fetchStatuses";
 import { albumsSelectors, albumsActions } from "../albums/albumsSlice";
 import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
-import { checkFetchStatuses } from "../../../common/functions/checkFetchStatuses";
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
 import { useNavigate } from "react-router-dom";
 import { toArtist, toListPage } from "../../../common/functions/routes";
-import { areAllDatasExists } from "../../../common/functions/areAllDatasExists";
 import { setList } from "../../ListPage/listSlice";
+import { useFetchStatuses } from "../../../common/hooks/useFetchStatuses";
 
 export const HomePage = () => {
     const dispatch = useDispatch();
@@ -25,10 +23,10 @@ export const HomePage = () => {
     const albums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const artists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
-    const isInitial = checkFetchStatuses([albumsStatus, artistsStatus], initial);
-    const isLoading = checkFetchStatuses([albumsStatus, artistsStatus], loading);
-    const isError = checkFetchStatuses([albumsStatus, artistsStatus], error);
-    const isSucces = checkFetchStatuses([albumsStatus, artistsStatus], success, true) && areAllDatasExists([albums, artists]);
+    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
+        [albumsStatus, artistsStatus],
+        [albums, artists],
+    );
 
     useEffect(() => {
 
