@@ -8,10 +8,7 @@ export const Tile = ({ picture, title, subInfo, id, navigateTo, useArtistPicture
     const dispatch = useDispatch();
 
     return (
-        <Container onClick={() => {
-            navigateTo();
-            dispatch(setNavigationID({ id }))
-        }}>
+        <Container to={navigateTo} onClick={() => dispatch(setNavigationID({ id }))}>
             <Picture picture={picture} artistPictureStyle={useArtistPictureStyle} />
             <Title>{title}</Title>
             <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
