@@ -20,6 +20,7 @@ export const Row = styled.tr`
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
+      cursor: pointer;
     };
 `;
 
@@ -41,7 +42,7 @@ export const RowHeader = styled.th`
     width: 30px;
     text-align: right;
     color: ${({ theme }) => theme.colors.nobel};
-    font-weight: 400;
+    font-weight: 450;
     font-size: 14px;
 `;
 
@@ -53,7 +54,7 @@ export const TrackStats = styled.div`
 
 export const TrackName = styled.td`
     font-weight: 350;
-    font-size: 14px;
+    font-size: 13px;
     max-width: 530px;
     width: 100%;
  
@@ -66,6 +67,6 @@ export const TrackName = styled.td`
 
 export const TrackStat = styled.td`
     color: ${({ theme }) => theme.colors.nobel};
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
 `;
