@@ -1,4 +1,4 @@
-import { getArtistTopTracks } from "./getArtistTopTracks";
+import { getArtistTopTracks } from "../API/getArtistTopTracks";
 import { artistTopTracksActions } from "./artistTopTracksSlice";
 import { createSaga } from "../../../common/functions/createSaga";
 

@@ -1,4 +1,4 @@
-import {getArtistDetails} from "./getArtistDetails";
+import { getArtistDetails } from "../API/getArtistDetails"
 import { artistDetailsActions } from "./artistDetailsSlice";
 import { createSaga } from "../../../common/functions/createSaga";
 

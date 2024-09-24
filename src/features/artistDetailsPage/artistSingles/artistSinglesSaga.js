@@ -1,5 +1,5 @@
 import { createSaga } from "../../../common/functions/createSaga";
-import { getArtistSingles } from "./getArtistSingles";
+import { getArtistSingles } from "../API/getArtistSingles"
 import { artistSinglesActions } from "./artistSinglesSlice";
 
 export function* watchFetchArtistSinglesSaga() {
