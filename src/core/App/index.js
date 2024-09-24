@@ -6,7 +6,7 @@ import { Search } from "../../features/Search";
 import { Album } from "../../features/Album";
 import { Library } from "./Library";
 import { ListPage } from "../../features/ListPage";
-import { ArtistDetailsPage } from "../../features/artistDetailsPage/ArtistDetailsPage";
+import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/ArtistDetailsPage";
 
 export const App = () => {
   return (
