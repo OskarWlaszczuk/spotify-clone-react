@@ -21,6 +21,7 @@ import { areAllDatasExists } from "../../../../common/functions/areAllDatasExist
 import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { setList } from "../../../ListPage/listSlice";
+import { removeDuplicates } from "../../functions/removeDuplicates"
 
 export const ArtistDetailsPage = () => {
     const { id } = useParams();
@@ -155,14 +156,6 @@ export const ArtistDetailsPage = () => {
         clearArtistCompilation,
         id,
     ]);
-
-    const removeDuplicates = (albums = []) => {
-        const caughtDuplicates = new Set();
-        return albums.filter(({ name }) => {
-            const keyValue = name;
-            return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
-        });
-    };
 
     const replaceReleaseDateIfCurrentYear = album => {
         return isLatestReleased(album) ?
