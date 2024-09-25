@@ -23,13 +23,9 @@ export const HomePage = () => {
     const albums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const artists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
-    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
-        [albumsStatus, artistsStatus],
-        [albums, artists],
-    );
+    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses([albumsStatus, artistsStatus]);
 
     useEffect(() => {
-
         const fetchDelayID = setTimeout(() => {
             dispatch(fetchAlbums());
             dispatch(fetchArtists());
