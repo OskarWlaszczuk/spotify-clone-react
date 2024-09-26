@@ -9,7 +9,7 @@ export const TilesList = ({
     renderItem,
     extraContentText,
     extraContentAction,
-    extraContentLink
+    navigateTo
 }) => {
 
     const [tilesPerRow, setTilesPerRow] = useState(0);
@@ -48,19 +48,19 @@ export const TilesList = ({
         <>
             <TitleContent>
                 {headerElement}
-                {hideRestListPart && <ExtraContent
-                    onClick={() => {
-                        extraContentLink();
-                        extraContentAction();
-                    }}
-                >
-                    {extraContentText}
-                </ExtraContent>}
-            </TitleContent>
+                {hideRestListPart &&
+                    <ExtraContent
+                        to={navigateTo}
+                        onClick={() => extraContentAction()}
+                    >
+                        {extraContentText}
+                    </ExtraContent>
+                }
+            </TitleContent >
             {subContent}
-            <List ref={containerRef}>
+            < List ref={containerRef} >
                 {iterateOnList(hideRestListPart ? previewList : wholeList)}
-            </List>
+            </List >
         </>
     );
 };
