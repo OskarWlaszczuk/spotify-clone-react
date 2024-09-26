@@ -66,7 +66,7 @@ export const HomePage = () => {
                             extraContentAction={() => dispatch(setList(
                                 { title: "Popular albums", list: albums, isArtistsList: false }
                             ))}
-                            extraContentLink={() => navigate(toListPage())}
+                            navigateTo={toListPage()}
                         />
                         <TilesList
                             title="Popular artists"
@@ -86,7 +86,7 @@ export const HomePage = () => {
                             artistsList
                             extraContentText="Show more"
                             extraContentAction={() => dispatch(setList({ title: "Popular artists", list: artists, isArtistsList: true }))}
-                            extraContentLink={() => navigate(toListPage())}
+                            navigateTo={toListPage()}
                         />
                     </>
                 }
