@@ -1,11 +1,10 @@
 import { MainContent } from "./styled"
 import { SectionContainer } from "../SectionContainer";
 
-export const Main = ({ content, banner, gradientAvailable }) => {
+export const Main = ({ content }) => {
     return (
         <MainContent>
-            {banner}
-            <SectionContainer $gradient={gradientAvailable} $bannerAvailable={banner}>
+            <SectionContainer>
                 {content}
             </SectionContainer>
         </MainContent>
