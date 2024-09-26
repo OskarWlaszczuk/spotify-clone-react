@@ -17,7 +17,7 @@ export const App = () => {
         <Route path={toHome()} element={<HomePage />} />
         <Route path={toSearch()} element={<Search />} />
         <Route path={toAlbum()} element={<Album />} />
-        <Route path="/artist/:id" element={<ArtistDetailsPage />} />
+        <Route path="/artist/:id/:type?" element={<ArtistDetailsPage />} />
         <Route path={toListPage()} element={<ListPage />} />
         <Route path="*" element={<Navigate to={toHome()} />} />
       </Routes>
