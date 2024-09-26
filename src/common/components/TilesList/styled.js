@@ -1,4 +1,5 @@
-import styled, { css } from "styled-components";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 export const TitleContent = styled.header`
   display: flex; 
@@ -6,7 +7,7 @@ export const TitleContent = styled.header`
   justify-content: space-between;
 `;
 
-export const ExtraContent = styled.a`
+export const ExtraContent = styled(Link)`
     color: ${({ theme }) => theme.colors.nobel};
     font-size: 13px;
     cursor: pointer;
