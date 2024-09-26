@@ -24,6 +24,9 @@ import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { ListView } from "../../../../common/components/ListView";
 import { useState } from "react";
+import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
+import { Banner } from "../../../../common/components/Banner";
+import { ContentWrapper } from "../../../../common/components/ContentWrapper";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -37,6 +40,11 @@ export const MainContent = () => {
     const singles = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
     const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
+    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
+
+    const name = details?.name;
+    const followers = details?.followers;
+    const images = details?.images;
 
     const popularReleases = topTracks?.map(({ album }) => album);
     const newestPopularRelease = popularReleases?.slice().sort(
@@ -48,22 +56,71 @@ export const MainContent = () => {
         ...(popularReleases?.slice() ?? []),
     ];
 
+
+    const mergedArray = [
+        ...albums,
+        ...compilations,
+        ...singles,
+        ...sortedPopularReleasesWithNewestFirst,
+    ];
+
     const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, {
         albums, singles, compilations, sortedPopularReleasesWithNewestFirst
     });
 
-    const [listView, setListView] = useState({ title: "", list: null });
-    const [isListView, setIsListView] = useState(false);
+    const allParamGroup = "/all";
+    const albumsParamGroup = "/album";
+    const singleParamGroup = "/single";
+    const compilationParamGroup = "/compilation";
+
+    const isMatch = (group, targetGroup) => group === targetGroup;
+    const isParamMatch = param => param === type;
+
+    const findMatchingGroup = () => {
+
+        if (isMatch(popularReleasesGroup, currentGroupType))
+            return { group: mergedArray, param: allParamGroup };
+
+        if (isMatch(albumsGroup, currentGroupType))
+            return { group: albums, param: albumsParamGroup };
+
+        if (isMatch(compilationsGroup, currentGroupType))
+            return { group: compilations, param: compilationParamGroup };
+
+        if (isMatch(singlesGroup, currentGroupType))
+            return { group: singles, param: singleParamGroup };
+    };
+
+
+    const matchListToParam = () => {
+
+        if (isParamMatch(allParamGroup))
+            return mergedArray;
+
+        if (isMatch(albumsParamGroup))
+            return albums;
+
+        if (isMatch(compilationParamGroup))
+            return compilations;
+
+        if (isMatch(singleParamGroup))
+            return singles;
+    };
+
+    const [listView, setListView] = useState(matchListToParam() || null);
+    const [currentListViewParam, setCurrentListViewType] = useState(findMatchingGroup().param || null);
+
+    // const [isListView, setIsListView] = useState(false);
 
     const groupToDisplay = removeDuplicates(matchedGroup.group);
-
+    console.log(currentGroupType);
     return (
         <>
             {
                 type ?
                     <TilesList
-                        title={"tytuł"}
-                        list={singles}
+                        title={name}
+                        list={removeDuplicates(listView)}
                         renderItem={
                             ((item, index) => {
                                 const { id, name, release_date, images, album_group = "", album_type = "" } = item;
@@ -72,12 +129,18 @@ export const MainContent = () => {
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo="test"
+                                    subInfo={album_group}
                                 />
                             })
                         }
                     /> :
                     <>
+                        <Banner
+                            picture={images ? images[0]?.url : ''}
+                            title={name}
+                            caption="Verified artist"
+                            metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                        />
                         <Table />
                         <TilesList
                             title="Discography"
@@ -90,7 +153,7 @@ export const MainContent = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setCurrentGroupType(popularReleasesGroup)}
                                                         text="Popular releases"
-                                                        isActive={isAlbumGroupMatch(popularReleasesGroup, currentGroupType)}
+                                                        isActive={isMatch(popularReleasesGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -99,7 +162,7 @@ export const MainContent = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setCurrentGroupType(albumsGroup)}
                                                         text="Albums"
-                                                        isActive={isAlbumGroupMatch(albumsGroup, currentGroupType)}
+                                                        isActive={isMatch(albumsGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -108,7 +171,7 @@ export const MainContent = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setCurrentGroupType(singlesGroup)}
                                                         text="Singles"
-                                                        isActive={isAlbumGroupMatch(singlesGroup, currentGroupType)}
+                                                        isActive={isMatch(singlesGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -117,7 +180,7 @@ export const MainContent = () => {
                                                     <ListToggleButton
                                                         toggleList={() => setCurrentGroupType(compilationsGroup)}
                                                         text="Compilations"
-                                                        isActive={isAlbumGroupMatch(compilationsGroup, currentGroupType)}
+                                                        isActive={isMatch(compilationsGroup, currentGroupType)}
                                                     />
                                                 )
                                             }
@@ -144,13 +207,12 @@ export const MainContent = () => {
                             }
                             hideRestListPart
                             extraContentText="Show all"
-                            extraContentAction={
-                                () => dispatch(
-                                    setList({ title: matchedGroup.title, list: groupToDisplay, isArtistsList: false })
-                                )
-                            }
+                            extraContentAction={() => {
+                                setListView(findMatchingGroup().group);
+                                setCurrentListViewType(matchListToParam())
+                            }}
                             navigateTo={toArtist({
-                                id: id, additionalPath: '/all'
+                                id: id, additionalPath: findMatchingGroup().param
                             })}
                         />
                         < TilesList
