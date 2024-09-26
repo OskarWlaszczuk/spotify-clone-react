@@ -22,8 +22,11 @@ import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
 import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
+import { ListView } from "../../../../common/components/ListView";
+import { useState } from "react";
 
 export const MainContent = () => {
+    const { id, type } = useParams();
 
     const dispatch = useDispatch()
     const navigate = useNavigate();
@@ -49,127 +52,150 @@ export const MainContent = () => {
         albums, singles, compilations, sortedPopularReleasesWithNewestFirst
     });
 
+    const [listView, setListView] = useState({ title: "", list: null });
+    const [isListView, setIsListView] = useState(false);
 
     const groupToDisplay = removeDuplicates(matchedGroup.group);
 
     return (
         <>
-            <Table />
-            <TilesList
-                title="Discography"
-                subContent={
-                    <ItemsList
-                        items={
-                            <>
-                                {
-                                    isListEmpty(popularReleases) && (
-                                        <ListToggleButton
-                                            toggleList={() => setCurrentGroupType(popularReleasesGroup)}
-                                            text="Popular releases"
-                                            isActive={isAlbumGroupMatch(popularReleasesGroup, currentGroupType)}
-                                        />
-                                    )
-                                }
-                                {
-                                    isListEmpty(albums) && (
-                                        <ListToggleButton
-                                            toggleList={() => setCurrentGroupType(albumsGroup)}
-                                            text="Albums"
-                                            isActive={isAlbumGroupMatch(albumsGroup, currentGroupType)}
-                                        />
-                                    )
-                                }
-                                {
-                                    isListEmpty(singles) && (
-                                        <ListToggleButton
-                                            toggleList={() => setCurrentGroupType(singlesGroup)}
-                                            text="Singles"
-                                            isActive={isAlbumGroupMatch(singlesGroup, currentGroupType)}
-                                        />
-                                    )
-                                }
-                                {
-                                    isListEmpty(compilations) && (
-                                        <ListToggleButton
-                                            toggleList={() => setCurrentGroupType(compilationsGroup)}
-                                            text="Compilations"
-                                            isActive={isAlbumGroupMatch(compilationsGroup, currentGroupType)}
-                                        />
-                                    )
-                                }
-                            </>
-                        }
-                    />
-                }
-                list={groupToDisplay}
-                renderItem={
-                    ((item, index) => {
-                        const { id, name, release_date, images, album_group = "", album_type = "" } = item;
+            {
+                type ?
+                    <TilesList
+                        title={"tytuł"}
+                        list={singles}
+                        renderItem={
+                            ((item, index) => {
+                                const { id, name, release_date, images, album_group = "", album_type = "" } = item;
 
-                        return <Tile
-                            id={id}
-                            picture={images[0].url}
-                            title={name}
-                            subInfo={`
-                                            ${index === 0 && isLatestReleased(item)
-                                    ? replaceReleaseDateIfCurrentYear(item).release_date
-                                    : getYear(release_date)
-                                }
-                                            ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
-                                        `}
+                                return <Tile
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo="test"
+                                />
+                            })
+                        }
+                    /> :
+                    <>
+                        <Table />
+                        <TilesList
+                            title="Discography"
+                            subContent={
+                                <ItemsList
+                                    items={
+                                        <>
+                                            {
+                                                isListEmpty(popularReleases) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setCurrentGroupType(popularReleasesGroup)}
+                                                        text="Popular releases"
+                                                        isActive={isAlbumGroupMatch(popularReleasesGroup, currentGroupType)}
+                                                    />
+                                                )
+                                            }
+                                            {
+                                                isListEmpty(albums) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setCurrentGroupType(albumsGroup)}
+                                                        text="Albums"
+                                                        isActive={isAlbumGroupMatch(albumsGroup, currentGroupType)}
+                                                    />
+                                                )
+                                            }
+                                            {
+                                                isListEmpty(singles) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setCurrentGroupType(singlesGroup)}
+                                                        text="Singles"
+                                                        isActive={isAlbumGroupMatch(singlesGroup, currentGroupType)}
+                                                    />
+                                                )
+                                            }
+                                            {
+                                                isListEmpty(compilations) && (
+                                                    <ListToggleButton
+                                                        toggleList={() => setCurrentGroupType(compilationsGroup)}
+                                                        text="Compilations"
+                                                        isActive={isAlbumGroupMatch(compilationsGroup, currentGroupType)}
+                                                    />
+                                                )
+                                            }
+                                        </>
+                                    }
+                                />
+                            }
+                            list={groupToDisplay}
+                            renderItem={
+                                ((item, index) => {
+                                    const { id, name, release_date, images, album_group = "", album_type = "" } = item;
+
+                                    return <Tile
+                                        id={id}
+                                        picture={images[0].url}
+                                        title={name}
+                                        subInfo={`${index === 0 && isLatestReleased(item)
+                                            ? replaceReleaseDateIfCurrentYear(item).release_date
+                                            : getYear(release_date)}
+                                ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
+                            `}
+                                    />
+                                })
+                            }
+                            hideRestListPart
+                            extraContentText="Show all"
+                            extraContentAction={
+                                () => dispatch(
+                                    setList({ title: matchedGroup.title, list: groupToDisplay, isArtistsList: false })
+                                )
+                            }
+                            navigateTo={toArtist({
+                                id: id, additionalPath: '/all'
+                            })}
                         />
-                    })
-                }
-                hideRestListPart
-                extraContentText="Show all"
-                extraContentAction={
-                    () => dispatch(
-                        setList({ title: matchedGroup.title, list: groupToDisplay, isArtistsList: false })
-                    )
-                }
-                extraContentLink={() => navigate(toListPage())}
-            />
-            <TilesList
-                title="Fans also like"
-                list={relatedArtists}
-                renderItem={({ images, name, type, id }) => (
-                    <Tile
-                        key={id}
-                        id={id}
-                        picture={images[0].url}
-                        title={name}
-                        subInfo={type}
-                        useArtistPictureStyle
-                        navigateTo={toArtist({ id })}
-                    />
-                )}
-                hideRestListPart
-                extraContentText="Show all"
-                extraContentAction={
-                    () => dispatch(setList({ title: "Fans also like", list: relatedArtists, isArtistsList: true }))
-                }
-                extraContentLink={() => navigate(toListPage())}
-            />
-            <TilesList
-                title="Appears on"
-                list={appearsOn}
-                renderItem={({ images, name, type, id }) => (
-                    <Tile
-                        key={id}
-                        id={id}
-                        picture={images[0].url}
-                        title={name}
-                        subInfo={type}
-                    // navigateTo={navigate(toArtist({ id }))}
-                    />
-                )}
-                hideRestListPart
-                extraContentText="Show all"
-                extraContentAction={
-                    () => dispatch(setList({ title: "Appears on", list: appearsOn }))
-                }
-                extraContentLink={() => navigate(toListPage())}
-            />
+                        < TilesList
+                            title="Fans also like"
+                            list={relatedArtists}
+                            renderItem={({ images, name, type, id }) => (
+                                <Tile
+                                    key={id}
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={type}
+                                    useArtistPictureStyle
+                                    navigateTo={toArtist({ id })}
+                                />
+                            )}
+                            hideRestListPart
+                            extraContentText="Show all"
+                            extraContentAction={
+                                () => dispatch(setList({ title: "Fans also like", list: relatedArtists, isArtistsList: true }))
+                            }
+                            navigateTo={() => navigate(toListPage())}
+                        />
+                        <TilesList
+                            title="Appears on"
+                            list={appearsOn}
+                            renderItem={({ images, name, type, id }) => (
+                                <Tile
+                                    key={id}
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={type}
+                                // navigateTo={navigate(toArtist({ id }))}
+                                />
+                            )}
+                            hideRestListPart
+                            extraContentText="Show all"
+                            extraContentAction={
+                                () => dispatch(setList({ title: "Appears on", list: appearsOn }))
+                            }
+                            navigateTo={() => navigate(toListPage())}
+                        />
+                    </>
+            }
         </>
-    )
-}
+    );
+};
