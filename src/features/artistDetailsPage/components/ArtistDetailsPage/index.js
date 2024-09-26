@@ -97,14 +97,6 @@ export const ArtistDetailsPage = () => {
         return (
             <Main
                 gradientAvailable
-                banner={
-                    <Banner
-                        picture={images ? images[0]?.url : ''}
-                        title={name}
-                        caption="Verified artist"
-                        metaDatas={`${followers?.total?.toLocaleString()} followers`}
-                    />
-                }
                 content={
                     <>
                         <MainContent />
