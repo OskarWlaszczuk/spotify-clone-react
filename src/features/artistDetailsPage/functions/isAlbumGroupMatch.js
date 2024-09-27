@@ -1,1 +1,0 @@
-export const isAlbumGroupMatch = (group, targetGroup) => group === targetGroup;

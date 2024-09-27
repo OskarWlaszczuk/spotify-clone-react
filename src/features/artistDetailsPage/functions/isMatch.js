@@ -1,0 +1,1 @@
+export const isMatch = (group, targetGroup) => group === targetGroup;
