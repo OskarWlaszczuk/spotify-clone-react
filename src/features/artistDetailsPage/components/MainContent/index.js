@@ -19,13 +19,15 @@ import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseD
 import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
 import { useCurrentListCategory } from "../../hooks/useCurrentListCategory";
-import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/categories";
+import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/listCategories";
 import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { useState } from "react";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
+import { useListView } from "../../hooks/useListViev";
+import { allParamCategory, albumsParamCategory, compilationParamCategory, singleParamCategory } from "../../constants/paramCategories";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -80,28 +82,14 @@ export const MainContent = () => {
         previewAllCategoriesList,
     });
 
-    const allParamCategory = "/all";
-    const albumsParamCategory = "/album";
-    const singleParamCategory = "/single";
-    const compilationParamCategory = "/compilation";
-
-    const matchedParam = findMatchingValueByKey([
-        { key: popularReleasesCategory, value: allParamCategory },
-        { key: albumsCategory, value: albumsParamCategory },
-        { key: compilationsCategory, value: compilationParamCategory },
-        { key: singlesCategory, value: singleParamCategory },
-    ], currentListCategory);
-
-    const matchedList = findMatchingValueByKey([
+    const { listView, setListView } = useListView(currentListCategory, type, [
         { key: allParamCategory, value: allCategoriesList },
         { key: albumsParamCategory, value: albums },
         { key: compilationParamCategory, value: compilations },
         { key: singleParamCategory, value: singles },
-    ], type)
+    ])
 
-    const [listView, setListView] = useState(matchedList || null);
-
-    const listToDisplay = removeDuplicates(listMachtedByCategory || listView);
+    const listToDisplay = removeDuplicates(listMachtedByCategory || listView.list);
 
     return (
         <>
@@ -196,7 +184,7 @@ export const MainContent = () => {
                             extraContentText="Show all"
                             extraContentAction={() => setListView(listView)}
                             navigateTo={toArtist({
-                                id: id, additionalPath: matchedParam
+                                id: id, additionalPath: listView.param
                             })}
                         />
 
