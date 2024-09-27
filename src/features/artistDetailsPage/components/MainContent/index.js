@@ -25,13 +25,22 @@ import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { useState } from "react";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { findMatchingItemValue } from "../../../../common/functions/findMatchingItemValue";
+import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 
 export const MainContent = () => {
     const { id, type } = useParams();
 
     const dispatch = useDispatch()
     const navigate = useNavigate();
+
+    const sortFromOldestToNewest = (array = []) => {
+
+        return (
+            array.slice().sort(
+                (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
+            )
+        );
+    };
 
     const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
@@ -55,31 +64,20 @@ export const MainContent = () => {
         ...(popularReleases?.slice() ?? []),
     ];
 
-
-    const mergedArray = [
+    const allCategoriesList = [
         ...sortedPopularReleasesWithNewestFirst,
         ...albums,
         ...compilations,
         ...singles,
     ];
+    const previewAllCategoriesList = sortFromOldestToNewest(allCategoriesList);
 
-    const sortFromOldestToNewest = (array = []) => {
-
-        return (
-            array.slice().sort(
-                (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
-            )
-        );
-    };
-
-    const mergedArrayWithNewestFirst = sortFromOldestToNewest(mergedArray);
-
-    const { matchedListByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, type, {
+    const { listMachtedByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, type, {
         albums,
         singles,
         compilations,
-        mergedArray,
-        mergedArrayWithNewestFirst,
+        allCategoriesList,
+        previewAllCategoriesList,
     });
 
     const allParamCategory = "/all";
@@ -87,15 +85,15 @@ export const MainContent = () => {
     const singleParamCategory = "/single";
     const compilationParamCategory = "/compilation";
 
-    const matchedParam = findMatchingItemValue([
+    const matchedParam = findMatchingValueByKey([
         { key: popularReleasesCategory, value: allParamCategory },
         { key: albumsCategory, value: albumsParamCategory },
         { key: compilationsCategory, value: compilationParamCategory },
         { key: singlesCategory, value: singleParamCategory },
     ], currentListCategory);
 
-    const matchedList = findMatchingItemValue([
-        { key: allParamCategory, value: mergedArray },
+    const matchedList = findMatchingValueByKey([
+        { key: allParamCategory, value: allCategoriesList },
         { key: albumsParamCategory, value: albums },
         { key: compilationParamCategory, value: compilations },
         { key: singleParamCategory, value: singles },
@@ -103,7 +101,7 @@ export const MainContent = () => {
 
     const [listView, setListView] = useState(matchedList || null);
 
-    const listToDisplay = removeDuplicates(matchedListByCategory || listView);
+    const listToDisplay = removeDuplicates(listMachtedByCategory || listView);
 
     return (
         <>
