@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../constants/groups";
-import { isAlbumGroupMatch } from "../functions/isAlbumGroupMatch";
+import { findMatchingItemValue } from "../../../common/functions/findMatchingGroup";
 
-export const useCurrentGroupType = (newAlbumTypeGroup, groups = {}) => {
+export const useCurrentGroupType = (newAlbumTypeGroup, param, groups = {}) => {
     const [currentGroupType, setCurrentGroupType] = useState(newAlbumTypeGroup);
-    const { albums, singles, compilations, sortedPopularReleasesWithNewestFirst } = groups;
+    const { albums, singles, compilations, mergedArray, mergedArrayWithNewestFirst } = groups;
 
-    const findMatchingGroup = () => {
-        if (isAlbumGroupMatch(albumsGroup, currentGroupType)) return { group: albums, title: "Albums" };
-        if (isAlbumGroupMatch(singlesGroup, currentGroupType)) return { group: singles, title: "Singles" };
-        if (isAlbumGroupMatch(compilationsGroup, currentGroupType)) return { group: compilations, title: "Compilations" };
-        if (isAlbumGroupMatch(popularReleasesGroup, currentGroupType)) return { group: sortedPopularReleasesWithNewestFirst, title: "Popular releases" };
-    };
-
-    const matchedGroup = findMatchingGroup();
+    const matchedGroup = findMatchingItemValue([
+        { key: albumsGroup, value: albums },
+        { key: singlesGroup, value: singles },
+        { key: compilationsGroup, value: compilations },
+        { key: popularReleasesGroup, value: param ? mergedArrayWithNewestFirst : mergedArray },
+    ], currentGroupType);
 
     return { matchedGroup, currentGroupType, setCurrentGroupType };
 };
