@@ -18,14 +18,14 @@ import { removeDuplicates } from "../../functions/removeDuplicates"
 import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
 import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
-import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
-import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
+import { useCurrentListCategory } from "../../hooks/useCurrentListCategory";
+import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/categories";
 import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { useState } from "react";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { findMatchingItemValue } from "../../../../common/functions/findMatchingGroup";
+import { findMatchingItemValue } from "../../../../common/functions/findMatchingItemValue";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -74,7 +74,7 @@ export const MainContent = () => {
 
     const mergedArrayWithNewestFirst = sortFromOldestToNewest(mergedArray);
 
-    const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, type, {
+    const { matchedListByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, type, {
         albums,
         singles,
         compilations,
@@ -82,28 +82,28 @@ export const MainContent = () => {
         mergedArrayWithNewestFirst,
     });
 
-    const allParamGroup = "/all";
-    const albumsParamGroup = "/album";
-    const singleParamGroup = "/single";
-    const compilationParamGroup = "/compilation";
+    const allParamCategory = "/all";
+    const albumsParamCategory = "/album";
+    const singleParamCategory = "/single";
+    const compilationParamCategory = "/compilation";
 
     const matchedParam = findMatchingItemValue([
-        { key: popularReleasesGroup, value: allParamGroup },
-        { key: albumsGroup, value: albumsParamGroup },
-        { key: compilationsGroup, value: compilationParamGroup },
-        { key: singlesGroup, value: singleParamGroup },
-    ], currentGroupType);
+        { key: popularReleasesCategory, value: allParamCategory },
+        { key: albumsCategory, value: albumsParamCategory },
+        { key: compilationsCategory, value: compilationParamCategory },
+        { key: singlesCategory, value: singleParamCategory },
+    ], currentListCategory);
 
     const matchedList = findMatchingItemValue([
-        { key: allParamGroup, value: mergedArray },
-        { key: albumsParamGroup, value: albums },
-        { key: compilationParamGroup, value: compilations },
-        { key: singleParamGroup, value: singles },
+        { key: allParamCategory, value: mergedArray },
+        { key: albumsParamCategory, value: albums },
+        { key: compilationParamCategory, value: compilations },
+        { key: singleParamCategory, value: singles },
     ], type)
 
     const [listView, setListView] = useState(matchedList || null);
 
-    const listToDisplay = removeDuplicates(matchedGroup || listView);
+    const listToDisplay = removeDuplicates(matchedListByCategory || listView);
 
     return (
         <>
@@ -140,36 +140,36 @@ export const MainContent = () => {
                                             {
                                                 isListEmpty(popularReleases) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentGroupType(popularReleasesGroup)}
+                                                        toggleList={() => setCurrentListCategory(popularReleasesCategory)}
                                                         text="Popular releases"
-                                                        isActive={isMatch(popularReleasesGroup, currentGroupType)}
+                                                        isActive={isMatch(popularReleasesCategory, currentListCategory)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(albums) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentGroupType(albumsGroup)}
+                                                        toggleList={() => setCurrentListCategory(albumsCategory)}
                                                         text="Albums"
-                                                        isActive={isMatch(albumsGroup, currentGroupType)}
+                                                        isActive={isMatch(albumsCategory, currentListCategory)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(singles) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentGroupType(singlesGroup)}
+                                                        toggleList={() => setCurrentListCategory(singlesCategory)}
                                                         text="Singles"
-                                                        isActive={isMatch(singlesGroup, currentGroupType)}
+                                                        isActive={isMatch(singlesCategory, currentListCategory)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(compilations) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentGroupType(compilationsGroup)}
+                                                        toggleList={() => setCurrentListCategory(compilationsCategory)}
                                                         text="Compilations"
-                                                        isActive={isMatch(compilationsGroup, currentGroupType)}
+                                                        isActive={isMatch(compilationsCategory, currentListCategory)}
                                                     />
                                                 )
                                             }
