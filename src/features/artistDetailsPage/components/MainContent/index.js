@@ -20,13 +20,12 @@ import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
 import { useCurrentGroupType } from "../../hooks/useCurrentGroupType";
 import { popularReleasesGroup, albumsGroup, singlesGroup, compilationsGroup } from "../../constants/groups";
-import { isAlbumGroupMatch } from "../../functions/isAlbumGroupMatch";
+import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
-import { ListView } from "../../../../common/components/ListView";
 import { useState } from "react";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { ContentWrapper } from "../../../../common/components/ContentWrapper";
+import { findMatchingItemValue } from "../../../../common/functions/findMatchingGroup";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -58,14 +57,29 @@ export const MainContent = () => {
 
 
     const mergedArray = [
+        ...sortedPopularReleasesWithNewestFirst,
         ...albums,
         ...compilations,
         ...singles,
-        ...sortedPopularReleasesWithNewestFirst,
     ];
 
-    const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, {
-        albums, singles, compilations, sortedPopularReleasesWithNewestFirst
+    const sortFromOldestToNewest = (array = []) => {
+
+        return (
+            array.slice().sort(
+                (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
+            )
+        );
+    };
+
+    const mergedArrayWithNewestFirst = sortFromOldestToNewest(mergedArray);
+
+    const { matchedGroup, currentGroupType, setCurrentGroupType } = useCurrentGroupType(popularReleasesGroup, type, {
+        albums,
+        singles,
+        compilations,
+        mergedArray,
+        mergedArrayWithNewestFirst,
     });
 
     const allParamGroup = "/all";
@@ -73,65 +87,40 @@ export const MainContent = () => {
     const singleParamGroup = "/single";
     const compilationParamGroup = "/compilation";
 
-    const isMatch = (group, targetGroup) => group === targetGroup;
-    const isParamMatch = param => param === type;
+    const matchedParam = findMatchingItemValue([
+        { key: popularReleasesGroup, value: allParamGroup },
+        { key: albumsGroup, value: albumsParamGroup },
+        { key: compilationsGroup, value: compilationParamGroup },
+        { key: singlesGroup, value: singleParamGroup },
+    ], currentGroupType);
 
-    const findMatchingGroup = () => {
+    const matchedList = findMatchingItemValue([
+        { key: allParamGroup, value: mergedArray },
+        { key: albumsParamGroup, value: albums },
+        { key: compilationParamGroup, value: compilations },
+        { key: singleParamGroup, value: singles },
+    ], type)
 
-        if (isMatch(popularReleasesGroup, currentGroupType))
-            return { group: mergedArray, param: allParamGroup };
+    const [listView, setListView] = useState(matchedList || null);
 
-        if (isMatch(albumsGroup, currentGroupType))
-            return { group: albums, param: albumsParamGroup };
+    const listToDisplay = removeDuplicates(matchedGroup || listView);
 
-        if (isMatch(compilationsGroup, currentGroupType))
-            return { group: compilations, param: compilationParamGroup };
-
-        if (isMatch(singlesGroup, currentGroupType))
-            return { group: singles, param: singleParamGroup };
-    };
-
-
-    const matchListToParam = () => {
-
-        if (isParamMatch(allParamGroup))
-            return mergedArray;
-
-        if (isMatch(albumsParamGroup))
-            return albums;
-
-        if (isMatch(compilationParamGroup))
-            return compilations;
-
-        if (isMatch(singleParamGroup))
-            return singles;
-    };
-
-    const [listView, setListView] = useState(matchListToParam() || null);
-    const [currentListViewParam, setCurrentListViewType] = useState(findMatchingGroup().param || null);
-
-    // const [isListView, setIsListView] = useState(false);
-
-    const groupToDisplay = removeDuplicates(matchedGroup.group);
-    console.log(currentGroupType);
     return (
         <>
             {
                 type ?
                     <TilesList
                         title={name}
-                        list={removeDuplicates(listView)}
+                        list={listToDisplay}
                         renderItem={
-                            ((item, index) => {
-                                const { id, name, release_date, images, album_group = "", album_type = "" } = item;
-
-                                return <Tile
+                            (({ id, name, images, album_group = "", album_type = "" }) => (
+                                <Tile
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={album_group}
+                                    subInfo={album_group || album_type}
                                 />
-                            })
+                            ))
                         }
                     /> :
                     <>
@@ -188,7 +177,7 @@ export const MainContent = () => {
                                     }
                                 />
                             }
-                            list={groupToDisplay}
+                            list={listToDisplay}
                             renderItem={
                                 ((item, index) => {
                                     const { id, name, release_date, images, album_group = "", album_type = "" } = item;
@@ -207,14 +196,12 @@ export const MainContent = () => {
                             }
                             hideRestListPart
                             extraContentText="Show all"
-                            extraContentAction={() => {
-                                setListView(findMatchingGroup().group);
-                                setCurrentListViewType(matchListToParam())
-                            }}
+                            extraContentAction={() => setListView(listView)}
                             navigateTo={toArtist({
-                                id: id, additionalPath: findMatchingGroup().param
+                                id: id, additionalPath: matchedParam
                             })}
                         />
+
                         < TilesList
                             title="Fans also like"
                             list={relatedArtists}
