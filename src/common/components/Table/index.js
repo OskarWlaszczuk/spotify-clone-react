@@ -1,50 +1,35 @@
-import { useSelector } from "react-redux";
 import { Image, Row, StyledTable, Caption, TrackOverview, TrackStats, RowHeader, TrackName, TrackStat } from "./styled";
-import { useEffect, useRef, useState } from "react";
-import { artistTopTracksSelectors } from "../../../features/artistDetailsPage/slices/artistTopTracksSlice";
+import { useState } from "react";
+import { ToggleViewButton } from "../ToggleViewButton";
+import { StyledPlayIcon } from "../StyledPlayIcon";
 
-export const Table = () => {
-    const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
+export const Table = ({ list }) => {
     const [hideRestTracks, setHideRestTracks] = useState(true);
+    const [activeIndex, setActiveIndex] = useState(undefined);
 
-    // const trackNameRefs = useRef([]);
-    // const [isOverflowingArray, setIsOverflowingArray] = useState([]);
-
-    // const onTrackNameResize = () => {
-    //     const newOverflowingArray = trackNameRefs.current.map(trackNameRef =>
-    //         trackNameRef.scrollWidth > trackNameRef.clientWidth
-    //     );
-    //     setIsOverflowingArray(newOverflowingArray);
-    // };
-
-    // useEffect(() => {
-    //     window.addEventListener('resize', onTrackNameResize);
-    //     onTrackNameResize(); // Sprawdzenie po załadowaniu elementu
-
-    //     return () => {
-    //         window.removeEventListener('resize', onTrackNameResize);
-    //     };
-    // }, [topTracks]);
+    const handleOnRowMouseEnter = (trackIndex) => setActiveIndex(list.findIndex((_, index) => index === trackIndex));
+    const handleOnRowMouseLeave = () => setActiveIndex(undefined);
 
     return (
         <StyledTable>
-            {topTracks && (
+            {list && (
                 <>
                     <Caption>Popular</Caption>
                     {
-                        topTracks
+                        list
                             .filter((_, index) => (hideRestTracks ? index < 5 : index <= 10))
                             .map(({ album, name, popularity, duration_ms }, index) => (
-                                <Row key={index}>
+                                <Row
+                                    key={index}
+                                    onMouseEnter={() => handleOnRowMouseEnter(index)}
+                                    onMouseLeave={handleOnRowMouseLeave}
+                                >
                                     <TrackOverview>
-                                        <RowHeader scope="row">{index + 1}</RowHeader>
+                                        <RowHeader scope="row">
+                                            {activeIndex === index ? <StyledPlayIcon /> : index + 1}
+                                        </RowHeader>
                                         <td><Image src={album.images[0].url} /></td>
-                                        <TrackName
-                                        // ref={trackNameRef => trackNameRefs.current[index] = trackNameRef}
-                                        // $ellipsis={isOverflowingArray[index]}
-                                        >
-                                            {name}
-                                        </TrackName>
+                                        <TrackName>{name}</TrackName>
                                     </TrackOverview>
                                     <TrackStats>
                                         <TrackStat>{popularity}/100</TrackStat>
@@ -53,9 +38,9 @@ export const Table = () => {
                                 </Row>
                             ))
                     }
-                    <button onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
+                    <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
                         {hideRestTracks ? <>Show more</> : <>Show less</>}
-                    </button>
+                    </ToggleViewButton>
                 </>
             )}
         </StyledTable>
