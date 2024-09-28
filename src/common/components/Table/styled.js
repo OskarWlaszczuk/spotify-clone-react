@@ -15,8 +15,8 @@ export const Row = styled.tr`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
-    margin: 10px 0;
-    padding: 5px;
+    padding: 10px;
+    border-radius: 8px;
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
