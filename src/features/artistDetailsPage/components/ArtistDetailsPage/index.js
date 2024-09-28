@@ -14,7 +14,7 @@ import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/a
 import { MainContent } from "../MainContent";
 
 export const ArtistDetailsPage = () => {
-    const { id } = useParams();
+    const { id, type } = useParams();
 
     const dispatch = useDispatch()
 
@@ -26,7 +26,6 @@ export const ArtistDetailsPage = () => {
     const { fetch: fetchArtistCompilation, clear: clearArtistCompilation } = artistCompilationActions;
     const { fetch: fetchArtistAppearsOn, clear: clearArtistAppearsOn } = artistAppearsOnActions;
 
-    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
     const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
     const appearsOnStatus = useSelector(artistAppearsOnSelectors.selectStatus);
     const albumsStatus = useSelector(artistAlbumsSelectors.selectStatus);
@@ -35,9 +34,6 @@ export const ArtistDetailsPage = () => {
     const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
     const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
 
-    const name = details?.name;
-    const followers = details?.followers;
-    const images = details?.images;
 
     const { isInitial, isLoading, isSucces, isError } = useFetchStatuses([
         detailsStatus,
@@ -96,7 +92,7 @@ export const ArtistDetailsPage = () => {
     if (isSucces)
         return (
             <Main
-                gradientAvailable
+                gradientAvailable={!type}
                 content={
                     <>
                         <MainContent />
