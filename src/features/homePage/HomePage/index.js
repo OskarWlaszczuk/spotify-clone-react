@@ -5,14 +5,12 @@ import { albumsSelectors, albumsActions } from "../albums/albumsSlice";
 import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
-import { useNavigate } from "react-router-dom";
 import { toArtist, toListPage } from "../../../common/functions/routes";
 import { setList } from "../../ListPage/listSlice";
 import { useFetchStatuses } from "../../../common/hooks/useFetchStatuses";
 
 export const HomePage = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const { fetch: fetchAlbums, clear: clearAlbums } = albumsActions;
     const { fetch: fetchArtists, clear: clearArtists } = artistsActions;
