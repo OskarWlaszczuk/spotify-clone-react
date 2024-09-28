@@ -1,4 +1,5 @@
-import { Button, StyledPlayIcon } from "./styled"
+import { Button } from "./styled"
+import { StyledPlayIcon } from "../StyledPlayIcon"
 
 export const PlayPauseButton = () => {
     return (
