@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { ReactComponent as PlayIcon } from "./icons/Play.svg";
 import { ReactComponent as PauseIcon } from "./icons/Pause.svg";
 
 
@@ -22,9 +21,5 @@ export const Button = styled.button`
 `;
 
 export const StyledPauseIcon = styled(PauseIcon)`
-
-`;
-
-export const StyledPlayIcon = styled(PlayIcon)`
 
 `;
