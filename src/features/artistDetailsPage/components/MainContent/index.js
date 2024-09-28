@@ -22,10 +22,8 @@ import { useCurrentListCategory } from "../../hooks/useCurrentListCategory";
 import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/listCategories";
 import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
-import { useState } from "react";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { useListView } from "../../hooks/useListViev";
 import { allParamCategory, albumsParamCategory, compilationParamCategory, singleParamCategory } from "../../constants/paramCategories";
 
@@ -74,20 +72,27 @@ export const MainContent = () => {
     ];
     const previewAllCategoriesList = sortFromOldestToNewest(allCategoriesList);
 
-    const { listMachtedByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, type, {
-        albums,
-        singles,
-        compilations,
-        allCategoriesList,
-        previewAllCategoriesList,
-    });
+    const { listMachtedByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, [
+        { key: albumsCategory, value: albums },
+        { key: singlesCategory, value: singles },
+        { key: compilationsCategory, value: compilations },
+        { key: popularReleasesCategory, value: type ? previewAllCategoriesList : allCategoriesList },
+    ]);
 
-    const { listView, setListView } = useListView(currentListCategory, type, [
-        { key: allParamCategory, value: allCategoriesList },
-        { key: albumsParamCategory, value: albums },
-        { key: compilationParamCategory, value: compilations },
-        { key: singleParamCategory, value: singles },
-    ])
+    const { listView, setListView } = useListView(currentListCategory, type,
+        [
+            { key: allParamCategory, value: allCategoriesList },
+            { key: albumsParamCategory, value: albums },
+            { key: compilationParamCategory, value: compilations },
+            { key: singleParamCategory, value: singles },
+        ],
+        [
+            { key: popularReleasesCategory, value: allParamCategory },
+            { key: albumsCategory, value: albumsParamCategory },
+            { key: compilationsCategory, value: compilationParamCategory },
+            { key: singlesCategory, value: singleParamCategory },
+        ],
+    );
 
     const listToDisplay = removeDuplicates(listMachtedByCategory || listView.list);
 
@@ -116,7 +121,7 @@ export const MainContent = () => {
                             caption="Verified artist"
                             metaDatas={`${followers?.total?.toLocaleString()} followers`}
                         />
-                        <Table />
+                        <Table list={topTracks} />
                         <TilesList
                             title="Discography"
                             subContent={
