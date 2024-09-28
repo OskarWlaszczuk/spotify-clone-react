@@ -5,9 +5,7 @@ export const Container = styled.div`
     grid-gap: 30px;
     padding: 20px;
     grid-template-columns: 204px 1fr;
-    background-color: #4468a1;
     border-radius: 10px 10px 0 0 ;
-    background-color: rgb(39 39 39);
 `;
 
 export const Picture = styled.div
