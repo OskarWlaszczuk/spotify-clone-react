@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { toArtist, toPopularList } from "../../../../../routes"
-import { TilesList } from "../../../../common/TilesList"
+import { TilesList } from "../../../../common/components/TilesList"
 import { useSelector } from "react-redux";
 import { Tile } from "../../../../common/Tile";
 import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
