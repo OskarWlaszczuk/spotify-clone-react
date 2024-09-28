@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { List, TitleContent, ExtraContent } from "./styled";
+import { List, TitleContent } from "./styled";
+import { ShowAllLink } from "../ShowAllLink";
 
 export const TilesList = ({
     title,
@@ -49,12 +50,12 @@ export const TilesList = ({
             <TitleContent>
                 {headerElement}
                 {hideRestListPart &&
-                    <ExtraContent
+                    <ShowAllLink
                         to={navigateTo}
                         onClick={() => extraContentAction()}
                     >
                         {extraContentText}
-                    </ExtraContent>
+                    </ShowAllLink>
                 }
             </TitleContent >
             {subContent}
