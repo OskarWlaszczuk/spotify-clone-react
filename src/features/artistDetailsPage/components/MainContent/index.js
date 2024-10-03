@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { Table } from "../../../../common/components/Table";
-import { toArtist, toListPage } from "../../../../common/functions/routes";
+import { toArtist } from "../../../../common/functions/routes";
 import { ListToggleButton } from "../../../../common/components/ListToggleButton";
 import { ItemsList } from "../../../../common/components/ItemsList";
 import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
@@ -18,23 +18,21 @@ import { removeDuplicates } from "../../functions/removeDuplicates"
 import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
 import { isLatestReleased } from "../../functions/isLatestReleased";
 import { isListEmpty } from "../../functions/isListEmpty";
-import { useCurrentListCategory } from "../../hooks/useCurrentListCategory";
+import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/listCategories";
 import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
 import { useListView } from "../../hooks/useListViev";
-import { allParamCategory, albumsParamCategory, compilationParamCategory, singleParamCategory } from "../../constants/paramCategories";
+import { allParamDiscography, albumsParamDiscography, compilationParamDiscography, singleParamDiscography, relatedArtistsParam, artistAppearsOnParam } from "../../constants/paramCategories";
+import { useState } from "react";
+import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 
 export const MainContent = () => {
     const { id, type } = useParams();
 
-    const dispatch = useDispatch()
-    const navigate = useNavigate();
-
     const sortFromOldestToNewest = (array = []) => {
-
         return (
             array.slice().sort(
                 (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
@@ -55,65 +53,66 @@ export const MainContent = () => {
     const images = details?.images;
 
     const popularReleases = topTracks?.map(({ album }) => album);
-    const newestPopularRelease = popularReleases?.slice().sort(
-        (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
-    )[0];
+    const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
-    const sortedPopularReleasesWithNewestFirst = [
-        { ...(newestPopularRelease ?? {}) },
-        ...(popularReleases?.slice() ?? []),
-    ];
+    const setNewestPopularReleaseItemIfItLatestRelease = () => {
+        if (isLatestReleased(newestPopularReleaseItem)) {
+            return [
+                { ...(newestPopularReleaseItem ?? {}) },
+                ...(popularReleases?.slice() ?? []),
+            ];
+        } else {
+            return popularReleases
+        }
+    }
 
     const allCategoriesList = [
-        ...sortedPopularReleasesWithNewestFirst,
+        ...setNewestPopularReleaseItemIfItLatestRelease(),
         ...albums,
         ...compilations,
         ...singles,
     ];
-    const previewAllCategoriesList = sortFromOldestToNewest(allCategoriesList);
 
-    const { listMachtedByCategory, currentListCategory, setCurrentListCategory } = useCurrentListCategory(popularReleasesCategory, [
-        { key: albumsCategory, value: albums },
-        { key: singlesCategory, value: singles },
-        { key: compilationsCategory, value: compilations },
-        { key: popularReleasesCategory, value: type ? previewAllCategoriesList : allCategoriesList },
-    ]);
-
-    const { listView, setListView } = useListView(currentListCategory, type,
-        [
-            { key: allParamCategory, value: allCategoriesList },
-            { key: albumsParamCategory, value: albums },
-            { key: compilationParamCategory, value: compilations },
-            { key: singleParamCategory, value: singles },
-        ],
-        [
-            { key: popularReleasesCategory, value: allParamCategory },
-            { key: albumsCategory, value: albumsParamCategory },
-            { key: compilationsCategory, value: compilationParamCategory },
-            { key: singlesCategory, value: singleParamCategory },
-        ],
+    const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData(
+        { key: popularReleasesCategory, value: allCategoriesList }
     );
 
-    const listToDisplay = removeDuplicates(listMachtedByCategory || listView.list);
+    const listView = findMatchingValueByKey(
+        [
+            { key: allParamDiscography, value: allCategoriesList },
+            { key: albumsParamDiscography, value: albums },
+            { key: compilationParamDiscography, value: compilations },
+            { key: singleParamDiscography, value: singles },
+            { key: relatedArtistsParam, value: relatedArtists, title: "Fans also like", isArtistsList: true },
+            { key: artistAppearsOnParam, value: appearsOn, title: "Appears On", isArtistsList: false },
+        ], type
+    );
+
+    const list = listView?.value;
+    const title = listView?.title;
+    const isArtistsList = listView?.isArtistsList;
 
     return (
         <>
             {
                 type ?
                     <TilesList
-                        title={name}
-                        list={listToDisplay}
+                        title={title || name}
+                        list={removeDuplicates(list)}
                         renderItem={
-                            (({ id, name, images, album_group = "", album_type = "" }) => (
+                            (({ id, name, images, album_type = "" }) => (
                                 <Tile
+                                    navigateTo={toArtist({ id: id })}
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={album_group || album_type}
+                                    subInfo={album_type}
+                                    useArtistPictureStyle={isArtistsList || false}
                                 />
                             ))
                         }
-                    /> :
+                    />
+                    :
                     <>
                         <Banner
                             picture={images ? images[0]?.url : ''}
@@ -131,36 +130,48 @@ export const MainContent = () => {
                                             {
                                                 isListEmpty(popularReleases) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentListCategory(popularReleasesCategory)}
+                                                        toggleList={() => setCurrentCategoryData({
+                                                            category: popularReleasesCategory,
+                                                            list: allCategoriesList,
+                                                        })}
                                                         text="Popular releases"
-                                                        isActive={isMatch(popularReleasesCategory, currentListCategory)}
+                                                        isActive={isMatch(popularReleasesCategory, currentCategoryData.category)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(albums) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentListCategory(albumsCategory)}
+                                                        toggleList={() => setCurrentCategoryData({
+                                                            category: albumsCategory,
+                                                            list: albums,
+                                                        })}
                                                         text="Albums"
-                                                        isActive={isMatch(albumsCategory, currentListCategory)}
+                                                        isActive={isMatch(albumsCategory, currentCategoryData.category)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(singles) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentListCategory(singlesCategory)}
+                                                        toggleList={() => setCurrentCategoryData({
+                                                            category: singlesCategory,
+                                                            list: singles,
+                                                        })}
                                                         text="Singles"
-                                                        isActive={isMatch(singlesCategory, currentListCategory)}
+                                                        isActive={isMatch(singlesCategory, currentCategoryData.category)}
                                                     />
                                                 )
                                             }
                                             {
                                                 isListEmpty(compilations) && (
                                                     <ListToggleButton
-                                                        toggleList={() => setCurrentListCategory(compilationsCategory)}
+                                                        toggleList={() => setCurrentCategoryData({
+                                                            category: compilationsCategory,
+                                                            list: compilations,
+                                                        })}
                                                         text="Compilations"
-                                                        isActive={isMatch(compilationsCategory, currentListCategory)}
+                                                        isActive={isMatch(compilationsCategory, currentCategoryData.category)}
                                                     />
                                                 )
                                             }
@@ -168,31 +179,42 @@ export const MainContent = () => {
                                     }
                                 />
                             }
-                            list={listToDisplay}
+                            list={removeDuplicates(currentCategoryData.list)}
                             renderItem={
                                 ((item, index) => {
                                     const { id, name, release_date, images, album_group = "", album_type = "" } = item;
 
-                                    return <Tile
-                                        id={id}
-                                        picture={images[0].url}
-                                        title={name}
-                                        subInfo={`${index === 0 && isLatestReleased(item)
-                                            ? replaceReleaseDateIfCurrentYear(item).release_date
-                                            : getYear(release_date)}
-                                ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
-                            `}
-                                    />
+                                    return (
+                                        <Tile
+                                            id={id}
+                                            picture={images[0].url}
+                                            title={name}
+                                            subInfo={`
+                                            ${index === 0 && isLatestReleased(item) ?
+                                                    replaceReleaseDateIfCurrentYear(item).release_date :
+                                                    getYear(release_date)
+                                                }
+                                        ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
+                                        `}
+                                        />
+                                    )
                                 })
                             }
                             hideRestListPart
                             extraContentText="Show all"
-                            extraContentAction={() => setListView(listView)}
+                            // extraContentAction={() => setListView(listView)}
                             navigateTo={toArtist({
-                                id: id, additionalPath: listView.param
+                                id: id,
+                                additionalPath: findMatchingValueByKey(
+                                    [
+                                        { key: popularReleasesCategory, value: allParamDiscography },
+                                        { key: albumsCategory, value: albumsParamDiscography },
+                                        { key: compilationsCategory, value: compilationParamDiscography },
+                                        { key: singlesCategory, value: singleParamDiscography },
+                                    ], currentCategoryData.category
+                                ).value,
                             })}
                         />
-
                         < TilesList
                             title="Fans also like"
                             list={relatedArtists}
@@ -209,10 +231,11 @@ export const MainContent = () => {
                             )}
                             hideRestListPart
                             extraContentText="Show all"
-                            extraContentAction={
-                                () => dispatch(setList({ title: "Fans also like", list: relatedArtists, isArtistsList: true }))
-                            }
-                            navigateTo={() => navigate(toListPage())}
+                            // extraContentAction={() => setListView(listView)}
+                            navigateTo={toArtist({
+                                id: id,
+                                additionalPath: relatedArtistsParam
+                            })}
                         />
                         <TilesList
                             title="Appears on"
@@ -229,10 +252,13 @@ export const MainContent = () => {
                             )}
                             hideRestListPart
                             extraContentText="Show all"
-                            extraContentAction={
-                                () => dispatch(setList({ title: "Appears on", list: appearsOn }))
-                            }
-                            navigateTo={() => navigate(toListPage())}
+                            // extraContentAction={
+                            //     () => dispatch(setList({ title: "Appears on", list: appearsOn }))
+                            // }
+                            navigateTo={toArtist({
+                                id: id,
+                                additionalPath: artistAppearsOnParam,
+                            })}
                         />
                     </>
             }
