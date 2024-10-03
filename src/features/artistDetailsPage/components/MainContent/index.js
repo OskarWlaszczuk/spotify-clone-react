@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
@@ -13,7 +13,6 @@ import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
-import { setList } from "../../../ListPage/listSlice";
 import { removeDuplicates } from "../../functions/removeDuplicates"
 import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
 import { isLatestReleased } from "../../functions/isLatestReleased";
@@ -24,21 +23,16 @@ import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-
 import { allParamDiscography, albumsParamDiscography, compilationParamDiscography, singleParamDiscography, relatedArtistsParam, artistAppearsOnParam } from "../../constants/paramCategories";
-import { useState } from "react";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
+import { selectDataView } from "../../../../common/functions/selectDataView";
 
 export const MainContent = () => {
     const { id, type } = useParams();
 
-    const sortFromOldestToNewest = (array = []) => {
-        return (
-            array.slice().sort(
-                (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
-            )
-        );
-    };
+    const sortFromOldestToNewest = (array = []) => [...array].sort(
+        (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
+    );
 
     const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
@@ -55,16 +49,14 @@ export const MainContent = () => {
     const popularReleases = topTracks?.map(({ album }) => album);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
-    const setNewestPopularReleaseItemIfItLatestRelease = () => {
-        if (isLatestReleased(newestPopularReleaseItem)) {
-            return [
+    const setNewestPopularReleaseItemIfItLatestRelease = () => (
+        isLatestReleased(newestPopularReleaseItem) ?
+            [
                 { ...(newestPopularReleaseItem ?? {}) },
                 ...(popularReleases?.slice() ?? []),
-            ];
-        } else {
-            return popularReleases
-        }
-    }
+            ] :
+            popularReleases
+    );
 
     const allCategoriesList = [
         ...setNewestPopularReleaseItemIfItLatestRelease(),
@@ -77,28 +69,22 @@ export const MainContent = () => {
         { key: popularReleasesCategory, value: allCategoriesList }
     );
 
-    const listView = findMatchingValueByKey(
-        [
-            { key: allParamDiscography, value: allCategoriesList },
-            { key: albumsParamDiscography, value: albums },
-            { key: compilationParamDiscography, value: compilations },
-            { key: singleParamDiscography, value: singles },
-            { key: relatedArtistsParam, value: relatedArtists, title: "Fans also like", isArtistsList: true },
-            { key: artistAppearsOnParam, value: appearsOn, title: "Appears On", isArtistsList: false },
-        ], type
-    );
-
-    const list = listView?.value;
-    const title = listView?.title;
-    const isArtistsList = listView?.isArtistsList;
+    const { selectedList, selectedTitle, isArtistsList } = selectDataView([
+        { key: allParamDiscography, value: allCategoriesList },
+        { key: albumsParamDiscography, value: albums },
+        { key: compilationParamDiscography, value: compilations },
+        { key: singleParamDiscography, value: singles },
+        { key: relatedArtistsParam, value: relatedArtists, title: "Fans also like", isArtistsList: true },
+        { key: artistAppearsOnParam, value: appearsOn, title: "Appears On", isArtistsList: false },
+    ], type)
 
     return (
         <>
             {
                 type ?
                     <TilesList
-                        title={title || name}
-                        list={removeDuplicates(list)}
+                        title={selectedTitle || name}
+                        list={removeDuplicates(selectedList)}
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
@@ -231,7 +217,6 @@ export const MainContent = () => {
                             )}
                             hideRestListPart
                             extraContentText="Show all"
-                            // extraContentAction={() => setListView(listView)}
                             navigateTo={toArtist({
                                 id: id,
                                 additionalPath: relatedArtistsParam
@@ -252,9 +237,6 @@ export const MainContent = () => {
                             )}
                             hideRestListPart
                             extraContentText="Show all"
-                            // extraContentAction={
-                            //     () => dispatch(setList({ title: "Appears on", list: appearsOn }))
-                            // }
                             navigateTo={toArtist({
                                 id: id,
                                 additionalPath: artistAppearsOnParam,
