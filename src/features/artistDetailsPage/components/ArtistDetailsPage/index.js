@@ -6,7 +6,6 @@ import { artistAlbumsSelectors, artistAlbumsActions } from "../../slices/artistA
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { Main } from "../../../../common/components/Main";
-import { Banner } from "../../../../common/components/Banner";
 import { artistSinglesActions, artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationActions, artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
