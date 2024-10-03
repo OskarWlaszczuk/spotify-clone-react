@@ -24,7 +24,7 @@ import { isMatch } from "../../functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { useListView } from "../../hooks/useListViev";
+
 import { allParamDiscography, albumsParamDiscography, compilationParamDiscography, singleParamDiscography, relatedArtistsParam, artistAppearsOnParam } from "../../constants/paramCategories";
 import { useState } from "react";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
