@@ -13,7 +13,7 @@ export const App = () => {
       <NavigationPanel />
       <Library />
       <Routes>
-        <Route path={toHome()} element={<HomePage />} />
+        <Route path="/home/:type?" element={<HomePage />} />
         <Route path={toSearch()} element={<Search />} />
         <Route path={toAlbum()} element={<Album />} />
         <Route path="/artist/:id/:type?" element={<ArtistDetailsPage />} />
