@@ -1,27 +1,49 @@
-import { useNavigate } from "react-router-dom"
-import { toArtist, toPopularList } from "../../../../../routes"
+import { useParams } from "react-router-dom"
 import { TilesList } from "../../../../common/components/TilesList"
 import { useSelector } from "react-redux";
-import { Tile } from "../../../../common/Tile";
+import { Tile } from "../../../../common/components/Tile";
 import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
 import { artistsSelectors } from "../../artists/artistsSlice";
+import { popularAlbumsParam, popularArtistsParam } from "../../constants/params";
+import { toHome, toArtist } from "../../../../common/functions/routes.js";
+import { selectDataView } from "../../../../common/functions/selectDataView.js";
 
 export const MainContent = () => {
-    const navigate = useNavigate();
+    const { type } = useParams();
 
-    const albums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
-    const artists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
+    const popularAlbums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
+    const popularArtists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
-    console.log(albums, artists)
+    const { selectedList, selectedTitle, isArtistsList } = selectDataView([
+        { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
+        { key: popularArtistsParam, value: popularArtists, title: "Popular artists", isArtistsList: true },
+    ], type)
+
     return (
         <>
             {
-                (albums && artists) && (
+                type ?
+                    <TilesList
+                        title={selectedTitle}
+                        list={selectedList}
+                        renderItem={
+                            (({ id, name, images, album_type = "" }) => (
+                                <Tile
+                                    navigateTo={toArtist({ id: id })}
+                                    id={id}
+                                    picture={images[0].url}
+                                    title={name}
+                                    subInfo={album_type}
+                                    useArtistPictureStyle={isArtistsList}
+                                />
+                            ))
+                        }
+                    />
+                    :
                     <>
-
                         <TilesList
                             title="Popular albums"
-                            list={albums}
+                            list={popularAlbums}
                             renderItem={
                                 (({ images, name, artists, id }) => (
                                     <Tile
@@ -34,18 +56,12 @@ export const MainContent = () => {
                             }
                             hideRestListPart
                             extraContentText="Show more"
-                            navigateTo={() => toPopularList(navigate, {
-                                state: {
-                                    title: "Popular albums",
-                                    list: albums,
-                                    isArtistsList: false,
-                                }
-                            })}
+                            navigateTo={toHome({ additionalPath: popularAlbumsParam })}
                         />
 
                         <TilesList
                             title="Popular artists"
-                            list={artists}
+                            list={popularArtists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
                                     id={id}
@@ -53,22 +69,15 @@ export const MainContent = () => {
                                     title={name}
                                     subInfo={type}
                                     useArtistPictureStyle
-                                    navigateTo={() => navigate(toArtist({ id }))}
+                                    navigateTo={toArtist({ id })}
                                 />
                             )}
                             hideRestListPart
                             artistsList
                             extraContentText="Show more"
-                            navigateTo={() => toPopularList(navigate, {
-                                state: {
-                                    title: "Popular artists",
-                                    list: artists,
-                                    isArtistsList: true,
-                                }
-                            })}
+                            navigateTo={toHome({ additionalPath: popularArtistsParam })}
                         />
                     </>
-                )
             }
         </>
     )
