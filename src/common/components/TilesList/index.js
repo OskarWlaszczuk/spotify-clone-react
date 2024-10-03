@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { List, TitleContent } from "./styled";
 import { ShowAllLink } from "../ShowAllLink";
+import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 
 export const TilesList = ({
     title,
@@ -13,26 +14,7 @@ export const TilesList = ({
     navigateTo
 }) => {
 
-    const [tilesPerRow, setTilesPerRow] = useState(0);
-    const containerRef = useRef(null);
-
-    const calculateTilesPerRow = () => {
-        const containerWidth = containerRef.current.offsetWidth;
-        const tileWidth = 150;
-
-        const effectiveTileWidth = tileWidth + 10;
-        const count = Math.floor(containerWidth / effectiveTileWidth);
-        setTilesPerRow(count);
-    };
-
-    useEffect(() => {
-        window.addEventListener('resize', calculateTilesPerRow);
-        calculateTilesPerRow();
-
-        return () => {
-            window.removeEventListener('resize', calculateTilesPerRow);
-        };
-    });
+    const { tilesPerRow, containerRef } = useTilesPerRow();
 
     const previewList = list.slice(0, tilesPerRow);
     const wholeList = list;
@@ -52,7 +34,7 @@ export const TilesList = ({
                 {hideRestListPart &&
                     <ShowAllLink
                         to={navigateTo}
-                        onClick={() => extraContentAction()}
+                    // onClick={() => extraContentAction()}
                     >
                         {extraContentText}
                     </ShowAllLink>
