@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 
-export const Container = styled.a`
+export const Container = styled(Link)`
     display: flex;
     justify-content: space-between;
     cursor: pointer;
