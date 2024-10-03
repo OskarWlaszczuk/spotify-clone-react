@@ -4,5 +4,5 @@ export const findMatchingValueByKey = (items, targetKey) => {
 
     const matchedItem = items.find(({ key }) => isMatch(key, targetKey));
 
-    return matchedItem ? matchedItem.value : undefined;
+    return matchedItem ? matchedItem : undefined;
 };
