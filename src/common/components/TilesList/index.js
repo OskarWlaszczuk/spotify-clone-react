@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import { List, TitleContent } from "./styled";
 import { ShowAllLink } from "../ShowAllLink";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
@@ -13,7 +12,6 @@ export const TilesList = ({
     extraContentAction,
     navigateTo
 }) => {
-
     const { tilesPerRow, containerRef } = useTilesPerRow();
 
     const previewList = list.slice(0, tilesPerRow);
