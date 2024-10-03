@@ -5,9 +5,10 @@ import { albumsSelectors, albumsActions } from "../albums/albumsSlice";
 import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
 import { TilesList } from "../../../common/components/TilesList";
 import { Tile } from "../../../common/components/Tile";
-import { toArtist, toListPage } from "../../../common/functions/routes";
+import { toArtist } from "../../../common/functions/routes";
 import { setList } from "../../ListPage/listSlice";
 import { useFetchStatuses } from "../../../common/hooks/useFetchStatuses";
+import { getAlbumArtists } from "../../../common/functions/getAlbumArtists";
 
 export const HomePage = () => {
     const dispatch = useDispatch();
@@ -56,15 +57,14 @@ export const HomePage = () => {
                                     id={id}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={artists.map(({ name }) => name).join(",")}
+                                    subInfo={getAlbumArtists(artists)}
                                 />
                             )}
                             hideRestListPart
                             extraContentText="Show more"
-                            extraContentAction={() => dispatch(setList(
-                                { title: "Popular albums", list: albums, isArtistsList: false }
-                            ))}
-                            navigateTo={toListPage()}
+                            // extraContentAction={() => dispatch(setList(
+                            //     { title: "Popular albums", list: albums, isArtistsList: false }
+                            // ))}
                         />
                         <TilesList
                             title="Popular artists"
@@ -83,8 +83,7 @@ export const HomePage = () => {
                             hideRestListPart
                             artistsList
                             extraContentText="Show more"
-                            extraContentAction={() => dispatch(setList({ title: "Popular artists", list: artists, isArtistsList: true }))}
-                            navigateTo={toListPage()}
+                            // extraContentAction={() => dispatch(setList({ title: "Popular artists", list: artists, isArtistsList: true }))}
                         />
                     </>
                 }
