@@ -5,13 +5,12 @@ import { ReactComponent as HomeIcon } from "./icons/Home.svg";
 import { Input } from "./Input";
 
 export const NavigationPanel = () => {
-    
+
     return (
         <NavPanel>
             <IconBox
-                navigateTo={toHome()}
+                toPage={toHome()}
                 Icon={HomeIcon}
-                noText
             />
             <Input />
         </NavPanel>
