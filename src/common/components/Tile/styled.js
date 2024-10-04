@@ -20,24 +20,6 @@ export const Container = styled(Link)`
     };
 `;
 
-export const Picture = styled.div
-    .attrs(({ picture }) => ({
-        style: {
-            backgroundImage: `url(${picture})`
-        }
-    }))`
-    
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-    padding-top: calc(100%* 585 / 582);
-    
-    ${({ artistPictureStyle }) => artistPictureStyle && css`
-        border-radius: 50%;
-    `};
-
-`;
-
 export const Title = styled.header`
     font-size: 13px;
     font-weight: 500;
