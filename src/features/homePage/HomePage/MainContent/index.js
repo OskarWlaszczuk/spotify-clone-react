@@ -55,8 +55,12 @@ export const MainContent = () => {
                                 ))
                             }
                             hideRestListPart
-                            extraContentText="Show more"
-                            navigateTo={toHome({ additionalPath: popularAlbumsParam })}
+                            titleExtraAsideContent={
+                                {
+                                    link: toHome({ additionalPath: popularAlbumsParam }),
+                                    text: "Show more",
+                                }
+                            }
                         />
 
                         <TilesList
@@ -74,8 +78,12 @@ export const MainContent = () => {
                             )}
                             hideRestListPart
                             artistsList
-                            extraContentText="Show more"
-                            navigateTo={toHome({ additionalPath: popularArtistsParam })}
+                            titleExtraAsideContent={
+                                {
+                                    link: toHome({ additionalPath: popularArtistsParam }),
+                                    text: "Show more",
+                                }
+                            }
                         />
                     </>
             }
