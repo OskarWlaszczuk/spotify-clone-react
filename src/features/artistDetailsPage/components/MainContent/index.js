@@ -13,17 +13,13 @@ import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
-import { removeDuplicates } from "../../functions/removeDuplicates"
-import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
-import { isLatestReleased } from "../../functions/isLatestReleased";
-import { isListEmpty } from "../../functions/isListEmpty";
+import { isLatestReleased } from "../../../../common/functions/isLatestReleased";
+import { isListEmpty } from "../../../../common/functions/isListEmpty";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
-import { popularReleasesCategory, albumsCategory, singlesCategory, compilationsCategory } from "../../constants/listCategories";
-import { isMatch } from "../../functions/isMatch";
+import { isMatch } from "../../../../common/functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
-import { allParamDiscography, albumsParamDiscography, compilationParamDiscography, singleParamDiscography, relatedArtistsParam, artistAppearsOnParam } from "../../constants/paramCategories";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { selectDataView } from "../../../../common/functions/selectDataView";
 
@@ -33,6 +29,33 @@ export const MainContent = () => {
     const sortFromOldestToNewest = (array = []) => [...array].sort(
         (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
     );
+
+    const removeDuplicates = (albums = []) => {
+        const caughtDuplicates = new Set();
+
+        return albums.filter(({ name }) => {
+            const keyValue = name;
+            return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
+        });
+    };
+
+    const replaceReleaseDateIfCurrentYear = album => {
+        return isLatestReleased(album) ?
+            { ...album, release_date: "Latest Release" } :
+            album;
+    };
+
+    const popularReleasesCategory = "popularReleases";
+    const albumsCategory = "albums";
+    const singlesCategory = "singles";
+    const compilationsCategory = "compilations";
+
+    const allParamDiscography = "all";
+    const albumsParamDiscography = "album";
+    const singleParamDiscography = "single";
+    const compilationParamDiscography = "compilation";
+    const relatedArtistsParam = "related";
+    const artistAppearsOnParam = "appears-on";
 
     const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
@@ -49,7 +72,7 @@ export const MainContent = () => {
     const popularReleases = topTracks?.map(({ album }) => album);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
-    const setNewestPopularReleaseItemIfItLatestRelease = () => (
+    const setNewestPopularReleaseItemFirstIfItLatestRelease = () => (
         isLatestReleased(newestPopularReleaseItem) ?
             [
                 { ...(newestPopularReleaseItem ?? {}) },
@@ -59,7 +82,7 @@ export const MainContent = () => {
     );
 
     const allCategoriesList = [
-        ...setNewestPopularReleaseItemIfItLatestRelease(),
+        ...setNewestPopularReleaseItemFirstIfItLatestRelease(),
         ...albums,
         ...compilations,
         ...singles,
@@ -109,7 +132,7 @@ export const MainContent = () => {
                         <Table list={topTracks} />
                         <TilesList
                             title="Discography"
-                            subContent={
+                            subExtraContent={
                                 <ItemsList
                                     items={
                                         <>
@@ -187,19 +210,22 @@ export const MainContent = () => {
                                 })
                             }
                             hideRestListPart
-                            extraContentText="Show all"
-                            // extraContentAction={() => setListView(listView)}
-                            navigateTo={toArtist({
-                                id: id,
-                                additionalPath: findMatchingValueByKey(
-                                    [
-                                        { key: popularReleasesCategory, value: allParamDiscography },
-                                        { key: albumsCategory, value: albumsParamDiscography },
-                                        { key: compilationsCategory, value: compilationParamDiscography },
-                                        { key: singlesCategory, value: singleParamDiscography },
-                                    ], currentCategoryData.category
-                                ).value,
-                            })}
+                            titleExtraAsideContent={
+                                {
+                                    link: toArtist({
+                                        id: id,
+                                        additionalPath: findMatchingValueByKey(
+                                            [
+                                                { key: popularReleasesCategory, value: allParamDiscography },
+                                                { key: albumsCategory, value: albumsParamDiscography },
+                                                { key: compilationsCategory, value: compilationParamDiscography },
+                                                { key: singlesCategory, value: singleParamDiscography },
+                                            ], currentCategoryData.category
+                                        ).value,
+                                    }),
+                                    text: "Show all"
+                                }
+                            }
                         />
                         < TilesList
                             title="Fans also like"
@@ -216,11 +242,15 @@ export const MainContent = () => {
                                 />
                             )}
                             hideRestListPart
-                            extraContentText="Show all"
-                            navigateTo={toArtist({
-                                id: id,
-                                additionalPath: relatedArtistsParam
-                            })}
+                            titleExtraAsideContent={
+                                {
+                                    link: toArtist({
+                                        id: id,
+                                        additionalPath: relatedArtistsParam
+                                    }),
+                                    text: "Show all"
+                                }
+                            }
                         />
                         <TilesList
                             title="Appears on"
@@ -232,15 +262,18 @@ export const MainContent = () => {
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}
-                                // navigateTo={navigate(toArtist({ id }))}
                                 />
                             )}
                             hideRestListPart
-                            extraContentText="Show all"
-                            navigateTo={toArtist({
-                                id: id,
-                                additionalPath: artistAppearsOnParam,
-                            })}
+                            titleExtraAsideContent={
+                                {
+                                    link: toArtist({
+                                        id: id,
+                                        additionalPath: artistAppearsOnParam,
+                                    }),
+                                    text: "Show all",
+                                }
+                            }
                         />
                     </>
             }
