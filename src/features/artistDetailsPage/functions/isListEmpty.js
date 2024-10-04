@@ -1,1 +1,0 @@
-export const isListEmpty = list => list.length > 0;
