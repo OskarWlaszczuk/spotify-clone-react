@@ -4,13 +4,11 @@ import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTil
 
 export const TilesList = ({
     title,
-    subContent,
+    subExtraContent,
     hideRestListPart,
     list,
     renderItem,
-    extraContentText,
-    extraContentAction,
-    navigateTo
+    titleExtraAsideContent
 }) => {
     const { tilesPerRow, containerRef } = useTilesPerRow();
 
@@ -29,16 +27,9 @@ export const TilesList = ({
         <>
             <TitleContent>
                 {headerElement}
-                {hideRestListPart &&
-                    <ShowAllLink
-                        to={navigateTo}
-                    // onClick={() => extraContentAction()}
-                    >
-                        {extraContentText}
-                    </ShowAllLink>
-                }
+                {hideRestListPart && <ShowAllLink to={titleExtraAsideContent.link}>{titleExtraAsideContent.text}</ShowAllLink>}
             </TitleContent >
-            {subContent}
+            {subExtraContent}
             < List ref={containerRef} >
                 {iterateOnList(hideRestListPart ? previewList : wholeList)}
             </List >
