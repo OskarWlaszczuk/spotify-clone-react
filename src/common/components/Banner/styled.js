@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Container = styled.div`
     display: grid;
@@ -6,27 +6,6 @@ export const Container = styled.div`
     padding: 20px;
     grid-template-columns: 204px 1fr;
     border-radius: 10px 10px 0 0 ;
-`;
-
-export const Picture = styled.div
-    .attrs(({ picture }) => ({
-        style: {
-            backgroundImage: `url(${picture})`
-        }
-    }))`
-    
-    background-size: cover;
-    background-position: center;
-    border-radius: 8px;
-    padding-top: calc(100%* 585 / 582);
-
-    ${({ artistPictureStyle }) => artistPictureStyle && css`
-        border-radius: 50%;
-    `};
-
-    ${({ banner }) => banner && css`
-        box-shadow: 0px 0px 30px 9px #00000061;
-    `};
 `;
 
 export const Details = styled.div`
