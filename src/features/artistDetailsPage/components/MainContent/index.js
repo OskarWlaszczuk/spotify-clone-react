@@ -6,7 +6,7 @@ import { artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { Table } from "../../../../common/components/Table";
-import { toArtist } from "../../../../common/functions/routes";
+import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { ListToggleButton } from "../../../../common/components/ListToggleButton";
 import { ItemsList } from "../../../../common/components/ItemsList";
 import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
@@ -22,6 +22,7 @@ import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { selectDataView } from "../../../../common/functions/selectDataView";
+import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -111,12 +112,11 @@ export const MainContent = () => {
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
-                                    navigateTo={toArtist({ id: id })}
-                                    id={id}
+                                    toPage={toArtist({ id: id })}
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={album_type}
-                                    useArtistPictureStyle={isArtistsList || false}
+                                    isArtistPictureStyle={isArtistsList || false}
                                 />
                             ))
                         }
@@ -128,6 +128,7 @@ export const MainContent = () => {
                             title={name}
                             caption="Verified artist"
                             metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                            isArtistPictureStyle
                         />
                         <Table list={topTracks} />
                         <TilesList
@@ -191,20 +192,18 @@ export const MainContent = () => {
                             list={removeDuplicates(currentCategoryData.list)}
                             renderItem={
                                 ((item, index) => {
-                                    const { id, name, release_date, images, album_group = "", album_type = "" } = item;
+                                    const { name, release_date, images, album_group = "", album_type = "" } = item;
 
                                     return (
                                         <Tile
-                                            id={id}
+                                            toPage={toAlbum()}
                                             picture={images[0].url}
                                             title={name}
                                             subInfo={`
-                                            ${index === 0 && isLatestReleased(item) ?
-                                                    replaceReleaseDateIfCurrentYear(item).release_date :
-                                                    getYear(release_date)
-                                                }
-                                        ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
-                                        `}
+                                                ${index === 0 && isLatestReleased(item) ? replaceReleaseDateIfCurrentYear(item).release_date : getYear(release_date)}
+                                                ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
+                                            `}
+                                            isArtistPictureStyle={false}
                                         />
                                     )
                                 })
@@ -223,7 +222,7 @@ export const MainContent = () => {
                                             ], currentCategoryData.category
                                         ).value,
                                     }),
-                                    text: "Show all"
+                                    text: titleExtraAsideContentText
                                 }
                             }
                         />
@@ -232,13 +231,12 @@ export const MainContent = () => {
                             list={relatedArtists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
-                                    key={id}
-                                    id={id}
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}
                                     useArtistPictureStyle
-                                    navigateTo={toArtist({ id })}
+                                    toPage={toArtist({ id })}
+                                    isArtistPictureStyle
                                 />
                             )}
                             hideRestListPart
@@ -248,7 +246,7 @@ export const MainContent = () => {
                                         id: id,
                                         additionalPath: relatedArtistsParam
                                     }),
-                                    text: "Show all"
+                                    text: titleExtraAsideContentText
                                 }
                             }
                         />
@@ -257,11 +255,11 @@ export const MainContent = () => {
                             list={appearsOn}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
-                                    key={id}
-                                    id={id}
+                                    toPage={toAlbum()}
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}
+                                    isArtistPictureStyle={false}
                                 />
                             )}
                             hideRestListPart
@@ -271,7 +269,7 @@ export const MainContent = () => {
                                         id: id,
                                         additionalPath: artistAppearsOnParam,
                                     }),
-                                    text: "Show all",
+                                    text: titleExtraAsideContentText,
                                 }
                             }
                         />
