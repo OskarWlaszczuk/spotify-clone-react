@@ -1,4 +1,4 @@
-import { isMatch } from "../../features/artistDetailsPage/functions/isMatch";
+import { isMatch } from "./isMatch";
 
 export const findMatchingValueByKey = (items, targetKey) => {
 
