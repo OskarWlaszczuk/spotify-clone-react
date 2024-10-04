@@ -1,10 +1,10 @@
 import { Container, Content, ContentWrapper, ExtraContent } from "./styled";
 
-export const IconBox = ({ Icon, text, navigateTo, extraContent, noText }) => {
+export const IconBox = ({ Icon, text, toPage, extraContent }) => {
 
     return (
-        <Container to={navigateTo}>
-            <ContentWrapper withoutText={noText}>
+        <Container to={toPage}>
+            <ContentWrapper $withoutText={!text}>
                 <Icon />
                 <Content>{text}</Content>
             </ContentWrapper>
