@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { useEffect } from "react";
 import { artistAlbumsSelectors, artistAlbumsActions } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
@@ -13,9 +12,7 @@ import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/a
 import { MainContent } from "../MainContent";
 
 export const ArtistDetailsPage = () => {
-    const { id, type } = useParams();
-
-    const dispatch = useDispatch()
+    const { type } = useParams();
 
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
     const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
@@ -33,57 +30,26 @@ export const ArtistDetailsPage = () => {
     const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
     const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
 
-
-    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses([
-        detailsStatus,
-        albumsStatus,
-        relatedArtistsStatus,
-        topTracksStatus,
-        singlesStatus,
-        compilationsStatus,
-        appearsOnStatus
-    ]);
-
-    useEffect(() => {
-        const fetchDelayId = setTimeout(() => {
-            dispatch(fetchArtistDetails({ id }));
-            dispatch(fetchRelatedArtists({ id }));
-            dispatch(fetchTopTracks({ id }));
-            dispatch(fetchArtistAlbums({ id }));
-            dispatch(fetchArtistSingles({ id }));
-            dispatch(fetchArtistCompilation({ id }));
-            dispatch(fetchArtistAppearsOn({ id }));
-        }, 500);
-
-        return () => {
-            clearTimeout(fetchDelayId);
-
-            clearArtistDetails();
-            clearArtistAlbums();
-            clearRelatedArtists();
-            clearTopTracks();
-            clearArtistCompilation();
-            clearArtistSingles();
-            clearArtistAppearsOn();
-        };
-    }, [
-        dispatch,
-        fetchArtistDetails,
-        fetchArtistAlbums,
-        fetchRelatedArtists,
-        fetchArtistSingles,
-        fetchArtistCompilation,
-        fetchTopTracks,
-        fetchArtistAppearsOn,
-        clearArtistDetails,
-        clearRelatedArtists,
-        clearArtistAlbums,
-        clearTopTracks,
-        clearArtistSingles,
-        clearArtistCompilation,
-        clearArtistAppearsOn,
-        id,
-    ]);
+    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
+        [
+            detailsStatus,
+            albumsStatus,
+            relatedArtistsStatus,
+            topTracksStatus,
+            singlesStatus,
+            compilationsStatus,
+            appearsOnStatus
+        ],
+        [
+            { fetchAction: fetchArtistDetails, clearAction: clearArtistDetails },
+            { fetchAction: fetchArtistAlbums, clearAction: clearArtistAlbums },
+            { fetchAction: fetchRelatedArtists, clearAction: clearRelatedArtists },
+            { fetchAction: fetchTopTracks, clearAction: clearTopTracks },
+            { fetchAction: fetchArtistSingles, clearAction: clearArtistSingles },
+            { fetchAction: fetchArtistCompilation, clearAction: clearArtistCompilation },
+            { fetchAction: fetchArtistAppearsOn, clearAction: clearArtistAppearsOn },
+        ]
+    );
 
     if (isLoading) return <Main content={<>loading</>} />;
     if (isError) return <Main content={<>error</>} />;
@@ -91,7 +57,7 @@ export const ArtistDetailsPage = () => {
     if (isSucces)
         return (
             <Main
-                gradientAvailable={!type}
+                isGradientAvailable={!type}
                 content={
                     <>
                         <MainContent />
