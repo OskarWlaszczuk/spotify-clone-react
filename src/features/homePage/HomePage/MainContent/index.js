@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { Tile } from "../../../../common/components/Tile";
 import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
 import { artistsSelectors } from "../../artists/artistsSlice";
-import { popularAlbumsParam, popularArtistsParam } from "../../constants/params";
 import { toHome, toArtist } from "../../../../common/functions/routes.js";
 import { selectDataView } from "../../../../common/functions/selectDataView.js";
 
@@ -13,6 +12,9 @@ export const MainContent = () => {
 
     const popularAlbums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const popularArtists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
+    
+    const popularAlbumsParam = "popular-albums";
+    const popularArtistsParam = "popular-artists";
 
     const { selectedList, selectedTitle, isArtistsList } = selectDataView([
         { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
