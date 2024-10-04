@@ -1,10 +1,10 @@
 import { MainContent } from "./styled"
 import { SectionContainer } from "../SectionContainer";
 
-export const Main = ({ content, gradientAvailable }) => {
+export const Main = ({ content, isGradientAvailable }) => {
     return (
         <MainContent>
-            <SectionContainer $gradient={gradientAvailable}>
+            <SectionContainer $useGradient={isGradientAvailable}>
                 {content}
             </SectionContainer>
         </MainContent>
