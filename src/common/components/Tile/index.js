@@ -1,17 +1,12 @@
-import { useDispatch } from "react-redux";
 import { capitalizeFirstLetter } from "../../functions/capitalizeFirstLetter";
-import { Container, Picture, SubInfo, Title } from "./styled";
-import { setNavigationID } from "../../../features/ListPage/listSlice";
+import { Picture } from "../Picture";
+import { Container, SubInfo, Title } from "./styled";
 
-export const Tile = ({ picture, title, subInfo, id, navigateTo, useArtistPictureStyle }) => {
+export const Tile = ({ picture, title, subInfo, toPage, isArtistPictureStyle }) => (
 
-    const dispatch = useDispatch();
-
-    return (
-        <Container to={navigateTo} onClick={() => dispatch(setNavigationID({ id }))}>
-            <Picture picture={picture} artistPictureStyle={useArtistPictureStyle} />
-            <Title>{title}</Title>
-            <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
-        </Container>
-    );
-};
+    <Container to={toPage}>
+        <Picture picture={picture} $useArtistPictureStyle={isArtistPictureStyle} />
+        <Title>{title}</Title>
+        <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
+    </Container>
+);
