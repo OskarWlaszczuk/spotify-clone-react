@@ -24,15 +24,15 @@ export const TilesList = ({
     const headerElement = hideRestListPart ? <h2>{title}</h2> : <h1>{title}</h1>;
 
     return (
-        <>
+        <section>
             <TitleContent>
                 {headerElement}
                 {hideRestListPart && <ShowAllLink to={titleExtraAsideContent.link}>{titleExtraAsideContent.text}</ShowAllLink>}
             </TitleContent >
             {subExtraContent}
-            < List ref={containerRef} >
+            <List ref={containerRef} >
                 {iterateOnList(hideRestListPart ? previewList : wholeList)}
             </List >
-        </>
+        </section>
     );
 };
