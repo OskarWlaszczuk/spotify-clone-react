@@ -23,6 +23,7 @@ import { Banner } from "../../../../common/components/Banner";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { selectDataView } from "../../../../common/functions/selectDataView";
 import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText";
+import { nanoid } from "nanoid";
 
 export const MainContent = () => {
     const { id, type } = useParams();
@@ -112,6 +113,7 @@ export const MainContent = () => {
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
+                                    key={nanoid()}
                                     toPage={toArtist({ id: id })}
                                     picture={images[0].url}
                                     title={name}
@@ -196,6 +198,7 @@ export const MainContent = () => {
 
                                     return (
                                         <Tile
+                                            key={nanoid()}
                                             toPage={toAlbum()}
                                             picture={images[0].url}
                                             title={name}
@@ -231,6 +234,7 @@ export const MainContent = () => {
                             list={relatedArtists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
+                                    key={nanoid()}
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}
@@ -255,6 +259,7 @@ export const MainContent = () => {
                             list={appearsOn}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
+                                    key={nanoid()}
                                     toPage={toAlbum()}
                                     picture={images[0].url}
                                     title={name}

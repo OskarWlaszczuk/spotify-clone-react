@@ -7,6 +7,7 @@ import { artistsSelectors } from "../../artists/artistsSlice";
 import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes.js";
 import { selectDataView } from "../../../../common/functions/selectDataView.js";
 import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText.js";
+import { nanoid } from "nanoid";
 
 export const MainContent = () => {
     const { type } = useParams();
@@ -32,6 +33,7 @@ export const MainContent = () => {
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
+                                    key={nanoid()}
                                     toPage={toArtist({ id: id })}
                                     picture={images[0].url}
                                     title={name}
@@ -47,8 +49,9 @@ export const MainContent = () => {
                             title="Popular albums"
                             list={popularAlbums}
                             renderItem={
-                                (({ images, name, artists }) => (
+                                (({ id, images, name, artists }) => (
                                     <Tile
+                                        key={nanoid()}
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={artists.map(({ name }) => name).join(",")}
@@ -70,6 +73,7 @@ export const MainContent = () => {
                             list={popularArtists}
                             renderItem={({ images, name, type, id }) => (
                                 <Tile
+                                    key={nanoid()}
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={type}

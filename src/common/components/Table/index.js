@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
 import { getAlbumArtists } from "../../functions/getAlbumArtists";
+import { nanoid } from "nanoid";
 
 export const Table = ({ list }) => {
     const [hideRestTracks, setHideRestTracks] = useState(true);
@@ -21,9 +22,9 @@ export const Table = ({ list }) => {
                             {
                                 list
                                     .filter((_, index) => (hideRestTracks ? index < 5 : index <= 10))
-                                    .map(({ album, name, duration_ms, artists }, index) => (
+                                    .map(({ id, album, name, duration_ms, artists }, index) => (
                                         <Row
-                                            key={index}
+                                            key={nanoid()}
                                             onMouseEnter={() => handleOnRowMouseEnter(index)}
                                             onMouseLeave={handleOnRowMouseLeave}
                                         >

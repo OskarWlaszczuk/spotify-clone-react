@@ -17,7 +17,7 @@ export const ExtraContent = styled(Link)`
     };
 `;
 
-export const List = styled.ul`
+export const List = styled.section`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     grid-gap: 15px 0;
