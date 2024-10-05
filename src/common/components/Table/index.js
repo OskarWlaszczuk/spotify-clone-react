@@ -13,7 +13,7 @@ export const Table = ({ list }) => {
     const handleOnRowMouseLeave = () => setActiveIndex(undefined);
 
     return (
-        <>
+        <article>
             <StyledTable>
                 {list && (
                     <>
@@ -49,6 +49,6 @@ export const Table = ({ list }) => {
             <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
                 {hideRestTracks ? <>Show more</> : <>Show less</>}
             </ToggleViewButton>
-        </>
+        </article>
     );
 };
