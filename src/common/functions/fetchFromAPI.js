@@ -1,10 +1,7 @@
 import axios from "axios"
-import { fetchAccessToken } from "./fetchAccessToken";
 import { BASE_URL } from "../constants/config";
 
-export const fetchFromAPI = async ({ params }) => {
-
-    const accessToken = await fetchAccessToken();
+export const fetchFromAPI = async ({ params, accessToken }) => {
     try {
         const response = await axios
             .get(
