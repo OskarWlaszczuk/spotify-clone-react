@@ -1,7 +1,8 @@
 import { fetchFromAPI } from "../../../common/functions/fetchFromAPI";
 
-export const getArtistDetails = async ({ id: artistID }) => await fetchFromAPI(
+export const getArtistDetails = async ({ id: artistID, accessToken }) => await fetchFromAPI(
     {
-        params: `artists/${artistID}`
+        params: `artists/${artistID}`,
+        accessToken,
     }
 );
