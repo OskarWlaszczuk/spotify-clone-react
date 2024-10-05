@@ -6,6 +6,8 @@ export const MainContent = styled.main`
     width: 100%;
     border-radius: 10px;
     padding: 15px 20px;
+    display: grid;
+    grid-gap: 40px;
 
     ${({ $useGradient }) => $useGradient && css`
         background: linear-gradient(180deg, rgba(41, 40, 40, 1) 0%, rgba(24, 20, 20, 1) 24%);
