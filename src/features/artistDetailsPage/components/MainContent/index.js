@@ -86,7 +86,6 @@ export const MainContent = () => {
     );
 
     const allCategoriesList = [
-        ...setNewestPopularReleaseItemFirstIfItLatestRelease(),
         ...albums,
         ...compilations,
         ...singles,
@@ -94,7 +93,7 @@ export const MainContent = () => {
     const sortedAllCategoriesListFromOldestToNewest = sortFromOldestToNewest(allCategoriesList);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData(
-        { key: popularReleasesCategory, value: sortedAllCategoriesListFromOldestToNewest }
+        { key: popularReleasesCategory, value: setNewestPopularReleaseItemFirstIfItLatestRelease() }
     );
 
     const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
