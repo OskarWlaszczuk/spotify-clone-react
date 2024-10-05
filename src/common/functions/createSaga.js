@@ -2,10 +2,11 @@ import { call, put, takeLatest } from "redux-saga/effects";
 
 export function* createSaga({ getDatas, actions }) {
 
-    function* fetchDatasHandler({ payload: id } = {}) {
-
+    function* fetchDatasHandler({ payload } = {}) {
+        const { id, accessToken } = payload;
+       
         try {
-            const response = yield call(getDatas, id || "");
+            const response = yield call(getDatas, { id: id || "", accessToken });
             yield put(actions.fetchSuccess({
                 datas: response
             }));
