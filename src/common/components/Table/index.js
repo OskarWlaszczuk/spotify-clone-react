@@ -47,7 +47,7 @@ export const Table = ({ list }) => {
                 )}
             </StyledTable>
             <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
-                {hideRestTracks ? <>Show more</> : <>Show less</>}
+                See {hideRestTracks ? <>more</> : <>less</>}
             </ToggleViewButton>
         </article>
     );
