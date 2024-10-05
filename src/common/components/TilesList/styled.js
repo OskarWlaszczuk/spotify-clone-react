@@ -17,10 +17,8 @@ export const ExtraContent = styled(Link)`
     };
 `;
 
-export const List = styled.section`
+export const List = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     grid-gap: 15px 0;
-    margin-bottom: 50px;
-    padding: 0;
 `;
