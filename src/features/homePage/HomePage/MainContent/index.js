@@ -5,7 +5,7 @@ import { Tile } from "../../../../common/components/Tile";
 import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
 import { artistsSelectors } from "../../artists/artistsSlice";
 import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes.js";
-import { selectDataView } from "../../../../common/functions/selectDataView.js";
+import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType.js";
 import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText.js";
 import { nanoid } from "nanoid";
 
@@ -18,7 +18,7 @@ export const MainContent = () => {
     const popularAlbumsParam = "popular-albums";
     const popularArtistsParam = "popular-artists";
 
-    const { selectedList, selectedTitle, isArtistsList } = selectDataView([
+    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
         { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
         { key: popularArtistsParam, value: popularArtists, title: "Popular artists", isArtistsList: true },
     ], type)
@@ -28,8 +28,8 @@ export const MainContent = () => {
             {
                 type ?
                     <TilesList
-                        title={selectedTitle}
-                        list={selectedList}
+                        title={fullListTitle}
+                        list={fullListContent}
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
@@ -38,7 +38,7 @@ export const MainContent = () => {
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={album_type}
-                                    isArtistPictureStyle={isArtistsList}
+                                    isArtistPictureStyle={isFullListArtistsList}
                                 />
                             ))
                         }

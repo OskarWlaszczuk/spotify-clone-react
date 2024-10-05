@@ -21,16 +21,18 @@ import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { Banner } from "../../../../common/components/Banner";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
-import { selectDataView } from "../../../../common/functions/selectDataView";
+import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText";
 import { nanoid } from "nanoid";
 
 export const MainContent = () => {
     const { id, type } = useParams();
 
-    const sortFromOldestToNewest = (array = []) => [...array].sort(
-        (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
-    );
+    const sortFromOldestToNewest = (array = []) => {
+        return [...array].sort(
+            (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
+        );
+    };
 
     const removeDuplicates = (albums = []) => {
         const caughtDuplicates = new Set();
@@ -89,13 +91,14 @@ export const MainContent = () => {
         ...compilations,
         ...singles,
     ];
+    const sortedAllCategoriesListFromOldestToNewest = sortFromOldestToNewest(allCategoriesList);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData(
-        { key: popularReleasesCategory, value: allCategoriesList }
+        { key: popularReleasesCategory, value: sortedAllCategoriesListFromOldestToNewest }
     );
 
-    const { selectedList, selectedTitle, isArtistsList } = selectDataView([
-        { key: allParamDiscography, value: allCategoriesList },
+    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
+        { key: allParamDiscography, value: sortedAllCategoriesListFromOldestToNewest },
         { key: albumsParamDiscography, value: albums },
         { key: compilationParamDiscography, value: compilations },
         { key: singleParamDiscography, value: singles },
@@ -108,8 +111,8 @@ export const MainContent = () => {
             {
                 type ?
                     <TilesList
-                        title={selectedTitle || name}
-                        list={removeDuplicates(selectedList)}
+                        title={fullListTitle || name}
+                        list={removeDuplicates(fullListContent)}
                         renderItem={
                             (({ id, name, images, album_type = "" }) => (
                                 <Tile
@@ -118,7 +121,7 @@ export const MainContent = () => {
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={album_type}
-                                    isArtistPictureStyle={isArtistsList || false}
+                                    isArtistPictureStyle={isFullListArtistsList || false}
                                 />
                             ))
                         }
