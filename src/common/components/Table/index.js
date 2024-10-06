@@ -1,4 +1,4 @@
-import { Image, Row, StyledTable, Caption, TrackOverview, RowHeader, TrackName, TrackDuration } from "./styled";
+import { Image, Row, StyledTable, Caption, TrackOverview, RowHeader, TrackName, TrackDuration, Wrapper } from "./styled";
 import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
@@ -13,7 +13,7 @@ export const Table = ({ list }) => {
     const handleOnRowMouseLeave = () => setActiveIndex(undefined);
 
     return (
-        <article>
+        <Wrapper>
             <StyledTable>
                 {list && (
                     <>
@@ -49,6 +49,6 @@ export const Table = ({ list }) => {
             <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
                 See {hideRestTracks ? <>more</> : <>less</>}
             </ToggleViewButton>
-        </article>
+        </Wrapper>
     );
 };
