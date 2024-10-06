@@ -5,6 +5,11 @@ export const Container = styled.div`
     grid-gap: 30px;
     grid-template-columns: 204px 1fr;
     border-radius: 10px 10px 0 0 ;
+    padding: 20px;
+    background-color: ${({ theme }) => theme.colors.mineShaft};
+    position: relative; 
+    box-shadow: 0 4px 58px 35px #2e2d2da1;
+    z-index: 2; 
 `;
 
 export const Details = styled.div`
