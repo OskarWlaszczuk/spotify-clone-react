@@ -1,10 +1,10 @@
 import { Button } from "./styled"
 import { StyledPlayIcon } from "../StyledPlayIcon"
 
-export const PlayPauseButton = () => {
+export const PlayPauseButton = ({ isLargerAndDarkerIcon }) => {
     return (
         <Button>
-            <StyledPlayIcon />
+            <StyledPlayIcon $largerAndDarkerIcon={isLargerAndDarkerIcon} />
         </Button>
     )
 }
