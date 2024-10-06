@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { ReactComponent as PauseIcon } from "../../icons/Pause.svg"
 
 
@@ -11,11 +11,12 @@ export const Button = styled.button`
     background-color : ${({ theme }) => theme.colors.green};
     width: 50px;
     height: 50px;
-    transition: background 0.3s;
+    position: absolute;
     
     &:hover{
         background-color : ${({ theme }) => theme.colors.mantis};
         cursor: pointer;
+       
     }
 `;
 
