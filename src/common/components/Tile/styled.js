@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 export const Container = styled(Link)`
     display: flex;
@@ -24,7 +24,6 @@ export const Title = styled.header`
     font-size: 13px;
     font-weight: 500;
 `;
-
 
 export const SubInfo = styled.span`
     font-size: 13px;
