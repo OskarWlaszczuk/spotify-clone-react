@@ -1,5 +1,12 @@
 import styled from "styled-components";
 
+export const Wrapper = styled.article`
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 3;
+`;
+
 export const StyledTable = styled.table`
     width: 100%;
     margin-bottom: 10px;
