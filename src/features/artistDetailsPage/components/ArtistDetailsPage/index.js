@@ -10,6 +10,7 @@ import { artistCompilationActions, artistCompilationSelectors } from "../../slic
 import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
 import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { MainContent } from "../MainContent";
+import { Banner } from "../../../../common/components/Banner";
 
 export const ArtistDetailsPage = () => {
     const { type } = useParams();
@@ -29,6 +30,11 @@ export const ArtistDetailsPage = () => {
     const singlesStatus = useSelector(artistSinglesSelectors.selectStatus);
     const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
     const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
+
+    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
+    const name = details?.name;
+    const followers = details?.followers;
+    const images = details?.images;
 
     const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
         [
@@ -57,7 +63,15 @@ export const ArtistDetailsPage = () => {
     if (isSucces)
         return (
             <Main
-                isGradientAvailable={!type}
+                banner={!type && (
+                    <Banner
+                        picture={images ? images[0]?.url : ''}
+                        title={name}
+                        caption="Verified artist"
+                        metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                        isArtistPictureStyle
+                    />)
+                }
                 content={
                     <>
                         <MainContent />
