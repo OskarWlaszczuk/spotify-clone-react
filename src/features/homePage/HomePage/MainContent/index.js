@@ -6,7 +6,6 @@ import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
 import { artistsSelectors } from "../../artists/artistsSlice";
 import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes.js";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType.js";
-import { titleExtraAsideContentText } from "../../../../common/constants/titleExtraAsideContentText.js";
 import { nanoid } from "nanoid";
 
 export const MainContent = () => {
@@ -60,12 +59,7 @@ export const MainContent = () => {
                                 ))
                             }
                             hideRestListPart
-                            titleExtraAsideContent={
-                                {
-                                    link: toHome({ additionalPath: popularAlbumsParam }),
-                                    text: titleExtraAsideContentText,
-                                }
-                            }
+                            fullListPathname={toHome({ additionalPath: popularAlbumsParam })}
                         />
 
                         <TilesList
@@ -82,12 +76,7 @@ export const MainContent = () => {
                                 />
                             )}
                             hideRestListPart
-                            titleExtraAsideContent={
-                                {
-                                    link: toHome({ additionalPath: popularArtistsParam }),
-                                    text: titleExtraAsideContentText,
-                                }
-                            }
+                            fullListPathname={toHome({ additionalPath: popularArtistsParam })}
                         />
                     </>
             }
