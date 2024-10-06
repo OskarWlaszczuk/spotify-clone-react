@@ -1,38 +1,43 @@
-import { List, TitleContent } from "./styled";
-import { ShowAllLink } from "../ShowAllLink";
+import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink } from "./styled";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 
 export const TilesList = ({
+    id,
     title,
     subExtraContent,
     hideRestListPart,
     list,
     renderItem,
-    titleExtraAsideContent
+    fullListPathname,
 }) => {
+    
     const { tilesPerRow, containerRef } = useTilesPerRow();
 
     const previewList = list.slice(0, tilesPerRow);
-    const wholeList = list;
+    const fullList = list;
 
     const iterateOnList = list => {
         return list.map((item, index) => (
             renderItem(item, index)
-        ))
+        ));
     };
 
-    const headerElement = hideRestListPart ? <h2>{title}</h2> : <h1>{title}</h1>;
+    const titleElement = (
+        hideRestListPart ?
+            <TitleAsLink to={fullListPathname}>{title}</TitleAsLink> :
+            <Title>{title}</Title>
+    );
 
     return (
-        <section>
+        <StyledSection>
             <TitleContent>
-                {headerElement}
-                {hideRestListPart && <ShowAllLink to={titleExtraAsideContent.link}>{titleExtraAsideContent.text}</ShowAllLink>}
+                {titleElement}
+                {hideRestListPart && <FullListLink to={fullListPathname}>Show all</FullListLink>}
             </TitleContent >
             {subExtraContent}
             <List ref={containerRef} >
-                {iterateOnList(hideRestListPart ? previewList : wholeList)}
+                {iterateOnList(hideRestListPart ? previewList : fullList)}
             </List >
-        </section>
+        </StyledSection>
     );
 };
