@@ -28,12 +28,7 @@ export const HomePage = () => {
     if (isError) return <Main content={<>error</>} />;
     if (isSucces) {
         return (
-            <Main
-                isGradientAvailable
-                content={
-                    <MainContent />
-                }
-            />
+            <Main content={<MainContent />} />
         );
     };
 };
