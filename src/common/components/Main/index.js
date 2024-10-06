@@ -1,5 +1,12 @@
-import { MainContent } from "./styled"
+import { MainContent, MainSection } from "./styled"
 
-export const Main = ({ content, isGradientAvailable }) => (
-    <MainContent $useGradient={isGradientAvailable}>{content}</MainContent>
+export const Main = ({ content, banner }) => (
+    <MainSection>
+        {banner}
+        <MainContent
+            $bannerAvailable={!!banner}
+        >
+            {content}
+        </MainContent>
+    </MainSection>
 );
