@@ -1,15 +1,19 @@
 import styled, { css } from "styled-components";
 
-export const MainContent = styled.main`
+export const MainSection = styled.main`
     grid-area: main;
-    background-color: ${({theme}) => theme.colors.black};
+    overflow: hidden;
+`;
+
+export const MainContent = styled.div`
+    background-color: ${({ theme }) => theme.colors.black};
     width: 100%;
     border-radius: 10px;
-    padding: 15px 20px;
     display: grid;
     grid-gap: 40px;
+    padding: 20px;
 
-    ${({ $useGradient }) => $useGradient && css`
-        background: linear-gradient(180deg, rgba(41, 40, 40, 1) 0%, rgba(24, 20, 20, 1) 24%);
+    ${({ $bannerAvailable }) => $bannerAvailable && css`
+       border-radius: 0px;
     `};
 `;
