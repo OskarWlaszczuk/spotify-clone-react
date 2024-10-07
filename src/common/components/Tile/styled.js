@@ -9,6 +9,7 @@ export const Container = styled(Link)`
     border-radius: 5px;
     color: ${({ theme }) => theme.colors.white};
     text-decoration: none;
+    
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
