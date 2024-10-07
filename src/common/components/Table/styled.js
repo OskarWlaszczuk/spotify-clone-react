@@ -21,7 +21,7 @@ export const Caption = styled.caption`
 
 export const Row = styled.tr`
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr auto;
     align-items: center;
     padding: 5px 10px;
     border-radius: 8px;
@@ -56,14 +56,16 @@ export const RowHeader = styled.th`
     font-weight: 450;
     font-size: 15px;
 `;
-
 export const TrackName = styled.td`
+
     font-weight: 400;
     font-size: 15px;
     max-width: 530px;
-    width: 100%;
+    /* overflow: ${({ isEllipsis }) => (isEllipsis ? 'hidden' : 'visible')};
+    white-space: ${({ isEllipsis }) => (isEllipsis ? 'nowrap' : 'normal')};
+    text-overflow: ${({ isEllipsis }) => (isEllipsis ? 'ellipsis' : 'clip')}; */
 
-    &:hover{
+    &:hover {
         cursor: pointer;
         text-decoration: underline;
     };
