@@ -9,8 +9,26 @@ export const Table = ({ list }) => {
     const [hideRestTracks, setHideRestTracks] = useState(true);
     const [activeIndex, setActiveIndex] = useState(undefined);
 
+
     const handleOnRowMouseEnter = (trackIndex) => setActiveIndex(list.findIndex((_, index) => index === trackIndex));
     const handleOnRowMouseLeave = () => setActiveIndex(undefined);
+
+    // const refs = useRef([]);
+    // useEffect(() => {
+    //     const checkEllipsis = () => {
+    //         if (refs.current.length > 0) {
+
+    //             refs.current.forEach(({ scrollWidth, clientWidth }) => {
+    //                 console.log(scrollWidth, clientWidth)
+    //             });
+    //         }
+    //     };
+
+    //     checkEllipsis();
+
+    //     window.addEventListener("resize", checkEllipsis);
+    //     return () => window.removeEventListener("resize", checkEllipsis);
+    // }, []);
 
     return (
         <Wrapper>
@@ -25,8 +43,8 @@ export const Table = ({ list }) => {
                                     .map(({ id, album, name, duration_ms, artists }, index) => (
                                         <Row
                                             key={nanoid()}
-                                            onMouseEnter={() => handleOnRowMouseEnter(index)}
-                                            onMouseLeave={handleOnRowMouseLeave}
+                                        onMouseEnter={() => handleOnRowMouseEnter(index)}
+                                        onMouseLeave={handleOnRowMouseLeave}
                                         >
                                             <TrackOverview>
                                                 <RowHeader
@@ -36,7 +54,12 @@ export const Table = ({ list }) => {
                                                     {activeIndex === index ? <StyledPlayIcon /> : index + 1}
                                                 </RowHeader>
                                                 <td><Image src={album.images[0].url} /></td>
-                                                <TrackName>{name}</TrackName>
+                                                <TrackName
+                                                // $isEllipsis={isEllipsis}
+                                                // ref={(el) => refs.current[index] = el}
+                                                >
+                                                    {name}
+                                                </TrackName>
                                             </TrackOverview>
                                             <TrackDuration>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</TrackDuration>
                                         </Row>
