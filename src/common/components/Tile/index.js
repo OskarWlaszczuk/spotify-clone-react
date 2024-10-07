@@ -11,7 +11,7 @@ export const Tile = ({ picture, title, subInfo, toPage, isArtistPictureStyle, mo
         onMouseLeave={mouseEventHandlers.leave}
     >
         <Picture picture={picture} $useArtistPictureStyle={isArtistPictureStyle} >
-            {isActive && <PlayPauseButton />}
+            {isActive && <PlayPauseButton isLargerAndDarkerIcon />}
         </Picture>
         <Title>{title}</Title>
         <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
