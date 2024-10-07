@@ -26,5 +26,15 @@ export const GlobalStyles = createGlobalStyle`
     font-family: "Lexend Deca", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    @media (max-width: 800px) {
+      grid-template-areas: 
+      "nav nav nav nav"
+      "main main main main"
+      "main main main main";
+
+      grid-template-columns:1fr;
+    }
+
   };
 `;
