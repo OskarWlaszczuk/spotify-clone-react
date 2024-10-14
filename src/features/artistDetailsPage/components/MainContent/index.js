@@ -8,18 +8,17 @@ import { Tile } from "../../../../common/components/Tile";
 import { Table } from "../../../../common/components/Table";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { ListToggleButton } from "../../../../common/components/ListToggleButton";
-import { ItemsList } from "../../../../common/components/ItemsList";
 import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { getYear } from "../../../../common/functions/getYear";
-import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
+import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter.ts";
 import { isLatestReleased } from "../../../../common/functions/isLatestReleased";
-import { isListEmpty } from "../../../../common/functions/isListEmpty";
+import { isEmpty } from "../../../../common/functions/isEmpty";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { isMatch } from "../../../../common/functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
+import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey.ts";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
@@ -67,6 +66,7 @@ export const MainContent = () => {
     const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
+
 
     const popularReleases = topTracks?.map(({ album }) => album);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
@@ -144,60 +144,56 @@ export const MainContent = () => {
                             id={1}
                             title="Discography"
                             subExtraContent={
-                                <ItemsList
-                                    items={
-                                        <>
-                                            {
-                                                isListEmpty(popularReleases) && (
-                                                    <ListToggleButton
-                                                        toggleList={() => setCurrentCategoryData({
-                                                            category: popularReleasesCategory,
-                                                            list: allCategoriesList,
-                                                        })}
-                                                        text="Popular releases"
-                                                        isActive={isMatch(popularReleasesCategory, currentCategoryData.category)}
-                                                    />
-                                                )
-                                            }
-                                            {
-                                                isListEmpty(albums) && (
-                                                    <ListToggleButton
-                                                        toggleList={() => setCurrentCategoryData({
-                                                            category: albumsCategory,
-                                                            list: albums,
-                                                        })}
-                                                        text="Albums"
-                                                        isActive={isMatch(albumsCategory, currentCategoryData.category)}
-                                                    />
-                                                )
-                                            }
-                                            {
-                                                isListEmpty(singles) && (
-                                                    <ListToggleButton
-                                                        toggleList={() => setCurrentCategoryData({
-                                                            category: singlesCategory,
-                                                            list: singles,
-                                                        })}
-                                                        text="Singles"
-                                                        isActive={isMatch(singlesCategory, currentCategoryData.category)}
-                                                    />
-                                                )
-                                            }
-                                            {
-                                                isListEmpty(compilations) && (
-                                                    <ListToggleButton
-                                                        toggleList={() => setCurrentCategoryData({
-                                                            category: compilationsCategory,
-                                                            list: compilations,
-                                                        })}
-                                                        text="Compilations"
-                                                        isActive={isMatch(compilationsCategory, currentCategoryData.category)}
-                                                    />
-                                                )
-                                            }
-                                        </>
+                                <>
+                                    {
+                                        isEmpty(popularReleases) && (
+                                            <ListToggleButton
+                                                toggleList={() => setCurrentCategoryData({
+                                                    category: popularReleasesCategory,
+                                                    list: allCategoriesList,
+                                                })}
+                                                text="Popular releases"
+                                                isActive={isMatch(popularReleasesCategory, currentCategoryData.category)}
+                                            />
+                                        )
                                     }
-                                />
+                                    {
+                                        isEmpty(albums) && (
+                                            <ListToggleButton
+                                                toggleList={() => setCurrentCategoryData({
+                                                    category: albumsCategory,
+                                                    list: albums,
+                                                })}
+                                                text="Albums"
+                                                isActive={isMatch(albumsCategory, currentCategoryData.category)}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        isEmpty(singles) && (
+                                            <ListToggleButton
+                                                toggleList={() => setCurrentCategoryData({
+                                                    category: singlesCategory,
+                                                    list: singles,
+                                                })}
+                                                text="Singles"
+                                                isActive={isMatch(singlesCategory, currentCategoryData.category)}
+                                            />
+                                        )
+                                    }
+                                    {
+                                        isEmpty(compilations) && (
+                                            <ListToggleButton
+                                                toggleList={() => setCurrentCategoryData({
+                                                    category: compilationsCategory,
+                                                    list: compilations,
+                                                })}
+                                                text="Compilations"
+                                                isActive={isMatch(compilationsCategory, currentCategoryData.category)}
+                                            />
+                                        )
+                                    }
+                                </>
                             }
                             list={listToDisplay}
                             renderItem={
