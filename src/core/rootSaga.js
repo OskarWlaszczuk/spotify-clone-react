@@ -1,6 +1,6 @@
 import { all } from "redux-saga/effects";
-import { watchFetchArtistsSaga } from "../features/homePage/artists/artistsSaga";
-import { watchFetchAlbumsSaga } from "../features/homePage/albums/albumsSaga";
+import { watchFetchArtistsSaga } from "../features/homePage/sagas/artistsSaga";
+import { watchFetchAlbumsSaga } from "../features/homePage/sagas/albumsSaga";
 import { watchFetchArtistDetails } from "../features/artistDetailsPage/sagas/artistDetailsSaga";
 import { watchFetchArtistTopTracks } from "../features/artistDetailsPage/sagas/artistTopTracksSaga";
 import { watchFetchArtistAlbums } from "../features/artistDetailsPage/sagas/artistAlbumsSaga";
