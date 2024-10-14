@@ -1,4 +1,4 @@
-import { albumsActions } from "../../homePage/albums/albumsSlice";
+import { albumsActions } from "../slices/albumsSlice";
 import { createSaga } from  "../../../common/functions/createSaga";
 import { getAPI } from "../../../common/functions/getAPI";
 

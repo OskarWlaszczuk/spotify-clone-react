@@ -1,4 +1,4 @@
-import { artistsActions } from "../../homePage/artists/artistsSlice";
+import { artistsActions } from "../slices/artistsSlice";
 import { createSaga } from "../../../common/functions/createSaga";
 import { getAPI } from "../../../common/functions/getAPI";
 

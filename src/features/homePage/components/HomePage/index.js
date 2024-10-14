@@ -1,9 +1,9 @@
-import { Main } from "../../../common/components/Main";
+import { Main } from "../../../../common/components/Main";
 import { useSelector } from "react-redux";
-import { albumsSelectors, albumsActions } from "../albums/albumsSlice";
-import { artistsSelectors, artistsActions } from "../artists/artistsSlice";
-import { useFetchStatuses } from "../../../common/hooks/useFetchStatuses";
-import { MainContent } from "./MainContent";
+import { albumsSelectors, albumsActions } from "../../slices/albumsSlice";
+import { artistsSelectors, artistsActions } from "../../slices/artistsSlice";
+import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
+import { MainContent } from "../MainContent";
 
 export const HomePage = () => {
     const { fetch: fetchAlbums, clear: clearAlbums } = albumsActions;

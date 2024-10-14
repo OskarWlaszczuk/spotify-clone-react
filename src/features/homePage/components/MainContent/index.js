@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom"
 import { TilesList } from "../../../../common/components/TilesList"
 import { useSelector } from "react-redux";
 import { Tile } from "../../../../common/components/Tile";
-import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
-import { artistsSelectors } from "../../artists/artistsSlice";
+import { albumsSelectors } from "../../slices/albumsSlice";
+import { artistsSelectors } from "../../slices/artistsSlice";
 import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";

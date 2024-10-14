@@ -1,7 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { NavigationPanel } from "./NavigationPanel/components";
 import { toAlbum, toHome, toSearch } from "../../common/functions/routes";
-import { HomePage } from "../../features/homePage/HomePage";
+import { HomePage } from "../../features/homePage/components/HomePage";
 import { Search } from "../../features/Search";
 import { Album } from "../../features/Album";
 import { Library } from "./Library/components";
