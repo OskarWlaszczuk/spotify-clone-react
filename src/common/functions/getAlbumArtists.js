@@ -1,1 +1,0 @@
-export const getAlbumArtists = (artists) => artists.map(({ name }) => name).join(",");

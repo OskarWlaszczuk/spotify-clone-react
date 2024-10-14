@@ -1,0 +1,1 @@
+export const getYear = (date: string): string => new Date(date).toLocaleDateString(undefined, { year: "numeric" });

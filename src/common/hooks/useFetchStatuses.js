@@ -4,11 +4,20 @@ import { checkFetchStatuses } from "../functions/checkFetchStatuses";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchAccessToken } from "../functions/fetchAccessToken";
+import { getAPI } from "../functions/getAPI";
+
+// interface FetchActionParams {
+//     id: string;
+//     accessToken: string;
+// }
+
+// interface Action {
+//     fetchAction: (params:FetchActionParams) => object;
+//     clearAction: () => void;
+// }
 
 export const useFetchStatuses = (fetchStatuses = [], actions) => {
-    const param = useParams();
-    const id = param?.id;
-
+    const { id } = useParams();
     const dispatch = useDispatch();
 
     const isInitial = checkFetchStatuses(fetchStatuses, initial);
@@ -20,8 +29,8 @@ export const useFetchStatuses = (fetchStatuses = [], actions) => {
         const fetchAccessTokenAndData = async () => {
             const accessToken = await fetchAccessToken();
 
-            actions.forEach(({ fetchAction }) => {
-                dispatch(fetchAction({ id: id || '', accessToken }));
+            actions.forEach(({ fetchAction, endpoint }) => {
+                dispatch(fetchAction({ endpoint, accessToken }));
             });
         };
 

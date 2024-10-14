@@ -1,1 +1,0 @@
-export const isMatch = (group, targetCategory) => group === targetCategory;

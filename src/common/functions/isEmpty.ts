@@ -1,0 +1,1 @@
+export const isEmpty = (array: []):boolean => array.length > 0;

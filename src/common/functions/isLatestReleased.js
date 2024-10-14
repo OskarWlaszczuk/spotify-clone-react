@@ -1,1 +1,0 @@
-export  const isLatestReleased = object => new Date(object?.release_date).getFullYear() === new Date().getFullYear();

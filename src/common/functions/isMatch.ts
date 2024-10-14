@@ -1,0 +1,1 @@
+export const isMatch = (value: string, targetValue: string): boolean => value === targetValue;
