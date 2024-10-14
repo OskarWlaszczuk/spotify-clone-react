@@ -4,10 +4,11 @@ import { useSelector } from "react-redux";
 import { Tile } from "../../../../common/components/Tile";
 import { albumsSelectors } from "../../../homePage/albums/albumsSlice";
 import { artistsSelectors } from "../../artists/artistsSlice";
-import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes.js";
-import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType.js";
+import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes";
+import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";
-import { useActiveTile } from "../../../../common/hooks/useActiveTile.js";
+import { useActiveTile } from "../../../../common/hooks/useActiveTile";
+import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 
 export const MainContent = () => {
     const { type } = useParams();
@@ -19,10 +20,11 @@ export const MainContent = () => {
     const popularAlbumsParam = "popular-albums";
     const popularArtistsParam = "popular-artists";
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
-        { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
-        { key: popularArtistsParam, value: popularArtists, title: "Popular artists", isArtistsList: true },
-    ], type)
+    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType(
+        [
+            { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
+            { key: popularArtistsParam, value: popularArtists, title: "Popular artists", isArtistsList: true },
+        ], type)
 
     return (
         <>
@@ -77,10 +79,11 @@ export const MainContent = () => {
                                         key={nanoid()}
                                         picture={images[0].url}
                                         title={name}
-                                        subInfo={artists.map(({ name }) => name).join(",")}
+                                        subInfo={getAlbumArtists(artists)}
                                         toPage={toAlbum()}
                                     />
-                                ))
+                                )
+                                )
                             }
                             hideRestListPart
                             fullListPathname={toHome({ additionalPath: popularAlbumsParam })}
