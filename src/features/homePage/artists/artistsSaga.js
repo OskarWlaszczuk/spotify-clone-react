@@ -1,10 +1,10 @@
 import { artistsActions } from "../../homePage/artists/artistsSlice";
 import { createSaga } from "../../../common/functions/createSaga";
-import { getArtists } from "./getArtists";
+import { getAPI } from "../../../common/functions/getAPI";
 
 export function* watchFetchArtistsSaga() {
     yield createSaga({
-        getDatas: getArtists,
+        getDatas: getAPI,
         actions: artistsActions,
     });
 };

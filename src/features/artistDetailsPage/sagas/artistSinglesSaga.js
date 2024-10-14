@@ -1,10 +1,10 @@
 import { createSaga } from "../../../common/functions/createSaga";
-import { getArtistSingles } from "../API/getArtistSingles"
+import { getAPI } from "../../../common/functions/getAPI";
 import { artistSinglesActions } from "../slices/artistSinglesSlice";
 
 export function* watchFetchArtistSinglesSaga() {
     yield createSaga({
-        getDatas: getArtistSingles,
+        getDatas: getAPI,
         actions: artistSinglesActions,
     });
 };

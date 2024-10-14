@@ -1,10 +1,10 @@
-import { getArtistAppearsOn } from "../API/getArtistAppearsOn"
 import { artistAppearsOnActions } from "../slices/artistAppearsOnSlice";
 import { createSaga } from "../../../common/functions/createSaga";
+import { getAPI } from "../../../common/functions/getAPI";
 
 export function* watchFetchArtistAppearsOnSaga() {
     yield createSaga({
-        getDatas: getArtistAppearsOn,
+        getDatas: getAPI,
         actions: artistAppearsOnActions,
     });
 };
