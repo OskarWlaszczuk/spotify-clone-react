@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { rootSaga } from './rootSaga';
-import { artistsReducer } from '../features/homePage/artists/artistsSlice';
-import { albumsReducer } from '../features/homePage/albums/albumsSlice';
+import { artistsReducer } from '../features/homePage/slices/artistsSlice';
+import { albumsReducer } from '../features/homePage/slices/albumsSlice';
 import { artistDetailsReducer } from '../features/artistDetailsPage/slices/artistDetailsSlice';
 import { artistTopTracksReducer } from '../features/artistDetailsPage/slices/artistTopTracksSlice';
 import { artistAlbumsReducer } from '../features/artistDetailsPage/slices/artistAlbumsSlice';
