@@ -1,8 +1,12 @@
 import { useState } from "react";
 
-export const useActiveTile = () => {
+interface TileDatas {
+    activeTileIndex: number | undefined;
+    activeTilesListID: number | undefined;
+}
 
-    const [activeTile, setActiveTile] = useState({
+export const useActiveTile = () => {
+    const [activeTile, setActiveTile] = useState<TileDatas>({
         activeTileIndex: undefined,
         activeTilesListID: undefined,
     });
