@@ -1,4 +1,4 @@
-import { DataByGroup } from "../interfaces/ListDataGroup";
+import { DataByGroup } from "../interfaces/DataByGroup";
 import { MediaItemData } from "../interfaces/MediaItemData";
 import { findMatchingValueByKey } from "./findMatchingValueByKey";
 

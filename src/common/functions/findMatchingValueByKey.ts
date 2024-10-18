@@ -1,4 +1,4 @@
-import { DataByGroup } from "../interfaces/ListDataGroup";
+import { DataByGroup } from "../interfaces/DataByGroup";
 import { isMatch } from "./isMatch";
 
 export const findMatchingValueByKey = (groups: DataByGroup[], targetKey: string): DataByGroup | undefined => (
