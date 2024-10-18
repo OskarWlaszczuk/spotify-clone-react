@@ -1,31 +1,13 @@
-import { Image, Row, StyledTable, Caption, TrackOverview, RowIndex, TrackName, TrackDuration, Wrapper } from "./styled";
+import { RowImage, Row, StyledTable, Caption, TrackOverview, RowIndex, TrackName, TrackDuration, Wrapper } from "./styled";
 import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
 import { getAlbumArtists } from "../../functions/getAlbumArtists";
 import { nanoid } from "nanoid";
-
-interface AlbumImage {
-    url: string;
-};
-
-interface Album extends AlbumImage {
-    images: AlbumImage[];
-};
-
-interface Artists {
-    name: string;
-};
-
-interface List {
-    name: string;
-    duration_ms: number;
-    artists: Artists[];
-    album: Album,
-};
+import { TrackListItem } from "../../interfaces/TrackListItemInterfaces";
 
 interface TableProps {
-    list: List[];
+    list: TrackListItem[];
 };
 
 export const Table = ({ list }: TableProps) => {
@@ -75,7 +57,7 @@ export const Table = ({ list }: TableProps) => {
                                                 >
                                                     {activeIndex === index ? <StyledPlayIcon /> : index + 1}
                                                 </RowIndex>
-                                                <td><Image src={album.images[0].url} /></td>
+                                                <td><RowImage src={album.images[0].url} /></td>
                                                 <TrackName
                                                 // $isEllipsis={isEllipsis}
                                                 // ref={(el) => refs.current[index] = el}
