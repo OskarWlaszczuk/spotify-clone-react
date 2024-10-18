@@ -1,8 +1,14 @@
-import { ListDataGroup } from "../interfaces/ListDataGroup";
+import { DataByGroup } from "../interfaces/ListDataGroup";
+import { MediaItemData } from "../interfaces/MediaItemData";
 import { findMatchingValueByKey } from "./findMatchingValueByKey";
 
+interface MatchFullListDataByTypeReturnValues {
+    fullListTitle: string | undefined;
+    fullListContent: MediaItemData[] | undefined;
+    isFullListArtistsList: boolean | undefined;
+};
 
-export const matchFullListDataByType = (fullListsDatasOptions: ListDataGroup[], type: string) => {
+export const matchFullListDataByType = (fullListsDatasOptions: DataByGroup[], type: string): MatchFullListDataByTypeReturnValues => {
 
     const matchedFullListDataByType = findMatchingValueByKey(fullListsDatasOptions, type);
 
