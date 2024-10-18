@@ -65,7 +65,7 @@ export const ArtistDetailsPage = () => {
     return (
         <Main
             fetchStatus={fetchStatus}
-            banner={!type && (
+            bannerContent={!type && (
                 <Banner
                     picture={pictureUrl}
                     title={name}
