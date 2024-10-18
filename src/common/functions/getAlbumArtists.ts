@@ -1,5 +1,3 @@
-interface Artists {
-    name: string
-};
+import { ArtistData } from "../interfaces/ArtistData";
 
-export const getAlbumArtists = (artists: Artists[]): string => artists.map(({ name }) => name).join(",");
+export const getAlbumArtists = (artists: ArtistData[]): string => artists.map(({ name }) => name).join(",");
