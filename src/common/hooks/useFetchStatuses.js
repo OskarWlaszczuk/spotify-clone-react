@@ -1,35 +1,33 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { initial, loading, success, error } from "../constants/fetchStatuses";
 import { checkFetchStatuses } from "../functions/checkFetchStatuses";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchAccessToken } from "../functions/fetchAccessToken";
-import { getAPI } from "../functions/getAPI";
 
-// interface FetchActionParams {
-//     id: string;
-//     accessToken: string;
-// }
-
-// interface Action {
-//     fetchAction: (params:FetchActionParams) => object;
-//     clearAction: () => void;
-// }
-
-export const useFetchStatuses = (fetchStatuses = [], actions) => {
+export const useFetchStatus = (fetchStatuses = [], fetchConfigs) => {
     const { id } = useParams();
     const dispatch = useDispatch();
 
-    const isInitial = checkFetchStatuses(fetchStatuses, initial);
-    const isLoading = checkFetchStatuses(fetchStatuses, loading);
-    const isError = checkFetchStatuses(fetchStatuses, error);
-    const isSucces = (checkFetchStatuses(fetchStatuses, success, true));
+    const [fetchStatus, setFetchStatus] = useState(initial);
+
+    useEffect(() => {
+        const isInitial = checkFetchStatuses(fetchStatuses, initial);
+        const isLoading = checkFetchStatuses(fetchStatuses, loading);
+        const isError = checkFetchStatuses(fetchStatuses, error);
+        const isSucces = checkFetchStatuses(fetchStatuses, success, true);
+
+        if (isInitial) setFetchStatus(initial);
+        if (isLoading) setFetchStatus(loading);
+        if (isError) setFetchStatus(error);
+        if (isSucces) setFetchStatus(success);
+    }, [fetchStatuses]);
 
     useEffect(() => {
         const fetchAccessTokenAndData = async () => {
             const accessToken = await fetchAccessToken();
 
-            actions.forEach(({ fetchAction, endpoint }) => {
+            fetchConfigs.forEach(({ fetchAction, endpoint }) => {
                 dispatch(fetchAction({ endpoint, accessToken }));
             });
         };
@@ -37,10 +35,9 @@ export const useFetchStatuses = (fetchStatuses = [], actions) => {
         fetchAccessTokenAndData();
 
         return () => {
-            actions.forEach(({ clearAction }) => dispatch(clearAction()));
+            fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
         };
     }, [dispatch, id]);
 
-
-    return { isInitial, isLoading, isError, isSucces };
+    return fetchStatus;
 };
