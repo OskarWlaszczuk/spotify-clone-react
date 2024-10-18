@@ -9,6 +9,7 @@ import { matchFullListDataByType } from "../../../../common/functions/matchFullL
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
+import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
 
 export const MainContent = () => {
     const { type = "" } = useParams<{ type: string }>();
@@ -20,19 +21,23 @@ export const MainContent = () => {
     const popularAlbumsParam = "popular-albums";
     const popularArtistsParam = "popular-artists";
 
+    const popularAlbumsTitle = "Popular albums";
+    const popularArtistsTitle = "Popular artists";
+
     const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType(
         [
-            { key: popularAlbumsParam, value: popularAlbums, title: "Popular albums", isArtistsList: false },
-            { key: popularArtistsParam, value: popularArtists, title: "Popular artists", isArtistsList: true },
-        ], type)
+            { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
+            { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
+        ], type
+    );
 
     return (
         <>
             {
                 type ?
                     <TilesList
-                        title={fullListTitle}
-                        list={fullListContent}
+                        title={fullListTitle || undefined}
+                        list={fullListContent || undefined}
                         renderItem={
                             (({ id, name, images, album_type = "" }, index) => (
                                 <Tile
@@ -60,10 +65,10 @@ export const MainContent = () => {
                     :
                     <>
                         <TilesList
-                            title="Popular albums"
+                            title={popularAlbumsTitle}
                             list={popularAlbums}
                             renderItem={
-                                (({ id, images, name, artists }, index) => (
+                                (({ id, images, name, artists = [] }: MediaItemData, index) => (
                                     <Tile
                                         isActive={isTileActive(index, 1)}
                                         mouseEventHandlers={{
@@ -90,7 +95,7 @@ export const MainContent = () => {
                         />
 
                         <TilesList
-                            title="Popular artists"
+                            title={popularArtistsTitle}
                             list={popularArtists}
                             renderItem={({ images, name, type, id }, index) => (
                                 <Tile
@@ -108,7 +113,7 @@ export const MainContent = () => {
                                     key={nanoid()}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={type}
+                                    subInfo={type || ""}
                                     isArtistPictureStyle
                                     toPage={toArtist({ id })}
                                 />

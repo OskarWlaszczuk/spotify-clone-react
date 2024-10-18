@@ -11,40 +11,46 @@ import { ListToggleButton } from "../../../../common/components/ListToggleButton
 import { artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { getYear } from "../../../../common/functions/getYear";
-import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter.ts";
+import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { isLatestReleased } from "../../../../common/functions/isLatestReleased";
 import { isEmpty } from "../../../../common/functions/isEmpty";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { isMatch } from "../../../../common/functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey.ts";
+import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
+import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
+import { TrackListItem } from "../../../../common/interfaces/TrackListItemInterfaces";
 
 export const MainContent = () => {
-    const { id, type } = useParams();
+    const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
-    const sortFromOldestToNewest = (array = []) => {
+    interface ReleaseItem {
+        release_date: string;
+    };
+
+    const sortFromOldestToNewest = (array: ReleaseItem[] = []): ReleaseItem[] => {
         return [...array].sort(
             (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
         );
     };
 
-    const removeDuplicates = (albums = []) => {
+    const removeDuplicates = (list: MediaItemData[] = []): MediaItemData[] => {
         const caughtDuplicates = new Set();
 
-        return albums.filter(({ name }) => {
+        return list.filter(({ name }) => {
             const keyValue = name;
             return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
         });
     };
 
-    const replaceReleaseDateIfCurrentYear = album => {
-        return isLatestReleased(album) ?
-            { ...album, release_date: "Latest Release" } :
-            album;
+    const replaceReleaseDateIfCurrentYear = (listItem: ReleaseItem): ReleaseItem => {
+        return isLatestReleased(listItem) ?
+            { ...listItem, release_date: "Latest Release" } :
+            listItem;
     };
 
     const popularReleasesCategory = "popularReleases";
@@ -67,11 +73,11 @@ export const MainContent = () => {
     const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
-
-    const popularReleases = topTracks?.map(({ album }) => album);
+    const popularReleases = topTracks?.map(({ album }: TrackListItem) => album);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
-    const setNewestPopularReleaseItemFirstIfItLatestRelease = () => (
+    const setNewestPopularReleaseItemFirstIfIsLatestRelease = (newestPopularReleaseItem: ReleaseItem) => (
+        //wartość do zwrócenia
         isLatestReleased(newestPopularReleaseItem) ?
             [
                 { ...(newestPopularReleaseItem ?? {}) },
@@ -81,7 +87,7 @@ export const MainContent = () => {
     );
 
     const allCategoriesList = [
-        ...setNewestPopularReleaseItemFirstIfItLatestRelease(),
+        ...setNewestPopularReleaseItemFirstIfIsLatestRelease(newestPopularReleaseItem),
         ...albums,
         ...compilations,
         ...singles,
@@ -110,11 +116,10 @@ export const MainContent = () => {
             {
                 type ?
                     <TilesList
-                        id={0}
                         title={fullListTitle || details.name}
                         list={listToDisplay}
                         renderItem={
-                            (({ id, name, images, album_type = "" }, index) => (
+                            (({ id, name, images, album_type = "" }: MediaItemData, index: number) => (
                                 <Tile
                                     isActive={isTileActive(index, 0)}
                                     mouseEventHandlers={{
@@ -141,7 +146,6 @@ export const MainContent = () => {
                     <>
                         <Table list={topTracks} />
                         <TilesList
-                            id={1}
                             title="Discography"
                             subExtraContent={
                                 <>
@@ -228,19 +232,29 @@ export const MainContent = () => {
                             }
                             hideRestListPart
                             fullListPathname={toArtist({
-                                id: id,
-                                additionalPath: findMatchingValueByKey(
-                                    [
-                                        { key: popularReleasesCategory, value: allParamDiscography },
-                                        { key: albumsCategory, value: albumsParamDiscography },
-                                        { key: compilationsCategory, value: compilationParamDiscography },
-                                        { key: singlesCategory, value: singleParamDiscography },
-                                    ], currentCategoryData.category
-                                ).value,
+                                id: id!,
+                                additionalPath:
+                                    findMatchingValueByKey(
+                                        [
+                                            { key: popularReleasesCategory, value: allParamDiscography },
+                                            { key: albumsCategory, value: albumsParamDiscography },
+                                            { key: compilationsCategory, value: compilationParamDiscography },
+                                            { key: singlesCategory, value: singleParamDiscography },
+                                        ], currentCategoryData.category
+                                    )?.value
                             })}
                         />
+                        {/* {
+                            renderTilesList({
+                                list:relatedArtists,
+                                title:"Fans also like",
+                                isArtistPictureStyle:true,
+                                toPage: (id) => toArtist({id}),
+                                tilesListID:2,
+                                hideRestListPart:true,
+                            })
+                        } */}
                         < TilesList
-                            id={2}
                             title="Fans also like"
                             list={relatedArtists}
                             renderItem={({ images, name, type, id }, index) => (
@@ -259,20 +273,18 @@ export const MainContent = () => {
                                     key={nanoid()}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={type}
-                                    useArtistPictureStyle
+                                    subInfo={type || ""}
                                     toPage={toArtist({ id })}
                                     isArtistPictureStyle
                                 />
                             )}
                             hideRestListPart
                             fullListPathname={toArtist({
-                                id: id,
+                                id: id!,
                                 additionalPath: relatedArtistsParam
                             })}
                         />
                         <TilesList
-                            id={3}
                             title="Appears on"
                             list={appearsOn}
                             renderItem={({ images, name, type, id }, index) => (
@@ -292,13 +304,13 @@ export const MainContent = () => {
                                     toPage={toAlbum()}
                                     picture={images[0].url}
                                     title={name}
-                                    subInfo={type}
+                                    subInfo={type || ""}
                                     isArtistPictureStyle={false}
                                 />
                             )}
                             hideRestListPart
                             fullListPathname={toArtist({
-                                id: id,
+                                id: id!,
                                 additionalPath: artistAppearsOnParam,
                             })}
                         />
