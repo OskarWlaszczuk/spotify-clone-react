@@ -1,25 +1,15 @@
 import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink, ExtraSubContentSection } from "./styled";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 import { ReactElement } from "react";
-
-interface Image {
-    url: string;
-};
-
-interface ListItem {
-    id: string;
-    name: string;
-    images: Image[];
-    album_type?: string;
-};
+import { MediaItemData } from "../../interfaces/MediaItemData";
 
 interface TilesListProps {
-    title: string;
-    subExtraContent: ReactElement;
-    hideRestListPart?: true;
-    list: ListItem[];
-    renderItem: (list: ListItem, index: number) => ReactElement;
-    fullListPathname: string;
+    title: string | undefined;
+    subExtraContent?: ReactElement;
+    hideRestListPart?: boolean;
+    list: MediaItemData[] | undefined;
+    renderItem: (list: MediaItemData, index: number) => ReactElement;
+    fullListPathname?: string;
 };
 
 export const TilesList = ({
@@ -29,23 +19,22 @@ export const TilesList = ({
     list,
     renderItem,
     fullListPathname,
-}
-    : TilesListProps
+}: TilesListProps
 ) => {
 
     const { tilesPerRow, containerRef } = useTilesPerRow();
 
-    const previewList = list.slice(0, tilesPerRow);
+    const previewList = list?.slice(0, tilesPerRow);
     const fullList = list;
 
-    const iterateOnList = (list: ListItem[]) => (
-        list.map((item: ListItem, index: number) =>
+    const iterateOnList = (list: MediaItemData[]) => (
+        list.map((item: MediaItemData, index: number) =>
             renderItem(item, index)
         )
     );
 
     const titleElement = (
-        hideRestListPart ?
+        fullListPathname ?
             <TitleAsLink to={fullListPathname}>{title}</TitleAsLink> :
             <Title>{title}</Title>
     );
@@ -54,11 +43,11 @@ export const TilesList = ({
         <StyledSection>
             <TitleContent>
                 {titleElement}
-                {hideRestListPart && <FullListLink to={fullListPathname}>Show all</FullListLink>}
+                {fullListPathname && <FullListLink to={fullListPathname}>Show all</FullListLink>}
             </TitleContent >
             <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>
             <List ref={containerRef} >
-                {iterateOnList(hideRestListPart ? previewList : fullList)}
+                {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
             </List >
         </StyledSection>
     );
