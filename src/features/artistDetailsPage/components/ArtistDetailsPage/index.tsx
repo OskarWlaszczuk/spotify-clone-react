@@ -7,13 +7,13 @@ import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/a
 import { Main } from "../../../../common/components/Main";
 import { artistSinglesActions, artistSinglesSelectors } from "../../slices/artistSinglesSlice";
 import { artistCompilationActions, artistCompilationSelectors } from "../../slices/artistCompilationSlice";
-import { useFetchStatuses } from "../../../../common/hooks/useFetchStatuses";
+import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 
 export const ArtistDetailsPage = () => {
-    const { type, id } = useParams();
+    const { type, id } = useParams<{ type: string; id: string; }>();
 
     const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
     const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
@@ -38,7 +38,10 @@ export const ArtistDetailsPage = () => {
     const images = details?.images;
     const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
 
-    const { isInitial, isLoading, isSucces, isError } = useFetchStatuses(
+    const albumGroupsEndpoint = '/albums?include_groups';
+    const groupLimit = "limit=50";
+
+    const fetchStatus = useFetchStatus(
         [
             detailsStatus,
             albumsStatus,
@@ -50,35 +53,28 @@ export const ArtistDetailsPage = () => {
         ],
         [
             { fetchAction: fetchArtistDetails, clearAction: clearArtistDetails, endpoint: `artists/${id}/` },
-            { fetchAction: fetchArtistAlbums, clearAction: clearArtistAlbums, endpoint: `artists/${id}/albums?include_groups=album&limit=20` },
+            { fetchAction: fetchArtistAlbums, clearAction: clearArtistAlbums, endpoint: `artists/${id}${albumGroupsEndpoint}=album&${groupLimit}` },
             { fetchAction: fetchRelatedArtists, clearAction: clearRelatedArtists, endpoint: `artists/${id}/related-artists` },
             { fetchAction: fetchTopTracks, clearAction: clearTopTracks, endpoint: `artists/${id}/top-tracks` },
-            { fetchAction: fetchArtistSingles, clearAction: clearArtistSingles, endpoint: `artists/${id}/albums?include_groups=single&limit=50` },
-            { fetchAction: fetchArtistCompilation, clearAction: clearArtistCompilation, endpoint: `artists/${id}/albums?include_groups=compilation&limit=50` },
-            { fetchAction: fetchArtistAppearsOn, clearAction: clearArtistAppearsOn, endpoint: `artists/${id}/albums?include_groups=appears_on&limit=50` },
-        ]
+            { fetchAction: fetchArtistSingles, clearAction: clearArtistSingles, endpoint: `artists/${id}${albumGroupsEndpoint}=single&${groupLimit}` },
+            { fetchAction: fetchArtistCompilation, clearAction: clearArtistCompilation, endpoint: `artists/${id}${albumGroupsEndpoint}=compilation&${groupLimit}` },
+            { fetchAction: fetchArtistAppearsOn, clearAction: clearArtistAppearsOn, endpoint: `artists/${id}${albumGroupsEndpoint}=appears_on&${groupLimit}` },
+        ],
     );
 
-    if (isLoading) return <Main content={<>loading</>} />;
-    if (isError) return <Main content={<>error</>} />;
-    if (isInitial) return <Main content={<>Initial</>} />;
-    if (isSucces && images)
-        return (
-            <Main
-                banner={!type && (
-                    <Banner
-                        picture={pictureUrl}
-                        title={name}
-                        caption="Verified artist"
-                        metaDatas={`${followers?.total?.toLocaleString()} followers`}
-                        isArtistPictureStyle
-                    />)
-                }
-                content={
-                    <>
-                        <MainContent />
-                    </>
-                }
-            />
-        )
+    return (
+        <Main
+            fetchStatus={fetchStatus}
+            banner={!type && (
+                <Banner
+                    picture={pictureUrl}
+                    title={name}
+                    caption="Verified artist"
+                    metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                    isArtistPictureStyle
+                />)
+            }
+            content={<MainContent />}
+        />
+    )
 };
