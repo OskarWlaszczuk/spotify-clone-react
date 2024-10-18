@@ -11,6 +11,7 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
+import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
@@ -51,6 +52,9 @@ export const ArtistDetailsPage = () => {
             compilationsStatus,
             appearsOnStatus
         ],
+    );
+
+    useFetchAPI(
         [
             { fetchAction: fetchArtistDetails, clearAction: clearArtistDetails, endpoint: `artists/${id}/` },
             { fetchAction: fetchArtistAlbums, clearAction: clearArtistAlbums, endpoint: `artists/${id}${albumGroupsEndpoint}=album&${groupLimit}` },
