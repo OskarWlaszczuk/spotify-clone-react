@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import { initial, loading, success, error } from "../constants/fetchStatuses";
 import { checkFetchStatuses } from "../functions/checkFetchStatuses";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
-import { fetchAccessToken } from "../functions/fetchAccessToken";
 
-export const useFetchStatus = (fetchStatuses = [], fetchConfigs) => {
-    const { id } = useParams();
-    const dispatch = useDispatch();
-
+export const useFetchStatus = (fetchStatuses = []) => {
     const [fetchStatus, setFetchStatus] = useState(initial);
 
     useEffect(() => {
@@ -22,22 +16,6 @@ export const useFetchStatus = (fetchStatuses = [], fetchConfigs) => {
         if (isError) setFetchStatus(error);
         if (isSucces) setFetchStatus(success);
     }, [fetchStatuses]);
-
-    useEffect(() => {
-        const fetchAccessTokenAndData = async () => {
-            const accessToken = await fetchAccessToken();
-
-            fetchConfigs.forEach(({ fetchAction, endpoint }) => {
-                dispatch(fetchAction({ endpoint, accessToken }));
-            });
-        };
-
-        fetchAccessTokenAndData();
-
-        return () => {
-            fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
-        };
-    }, [dispatch, id]);
 
     return fetchStatus;
 };
