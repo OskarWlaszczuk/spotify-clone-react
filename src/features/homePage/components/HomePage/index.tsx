@@ -27,6 +27,6 @@ export const HomePage = () => {
     );
 
     return (
-        <Main fetchStatus={fetchStatus} content={<MainContent />} />
+        <Main useGradient fetchStatus={fetchStatus} content={<MainContent />} />
     );
 };
