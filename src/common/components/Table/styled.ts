@@ -35,7 +35,7 @@ export const Row = styled.tr`
     };
 `;
 
-export const Image = styled.img`
+export const RowImage = styled.img`
     width: 42px;
     height: 42px;
     border-radius: 5px;
