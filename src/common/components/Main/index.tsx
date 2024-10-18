@@ -5,17 +5,18 @@ import { error, loading, success } from "../../constants/fetchStatuses";
 interface MainProps {
     content: ReactElement;
     fetchStatus: string;
-    banner?: ReactElement | false;
-}
+    useGradient?: true | undefined;
+    bannerContent?: ReactElement | false;
+};
 
-export const Main = ({ content, banner, fetchStatus }: MainProps) => {
+export const Main = ({ content, bannerContent, fetchStatus, useGradient }: MainProps) => {
 
     switch (fetchStatus) {
         case success:
             return (
                 <MainSection>
-                    {banner}
-                    <MainContent $bannerAvailable={!!banner}>
+                    {bannerContent}
+                    <MainContent $gradientAvailable={useGradient || false} $bannerAvailable={!!bannerContent}>
                         {content}
                     </MainContent>
                 </MainSection>
