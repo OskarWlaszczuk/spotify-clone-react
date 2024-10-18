@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 
 interface MainContentprops {
     $bannerAvailable: boolean;
+    $gradientAvailable: boolean;
 }
 
 export const MainSection = styled.main`
@@ -20,4 +21,8 @@ export const MainContent = styled.div<MainContentprops>`
     ${({ $bannerAvailable }) => $bannerAvailable && css`
        border-radius: 0px;
     `};
+
+    ${({ $gradientAvailable }) => $gradientAvailable && css`
+        background: linear-gradient(180deg, rgba(40, 40, 40, 1) 0%, rgba(24, 20, 20, 1) 23%);
+    `}
 `;
