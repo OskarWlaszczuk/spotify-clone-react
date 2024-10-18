@@ -6,7 +6,7 @@ import { MediaItemData } from "../../interfaces/MediaItemData";
 interface TilesListProps {
     title: string | undefined;
     subExtraContent?: ReactElement;
-    hideRestListPart?: boolean;
+    hideRestListPart?: true | undefined;
     list: MediaItemData[] | undefined;
     renderItem: (list: MediaItemData, index: number) => ReactElement;
     fullListPathname?: string;
