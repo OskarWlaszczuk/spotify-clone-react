@@ -18,8 +18,17 @@ interface TileProps {
     isArtistPictureStyle?: boolean;
 };
 
-export const Tile = ({ picture, title, subInfo, toPage, isArtistPictureStyle, mouseEventHandlers, isActive }: TileProps) => (
-
+export const Tile = (
+    {
+        picture,
+        title,
+        subInfo,
+        toPage,
+        isArtistPictureStyle,
+        mouseEventHandlers,
+        isActive
+    }: TileProps
+) => (
     <Container
         to={toPage}
         onMouseEnter={mouseEventHandlers.enter}
