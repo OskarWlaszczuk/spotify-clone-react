@@ -22,7 +22,8 @@ import { matchFullListDataByType } from "../../../../common/functions/matchFullL
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { MediaItem } from "../../../../common/interfaces/MediaItem";
-import { ReleaseItem, TrackListItem } from "../../../../common/interfaces/TrackCollection";
+import { TrackListItem } from "../../../../common/interfaces/TrackCollection";
+import { ReleaseInfo } from "../../../../common/interfaces/ReleaseInfo";
 
 interface MainContentProps {
     name: string;
@@ -31,7 +32,7 @@ interface MainContentProps {
 export const MainContent = ({ name }: MainContentProps) => {
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
-    const sortFromOldestToNewest = (array: ReleaseItem[] = []): ReleaseItem[] => (
+    const sortFromOldestToNewest = (array: ReleaseInfo[] = []): ReleaseInfo[] => (
         [...array].sort(
             (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
         )
@@ -44,7 +45,7 @@ export const MainContent = ({ name }: MainContentProps) => {
             return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
         });
     };
-    const replaceReleaseDateIfCurrentYear = (listItem: ReleaseItem): ReleaseItem => {
+    const replaceReleaseDateIfCurrentYear = (listItem: ReleaseInfo): ReleaseInfo => {
         return isLatestReleased(listItem) ?
             { ...listItem, release_date: "Latest Release" } :
             listItem;
@@ -73,7 +74,7 @@ export const MainContent = ({ name }: MainContentProps) => {
 
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
-    const setNewestPopularReleaseItemFirstIfIsLatestRelease = (newestPopularReleaseItem: ReleaseItem) => (
+    const setNewestPopularReleaseItemFirstIfIsLatestRelease = (newestPopularReleaseItem: ReleaseInfo) => (
         isLatestReleased(newestPopularReleaseItem) ?
             [
                 { ...(newestPopularReleaseItem ?? {}) },
