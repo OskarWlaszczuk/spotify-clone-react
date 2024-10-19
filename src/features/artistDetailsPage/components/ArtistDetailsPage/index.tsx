@@ -13,6 +13,7 @@ import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { Details } from "../../../../common/interfaces/DetailsCollection";
+import { FetchStatus } from "../../../../common/types/FetchStatus";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
@@ -25,13 +26,14 @@ export const ArtistDetailsPage = () => {
     const { fetch: fetchArtistCompilation, clear: clearArtistCompilation } = artistCompilationActions;
     const { fetch: fetchArtistAppearsOn, clear: clearArtistAppearsOn } = artistAppearsOnActions;
 
-    const detailsStatus = useSelector(artistDetailsSelectors.selectStatus);
-    const appearsOnStatus = useSelector(artistAppearsOnSelectors.selectStatus);
-    const albumsStatus = useSelector(artistAlbumsSelectors.selectStatus);
-    const compilationsStatus = useSelector(artistCompilationSelectors.selectStatus);
-    const singlesStatus = useSelector(artistSinglesSelectors.selectStatus);
-    const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
-    const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
+    const detailsStatus: FetchStatus = useSelector(artistDetailsSelectors.selectStatus);
+    const appearsOnStatus: FetchStatus = useSelector(artistAppearsOnSelectors.selectStatus);
+    const albumsStatus: FetchStatus = useSelector(artistAlbumsSelectors.selectStatus);
+    const compilationsStatus: FetchStatus = useSelector(artistCompilationSelectors.selectStatus);
+    const singlesStatus: FetchStatus = useSelector(artistSinglesSelectors.selectStatus);
+    const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
+    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus)
+
     const details: Details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
     const name = details?.name;
