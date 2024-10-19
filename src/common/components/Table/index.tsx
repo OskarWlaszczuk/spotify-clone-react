@@ -4,7 +4,7 @@ import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
 import { getAlbumArtists } from "../../functions/getAlbumArtists";
 import { nanoid } from "nanoid";
-import { TrackListItem } from "../../interfaces/TrackListItemInterfaces";
+import { TrackListItem } from "../../interfaces/TrackCollection";
 
 interface TableProps {
     list: TrackListItem[];
