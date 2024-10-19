@@ -1,6 +1,10 @@
 import { Image } from "./Image";
 
-interface AlbumImage {
+export interface ReleaseItem {
+    release_date: string;
+};
+
+interface AlbumData extends ReleaseItem {
     images: Image[];
 };
 
@@ -12,5 +16,5 @@ export interface TrackListItem {
     name: string;
     duration_ms: number;
     artists: ArtistList[];
-    album: AlbumImage,
+    album: AlbumData,
 };
