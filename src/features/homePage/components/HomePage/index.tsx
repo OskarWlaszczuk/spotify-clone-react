@@ -5,8 +5,11 @@ import { artistsSelectors, artistsActions } from "../../slices/artistsSlice";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
+import { useParams } from "react-router-dom";
 
 export const HomePage = () => {
+    const { type } = useParams();
+
     const { fetch: fetchAlbums, clear: clearAlbums } = albumsActions;
     const { fetch: fetchArtists, clear: clearArtists } = artistsActions;
 
@@ -24,6 +27,6 @@ export const HomePage = () => {
     ]);
 
     return (
-        <Main useGradient fetchStatus={fetchStatus} content={<MainContent />} />
+        <Main useGradient={!type} fetchStatus={fetchStatus} content={<MainContent />} />
     );
 };
