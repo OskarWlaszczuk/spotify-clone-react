@@ -12,6 +12,7 @@ import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/a
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
+import { Details } from "../../../../common/interfaces/DetailsCollection";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
@@ -31,11 +32,10 @@ export const ArtistDetailsPage = () => {
     const singlesStatus = useSelector(artistSinglesSelectors.selectStatus);
     const relatedArtistsStatus = useSelector(relatedArtistsSelectors.selectStatus);
     const topTracksStatus = useSelector(artistTopTracksSelectors.selectStatus)
+    const details: Details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
-    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
     const name = details?.name;
     const followers = details?.followers;
-
     const images = details?.images;
     const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
 
