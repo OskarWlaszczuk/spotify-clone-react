@@ -13,7 +13,7 @@ import { artistCompilationSelectors } from "../../slices/artistCompilationSlice"
 import { getYear } from "../../../../common/functions/getYear";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { isLatestReleased } from "../../../../common/functions/isLatestReleased";
-import { isEmpty } from "../../../../common/functions/isEmpty";
+import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { isMatch } from "../../../../common/functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
@@ -23,21 +23,16 @@ import { matchFullListDataByType } from "../../../../common/functions/matchFullL
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
-import { TrackListItem } from "../../../../common/interfaces/TrackListItemInterfaces";
+import { ReleaseItem, TrackListItem } from "../../../../common/interfaces/TrackListItemInterfaces";
 
 export const MainContent = () => {
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
-    interface ReleaseItem {
-        release_date: string;
-    };
-
-    const sortFromOldestToNewest = (array: ReleaseItem[] = []): ReleaseItem[] => {
-        return [...array].sort(
+    const sortFromOldestToNewest = (array: ReleaseItem[] = []): ReleaseItem[] => (
+        [...array].sort(
             (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
-        );
-    };
-
+        )
+    );
     const removeDuplicates = (list: MediaItemData[] = []): MediaItemData[] => {
         const caughtDuplicates = new Set();
 
@@ -46,7 +41,6 @@ export const MainContent = () => {
             return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
         });
     };
-
     const replaceReleaseDateIfCurrentYear = (listItem: ReleaseItem): ReleaseItem => {
         return isLatestReleased(listItem) ?
             { ...listItem, release_date: "Latest Release" } :
@@ -65,19 +59,19 @@ export const MainContent = () => {
     const relatedArtistsParam = "related";
     const artistAppearsOnParam = "appears-on";
 
-    const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
-    const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
-    const compilations = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
-    const singles = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
-    const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
-    const topTracks = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
+    const appearsOn: MediaItemData[] = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
+    const albums: MediaItemData[] = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
+    const compilations: MediaItemData[] = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
+    const singles: MediaItemData[] = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
+    const relatedArtists: MediaItemData[] = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
+    const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
     const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
     const popularReleases = topTracks?.map(({ album }: TrackListItem) => album);
+    console.log(details);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
     const setNewestPopularReleaseItemFirstIfIsLatestRelease = (newestPopularReleaseItem: ReleaseItem) => (
-        //wartość do zwrócenia
         isLatestReleased(newestPopularReleaseItem) ?
             [
                 { ...(newestPopularReleaseItem ?? {}) },
@@ -150,7 +144,7 @@ export const MainContent = () => {
                             subExtraContent={
                                 <>
                                     {
-                                        isEmpty(popularReleases) && (
+                                        isNotEmpty([popularReleases]) && (
                                             <ListToggleButton
                                                 toggleList={() => setCurrentCategoryData({
                                                     category: popularReleasesCategory,
@@ -162,7 +156,7 @@ export const MainContent = () => {
                                         )
                                     }
                                     {
-                                        isEmpty(albums) && (
+                                        isNotEmpty(albums) && (
                                             <ListToggleButton
                                                 toggleList={() => setCurrentCategoryData({
                                                     category: albumsCategory,
@@ -174,7 +168,7 @@ export const MainContent = () => {
                                         )
                                     }
                                     {
-                                        isEmpty(singles) && (
+                                        isNotEmpty(singles) && (
                                             <ListToggleButton
                                                 toggleList={() => setCurrentCategoryData({
                                                     category: singlesCategory,
@@ -186,7 +180,7 @@ export const MainContent = () => {
                                         )
                                     }
                                     {
-                                        isEmpty(compilations) && (
+                                        isNotEmpty(compilations) && (
                                             <ListToggleButton
                                                 toggleList={() => setCurrentCategoryData({
                                                     category: compilationsCategory,
