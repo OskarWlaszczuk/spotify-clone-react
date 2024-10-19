@@ -1,10 +1,10 @@
 import { DataByGroup } from "../interfaces/DataByGroup";
-import { MediaItemData } from "../interfaces/MediaItemData";
+import { MediaItem } from "../interfaces/MediaItem";
 import { findMatchingValueByKey } from "./findMatchingValueByKey";
 
 interface MatchFullListDataByTypeReturnValues {
     fullListTitle: string | undefined;
-    fullListContent: MediaItemData[] | undefined;
+    fullListContent: MediaItem[] | undefined;
     isFullListArtistsList: boolean | undefined;
 };
 
