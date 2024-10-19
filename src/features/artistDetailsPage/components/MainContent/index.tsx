@@ -17,7 +17,6 @@ import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { isMatch } from "../../../../common/functions/isMatch";
 import { artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
-import { artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";
@@ -25,7 +24,11 @@ import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
 import { ReleaseItem, TrackListItem } from "../../../../common/interfaces/TrackListItemInterfaces";
 
-export const MainContent = () => {
+interface MainContentProps {
+    name: string;
+};
+
+export const MainContent = ({ name }: MainContentProps) => {
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
     const sortFromOldestToNewest = (array: ReleaseItem[] = []): ReleaseItem[] => (
@@ -65,10 +68,9 @@ export const MainContent = () => {
     const singles: MediaItemData[] = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
     const relatedArtists: MediaItemData[] = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
-    const details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
     const popularReleases = topTracks?.map(({ album }: TrackListItem) => album);
-    console.log(details);
+
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
 
     const setNewestPopularReleaseItemFirstIfIsLatestRelease = (newestPopularReleaseItem: ReleaseItem) => (
@@ -110,7 +112,7 @@ export const MainContent = () => {
             {
                 type ?
                     <TilesList
-                        title={fullListTitle || details.name}
+                        title={fullListTitle || name}
                         list={listToDisplay}
                         renderItem={
                             (({ id, name, images, album_type = "" }: MediaItemData, index: number) => (
