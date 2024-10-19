@@ -21,8 +21,8 @@ import { findMatchingValueByKey } from "../../../../common/functions/findMatchin
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
-import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
-import { ReleaseItem, TrackListItem } from "../../../../common/interfaces/TrackListItemInterfaces";
+import { MediaItem } from "../../../../common/interfaces/MediaItem";
+import { ReleaseItem, TrackListItem } from "../../../../common/interfaces/TrackCollection";
 
 interface MainContentProps {
     name: string;
@@ -36,7 +36,7 @@ export const MainContent = ({ name }: MainContentProps) => {
             (a, b) => Number(new Date(b.release_date)) - Number(new Date(a.release_date))
         )
     );
-    const removeDuplicates = (list: MediaItemData[] = []): MediaItemData[] => {
+    const removeDuplicates = (list: MediaItem[] = []): MediaItem[] => {
         const caughtDuplicates = new Set();
 
         return list.filter(({ name }) => {
@@ -62,11 +62,11 @@ export const MainContent = ({ name }: MainContentProps) => {
     const relatedArtistsParam = "related";
     const artistAppearsOnParam = "appears-on";
 
-    const appearsOn: MediaItemData[] = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
-    const albums: MediaItemData[] = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
-    const compilations: MediaItemData[] = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
-    const singles: MediaItemData[] = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
-    const relatedArtists: MediaItemData[] = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
+    const appearsOn: MediaItem[] = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
+    const albums: MediaItem[] = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
+    const compilations: MediaItem[] = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
+    const singles: MediaItem[] = useSelector(artistSinglesSelectors.selectDatas)?.datas.items;
+    const relatedArtists: MediaItem[] = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
 
     const popularReleases = topTracks?.map(({ album }: TrackListItem) => album);
@@ -115,7 +115,7 @@ export const MainContent = ({ name }: MainContentProps) => {
                         title={fullListTitle || name}
                         list={listToDisplay}
                         renderItem={
-                            (({ id, name, images, album_type = "" }: MediaItemData, index: number) => (
+                            (({ id, name, images, album_type = "" }: MediaItem, index: number) => (
                                 <Tile
                                     isActive={isTileActive(index, 0)}
                                     mouseEventHandlers={{

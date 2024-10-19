@@ -1,14 +1,14 @@
 import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink, ExtraSubContentSection } from "./styled";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 import { ReactElement } from "react";
-import { MediaItemData } from "../../interfaces/MediaItemData";
+import { MediaItem } from "../../interfaces/MediaItem";
 
 interface TilesListProps {
     title: string | undefined;
     subExtraContent?: ReactElement;
     hideRestListPart?: true | undefined;
-    list: MediaItemData[] | undefined;
-    renderItem: (list: MediaItemData, index: number) => ReactElement;
+    list: MediaItem[] | undefined;
+    renderItem: (list: MediaItem, index: number) => ReactElement;
     fullListPathname?: string;
 };
 
@@ -27,8 +27,8 @@ export const TilesList = ({
     const previewList = list?.slice(0, tilesPerRow);
     const fullList = list;
 
-    const iterateOnList = (list: MediaItemData[]) => (
-        list.map((item: MediaItemData, index: number) =>
+    const iterateOnList = (list: MediaItem[]) => (
+        list.map((item: MediaItem, index: number) =>
             renderItem(item, index)
         )
     );

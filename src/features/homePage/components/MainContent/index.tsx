@@ -9,7 +9,7 @@ import { matchFullListDataByType } from "../../../../common/functions/matchFullL
 import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
-import { MediaItemData } from "../../../../common/interfaces/MediaItemData";
+import { MediaItem } from "../../../../common/interfaces/MediaItem";
 
 export const MainContent = () => {
     const { type = "" } = useParams<{ type: string }>();
@@ -68,7 +68,7 @@ export const MainContent = () => {
                             title={popularAlbumsTitle}
                             list={popularAlbums}
                             renderItem={
-                                (({ id, images, name, artists = [] }: MediaItemData, index) => (
+                                (({ id, images, name, artists = [] }: MediaItem, index) => (
                                     <Tile
                                         isActive={isTileActive(index, 1)}
                                         mouseEventHandlers={{
