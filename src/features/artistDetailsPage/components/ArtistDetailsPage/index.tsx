@@ -78,7 +78,7 @@ export const ArtistDetailsPage = () => {
                     isArtistPictureStyle
                 />)
             }
-            content={<MainContent />}
+            content={<MainContent name={name} />}
         />
     )
 };
