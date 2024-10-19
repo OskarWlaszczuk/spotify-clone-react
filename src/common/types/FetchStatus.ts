@@ -1,0 +1,1 @@
+export type FetchStatus = 'initial' | 'loading' | 'success' | 'error';
