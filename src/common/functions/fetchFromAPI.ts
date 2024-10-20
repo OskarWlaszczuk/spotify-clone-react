@@ -16,6 +16,7 @@ export const fetchFromAPI = async ({ endpoint, accessToken }: APIFetchParams) =>
                 }
             }
             );
+
         return response.data;
     } catch (error: any) {
         console.log(error)
