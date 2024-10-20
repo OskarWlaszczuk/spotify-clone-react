@@ -8,7 +8,7 @@ interface MatchFullListDataByTypeReturnValues {
     isFullListArtistsList: boolean | undefined;
 };
 
-export const matchFullListDataByType = (fullListsDatasOptions: DataByGroup[], type: string): MatchFullListDataByTypeReturnValues => {
+export const matchFullListDataByType = (fullListsDatasOptions: DataByGroup<MediaItem[] | undefined>[], type: string): MatchFullListDataByTypeReturnValues => {
 
     const matchedFullListDataByType = findMatchingValueByKey(fullListsDatasOptions, type);
 
