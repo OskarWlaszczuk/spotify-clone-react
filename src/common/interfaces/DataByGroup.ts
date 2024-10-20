@@ -1,6 +1,6 @@
-export interface DataByGroup {
+export interface DataByGroup<ValueType> {
     key: string;
-    value: any;
+    value: ValueType;
     title?: string;
     isArtistsList?: boolean;
 };
