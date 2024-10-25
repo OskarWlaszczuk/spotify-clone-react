@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
 import { toArtist } from "../../functions/routes";
+import { StyledDiscIcon } from "../StyledDiscIcon";
 
 interface TableProps {
     list: TrackListItem[];
@@ -53,53 +54,92 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                         )
                     }
                     {
-                        discsNumbers?.map(discNumber => {
-                            return (
-                                <>
-                                    <DiscNumberContainer>Disc {discNumber}</DiscNumberContainer>
-                                    {
-                                        list
-                                            .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
-                                            .filter(({ disc_number }) => disc_number === discNumber)
-                                            .map(({ album, name, duration_ms, artists }, index: number) => (
-                                                <>
-                                                    <ContentRow
-                                                        key={nanoid()}
-                                                        onMouseEnter={() => handleOnRowMouseEnter(index)}
-                                                        onMouseLeave={handleOnRowMouseLeave}
-                                                    >
-                                                        <TrackOverview rowSpan={useAlbumView ? 2 : 1}>
-                                                            <Index
-                                                                scope="row"
-                                                                title={`Play ${name} by ${getAlbumArtists(artists)}`}
-                                                            >
-                                                                {activeIndex === index ? <StyledPlayIcon /> : index + 1}
-                                                            </Index>
-                                                            {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
-                                                            <TrackDetailsWrapper>
-                                                                <TrackName
-                                                                // $isEllipsis={isEllipsis}
-                                                                // ref={(el) => refs.current[index] = el}
+                        discsNumbers && discsNumbers.length > 1 ?
+                            discsNumbers?.map(discNumber => {
+                                return (
+                                    <>
+                                        <DiscNumberContainer><StyledDiscIcon /> Disc {discNumber}</DiscNumberContainer>
+                                        {
+                                            list
+                                                .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
+                                                .filter(({ disc_number }) => disc_number === discNumber)
+                                                .map(({ album, name, duration_ms, artists }, index: number) => (
+                                                    <>
+                                                        <ContentRow
+                                                            key={nanoid()}
+                                                            onMouseEnter={() => handleOnRowMouseEnter(index)}
+                                                            onMouseLeave={handleOnRowMouseLeave}
+                                                        >
+                                                            <TrackOverview rowSpan={useAlbumView ? 2 : 1}>
+                                                                <Index
+                                                                    scope="row"
+                                                                    title={`Play ${name} by ${getAlbumArtists(artists)}`}
                                                                 >
-                                                                    {name}
-                                                                </TrackName>
-                                                                {useAlbumView && (
-                                                                    <TrackArtists>{artists?.map(({ name, id }, artistIndex) => (
-                                                                        <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{artistIndex !== 0 && ","}{name}</ArtistName>
-                                                                    ))}
-                                                                    </TrackArtists>)
-                                                                }
-                                                            </TrackDetailsWrapper>
-                                                        </TrackOverview>
-                                                        <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
-                                                    </ContentRow>
-                                                </>
-                                            ))
-                                    }
-                                </>
-                            )
-                        })
+                                                                    {activeIndex === index ? <StyledPlayIcon /> : index + 1}
+                                                                </Index>
+                                                                {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
+                                                                <TrackDetailsWrapper>
+                                                                    <TrackName
+                                                                    // $isEllipsis={isEllipsis}
+                                                                    // ref={(el) => refs.current[index] = el}
+                                                                    >
+                                                                        {name}
+                                                                    </TrackName>
+                                                                    {useAlbumView && (
+                                                                        <TrackArtists>{artists?.map(({ name, id }, artistIndex) => (
+                                                                            <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{artistIndex !== 0 && ","}{name}</ArtistName>
+                                                                        ))}
+                                                                        </TrackArtists>)
+                                                                    }
+                                                                </TrackDetailsWrapper>
+                                                            </TrackOverview>
+                                                            <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
+                                                        </ContentRow>
+                                                    </>
+                                                ))
+                                        }
+                                    </>
+                                )
+                            }) :
+
+                            list
+                                .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
+                                .map(({ album, name, duration_ms, artists }, index: number) => (
+                                    <>
+                                        <ContentRow
+                                            key={nanoid()}
+                                            onMouseEnter={() => handleOnRowMouseEnter(index)}
+                                            onMouseLeave={handleOnRowMouseLeave}
+                                        >
+                                            <TrackOverview rowSpan={useAlbumView ? 2 : 1}>
+                                                <Index
+                                                    scope="row"
+                                                    title={`Play ${name} by ${getAlbumArtists(artists)}`}
+                                                >
+                                                    {activeIndex === index ? <StyledPlayIcon /> : index + 1}
+                                                </Index>
+                                                {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
+                                                <TrackDetailsWrapper>
+                                                    <TrackName
+                                                    // $isEllipsis={isEllipsis}
+                                                    // ref={(el) => refs.current[index] = el}
+                                                    >
+                                                        {name}
+                                                    </TrackName>
+                                                    {useAlbumView && (
+                                                        <TrackArtists>{artists?.map(({ name, id }, artistIndex) => (
+                                                            <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{artistIndex !== 0 && ","}{name}</ArtistName>
+                                                        ))}
+                                                        </TrackArtists>)
+                                                    }
+                                                </TrackDetailsWrapper>
+                                            </TrackOverview>
+                                            <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
+                                        </ContentRow>
+                                    </>
+                                ))
                     }
+
                 </tbody>
             </StyledTable>
             {
