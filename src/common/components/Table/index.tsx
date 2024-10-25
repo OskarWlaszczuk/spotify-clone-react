@@ -43,16 +43,18 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
         <Wrapper>
             <StyledTable>
                 {!useAlbumView && <Caption>Popular</Caption>}
-                <tbody>
-                    {
-                        useAlbumView && (
+                {
+                    useAlbumView && (
+                        <thead>
                             <HeaderRow>
                                 <Header $larger scope="col">#</Header>
                                 <Header scope="col">Title</Header>
                                 <Header scope="col"><StyledTimer /></Header>
                             </HeaderRow>
-                        )
-                    }
+                        </thead>
+                    )
+                }
+                <tbody>
                     {
                         discsNumbers && discsNumbers.length > 1 ?
                             discsNumbers?.map(discNumber => {
@@ -139,7 +141,6 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                     </>
                                 ))
                     }
-
                 </tbody>
             </StyledTable>
             {
@@ -149,6 +150,6 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                     </ToggleViewButton>
                 )
             }
-        </Wrapper>
+        </Wrapper >
     );
 };
