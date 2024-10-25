@@ -1,17 +1,21 @@
-import { RowImage, Row, StyledTable, Caption, TrackOverview, RowIndex, TrackName, TrackDuration, Wrapper } from "./styled";
+import { Image, ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer } from "./styled";
 import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
 import { getAlbumArtists } from "../../functions/getAlbumArtists";
 import { nanoid } from "nanoid";
 import { TrackListItem } from "../../interfaces/TrackCollection";
+import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
+import { toArtist } from "../../functions/routes";
 
 interface TableProps {
     list: TrackListItem[];
+    discsNumbers?: number[];
+    useAlbumView?: boolean;
 };
 
-export const Table = ({ list }: TableProps) => {
-    const [hideRestTracks, setHideRestTracks] = useState<boolean>(true);
+export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
+    const [hideRestTracks, setHideRestTracks] = useState<boolean>(!useAlbumView);
     const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
     const handleOnRowMouseEnter = (trackIndex: number): void => setActiveIndex(list.findIndex((_, index: number) => index === trackIndex));
@@ -37,45 +41,74 @@ export const Table = ({ list }: TableProps) => {
     return (
         <Wrapper>
             <StyledTable>
-                {list && (
-                    <>
-                        <Caption>Popular</Caption>
-                        <tbody>
-                            {
-                                list
-                                    .filter((_, index) => (hideRestTracks ? index < 5 : index <= 10))
-                                    .map(({ album, name, duration_ms, artists }, index: number) => (
-                                        <Row
-                                            key={nanoid()}
-                                            onMouseEnter={() => handleOnRowMouseEnter(index)}
-                                            onMouseLeave={handleOnRowMouseLeave}
-                                        >
-                                            <TrackOverview>
-                                                <RowIndex
-                                                    scope="row"
-                                                    title={`Play ${name} by ${getAlbumArtists(artists)}`}
-                                                >
-                                                    {activeIndex === index ? <StyledPlayIcon /> : index + 1}
-                                                </RowIndex>
-                                                <td><RowImage src={album.images[0].url} /></td>
-                                                <TrackName
-                                                // $isEllipsis={isEllipsis}
-                                                // ref={(el) => refs.current[index] = el}
-                                                >
-                                                    {name}
-                                                </TrackName>
-                                            </TrackOverview>
-                                            <TrackDuration>{(duration_ms / 60000).toFixed(2).replace(".", ":")}</TrackDuration>
-                                        </Row>
-                                    ))
-                            }
-                        </tbody>
-                    </>
-                )}
+                {!useAlbumView && <Caption>Popular</Caption>}
+                <tbody>
+                    {
+                        useAlbumView && (
+                            <HeaderRow>
+                                <Header $larger scope="col">#</Header>
+                                <Header scope="col">Title</Header>
+                                <Header scope="col"><StyledTimer /></Header>
+                            </HeaderRow>
+                        )
+                    }
+                    {
+                        discsNumbers?.map(discNumber => {
+                            return (
+                                <>
+                                    <DiscNumberContainer>Disc {discNumber}</DiscNumberContainer>
+                                    {
+                                        list
+                                            .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
+                                            .filter(({ disc_number }) => disc_number === discNumber)
+                                            .map(({ album, name, duration_ms, artists }, index: number) => (
+                                                <>
+                                                    <ContentRow
+                                                        key={nanoid()}
+                                                        onMouseEnter={() => handleOnRowMouseEnter(index)}
+                                                        onMouseLeave={handleOnRowMouseLeave}
+                                                    >
+                                                        <TrackOverview rowSpan={useAlbumView ? 2 : 1}>
+                                                            <Index
+                                                                scope="row"
+                                                                title={`Play ${name} by ${getAlbumArtists(artists)}`}
+                                                            >
+                                                                {activeIndex === index ? <StyledPlayIcon /> : index + 1}
+                                                            </Index>
+                                                            {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
+                                                            <TrackDetailsWrapper>
+                                                                <TrackName
+                                                                // $isEllipsis={isEllipsis}
+                                                                // ref={(el) => refs.current[index] = el}
+                                                                >
+                                                                    {name}
+                                                                </TrackName>
+                                                                {useAlbumView && (
+                                                                    <TrackArtists>{artists?.map(({ name, id }, artistIndex) => (
+                                                                        <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{artistIndex !== 0 && ","}{name}</ArtistName>
+                                                                    ))}
+                                                                    </TrackArtists>)
+                                                                }
+                                                            </TrackDetailsWrapper>
+                                                        </TrackOverview>
+                                                        <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
+                                                    </ContentRow>
+                                                </>
+                                            ))
+                                    }
+                                </>
+                            )
+                        })
+                    }
+                </tbody>
             </StyledTable>
-            <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
-                See {hideRestTracks ? <>more</> : <>less</>}
-            </ToggleViewButton>
+            {
+                !useAlbumView && (
+                    <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
+                        See {hideRestTracks ? <>more</> : <>less</>}
+                    </ToggleViewButton>
+                )
+            }
         </Wrapper>
     );
 };
