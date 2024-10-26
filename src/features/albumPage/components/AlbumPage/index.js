@@ -27,10 +27,10 @@ export const AlbumPage = () => {
     const { id: albumID } = useParams();
     const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
 
-    const [albumArtistDatas, setAlbumArtistDatas] = useState({ image: undefined, name: undefined, restArtistAlbumsList: undefined });
-    const { name: artistName, image: artistImage, restArtistAlbumsList } = albumArtistDatas;
+    const [artistDatasFetchStatus, setAlbumArtistDatasFetchStatus] = useState(initial);
+    const [artistDatas, setArtistDatas] = useState({ image: undefined, name: undefined, restArtistAlbumsList: undefined });
 
-    const [albumArtistDatasFetchStatus, setAlbumArtistDatasFetchStatus] = useState(initial);
+    const { name: artistName, image: artistImage, restArtistAlbumsList } = artistDatas;
 
     const removeDuplicates = (list = []) => {
         const caughtDuplicates = new Set();
@@ -44,31 +44,29 @@ export const AlbumPage = () => {
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
     const albumDetailsList = useSelector(albumDetailsSelectors.selectDatas)?.datas;
 
-    const fetchStatus = useFetchStatus([albumDetailsStatus, albumArtistDatasFetchStatus]);
-
     useFetchAPI([{ fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` }]);
 
-    const artistsList = albumDetailsList?.artists;
-    const artistID = artistsList?.map(({ id }) => id)[0];
-    const isArtistsListLengthEqualsOne = artistsList?.length === 1;
+    const albumArtistsList = albumDetailsList?.artists;
+    const albumArtistID = albumArtistsList?.map(({ id }) => id)[0];
+    const isAlbumArtistsListLengthEqualsOne = albumArtistsList?.length === 1;
 
     const albumImage = albumDetailsList?.images[0].url;
     const albumName = albumDetailsList?.name;
     const albumType = albumDetailsList?.album_type;
     const albumReleaseDate = getYear(albumDetailsList?.release_date);
 
-    const totalTracks = albumDetailsList?.total_tracks;
-    const tracks = albumDetailsList?.tracks.items;
-    const trackDiscNumbers = removeDuplicates(tracks?.map(({ disc_number }) => disc_number));
+    const albumTotalTracks = albumDetailsList?.total_tracks;
+    const albumTracks = albumDetailsList?.tracks.items;
+    const albumTrackDiscNumbers = removeDuplicates(albumTracks?.map(({ disc_number }) => disc_number));
 
-    const tracksDurations = tracks?.map(({ duration_ms }) => duration_ms);
-    const totalDuration = fromMillisecondsToMinutes(tracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
-    const totalDurationConverted = totalDuration >= 60 ? convertMinutesToHours(totalDuration) : convertToMinutesAndSeconds(totalDuration);
+    const albumTracksDurations = albumTracks?.map(({ duration_ms }) => duration_ms);
+    const albumTotalDuration = fromMillisecondsToMinutes(albumTracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
+    const albumTotalDurationConverted = albumTotalDuration >= 60 ? convertMinutesToHours(albumTotalDuration) : convertToMinutesAndSeconds(albumTotalDuration);
 
-    const metaDatasContent = [albumReleaseDate, `${totalTracks} songs, ${totalDurationConverted}`].join(" • ");
-    const subTitleContent = artistsList?.map(({ name, id }, index) => (
+    const metaDatasContent = [albumReleaseDate, `${albumTotalTracks} songs, ${albumTotalDurationConverted}`].join(" • ");
+    const subTitleContent = albumArtistsList?.map(({ name, id }, index) => (
         <>
-            {isArtistsListLengthEqualsOne && (
+            {isAlbumArtistsListLengthEqualsOne && (
                 <AvatarImage
                     src={artistImage}
                     alt={name}
@@ -87,11 +85,11 @@ export const AlbumPage = () => {
                 const accessToken = await fetchAccessToken();
 
                 const response = await Promise.all([
-                    fetchFromAPI({ endpoint: `artists?ids=${artistID}`, accessToken }),
-                    fetchFromAPI({ endpoint: `artists/${artistID}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation`, accessToken })
+                    fetchFromAPI({ endpoint: `artists?ids=${albumArtistID}`, accessToken }),
+                    fetchFromAPI({ endpoint: `artists/${albumArtistID}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation`, accessToken })
                 ]);
                 console.log(response)
-                setAlbumArtistDatas({ image: response[0].artists[0].images[0].url, name: response[0].artists[0].name, restArtistAlbumsList: response[1] });
+                setArtistDatas({ image: response[0].artists[0].images[0].url, name: response[0].artists[0].name, restArtistAlbumsList: response[1] });
                 setAlbumArtistDatasFetchStatus(success);
 
             } catch {
@@ -103,9 +101,11 @@ export const AlbumPage = () => {
             fetchArtistsDetails();
         }
         setAlbumArtistDatasFetchStatus(loading)
+        
     }, [albumDetailsList]);
 
     const { setActiveTile, isTileActive } = useActiveTile();
+    const fetchStatus = useFetchStatus([albumDetailsStatus, artistDatasFetchStatus]);
 
     return (
         <Main
@@ -121,7 +121,7 @@ export const AlbumPage = () => {
             }
             content={
                 <>
-                    <Table list={tracks} useAlbumView discsNumbers={trackDiscNumbers} />
+                    <Table list={albumTracks} useAlbumView discsNumbers={albumTrackDiscNumbers} />
                     <TilesList
                         title={<>More by {artistName}</>}
                         hideRestListPart
