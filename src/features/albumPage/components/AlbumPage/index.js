@@ -21,6 +21,7 @@ import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
+import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 
 export const AlbumPage = () => {
 
@@ -88,10 +89,9 @@ export const AlbumPage = () => {
                     fetchFromAPI({ endpoint: `artists?ids=${albumArtistID}`, accessToken }),
                     fetchFromAPI({ endpoint: `artists/${albumArtistID}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation`, accessToken })
                 ]);
-                console.log(response)
+
                 setArtistDatas({ image: response[0].artists[0].images[0].url, name: response[0].artists[0].name, restArtistAlbumsList: response[1] });
                 setAlbumArtistDatasFetchStatus(success);
-
             } catch {
                 setAlbumArtistDatasFetchStatus(error);
             }
@@ -101,12 +101,12 @@ export const AlbumPage = () => {
             fetchArtistsDetails();
         }
         setAlbumArtistDatasFetchStatus(loading)
-        
+
     }, [albumDetailsList]);
 
     const { setActiveTile, isTileActive } = useActiveTile();
     const fetchStatus = useFetchStatus([albumDetailsStatus, artistDatasFetchStatus]);
-
+    console.log(restArtistAlbumsList?.items)
     return (
         <Main
             fetchStatus={fetchStatus}
@@ -122,35 +122,39 @@ export const AlbumPage = () => {
             content={
                 <>
                     <Table list={albumTracks} useAlbumView discsNumbers={albumTrackDiscNumbers} />
-                    <TilesList
-                        title={<>More by {artistName}</>}
-                        hideRestListPart
-                        list={restArtistAlbumsList?.items}
-                        renderItem={
-                            (({ id, images, name, artists = [] }, index) => (
-                                <Tile
-                                    isActive={isTileActive(index, 1)}
-                                    mouseEventHandlers={{
-                                        enter: () => setActiveTile({
-                                            activeTileIndex: index,
-                                            activeTilesListID: 1,
-                                        }),
-                                        leave: () => setActiveTile({
-                                            activeTileIndex: undefined,
-                                            activeTilesListID: undefined,
-                                        }),
-                                    }}
-                                    key={id}
-                                    picture={images[0].url}
-                                    title={name}
-                                    subInfo={getAlbumArtists(artists)}
-                                    toPage={toAlbum({ id })}
-                                />
-                            )
-                            )
-                        }
-                    // fullListPathname={toAlbum({ additionalPath: popularAlbumsParam })}
-                    />
+                    {
+                        isNotEmpty(restArtistAlbumsList?.items) && (
+                            <TilesList
+                                title={<>More by {artistName}</>}
+                                hideRestListPart
+                                list={restArtistAlbumsList?.items.filter(({ name }) => name !== albumName)}
+                                renderItem={
+                                    (({ id, images, name, artists = [] }, index) => (
+                                        <Tile
+                                            isActive={isTileActive(index, 1)}
+                                            mouseEventHandlers={{
+                                                enter: () => setActiveTile({
+                                                    activeTileIndex: index,
+                                                    activeTilesListID: 1,
+                                                }),
+                                                leave: () => setActiveTile({
+                                                    activeTileIndex: undefined,
+                                                    activeTilesListID: undefined,
+                                                }),
+                                            }}
+                                            key={id}
+                                            picture={images[0].url}
+                                            title={name}
+                                            subInfo={getAlbumArtists(artists)}
+                                            toPage={toAlbum({ id })}
+                                        />
+                                    )
+                                    )
+                                }
+                            // fullListPathname={toAlbum({ additionalPath: popularAlbumsParam })}
+                            />
+                        )
+                    }
                 </>
             }
         />
