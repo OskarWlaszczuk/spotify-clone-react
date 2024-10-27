@@ -1,4 +1,4 @@
-import { Image, ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer } from "./styled";
+import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer } from "./styled";
 import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
@@ -8,6 +8,7 @@ import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
 import { toArtist } from "../../functions/routes";
 import { StyledDiscIcon } from "../StyledDiscIcon";
+import { AvatarImage } from "../AvatarImage";
 
 interface TableProps {
     list: TrackListItem[];
@@ -21,7 +22,6 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
 
     const handleOnRowMouseEnter = (trackIndex: number): void => setActiveIndex(list.findIndex((_, index: number) => index === trackIndex));
     const handleOnRowMouseLeave = (): void => setActiveIndex(undefined);
-
     // const refs = useRef([]);
     // useEffect(() => {
     //     const checkEllipsis = () => {
@@ -46,7 +46,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                 {
                     useAlbumView && (
                         <thead>
-                            <HeaderRow>
+                            <HeaderRow $albumViewNotAvailable={!!useAlbumView}>
                                 <Header $larger scope="col">#</Header>
                                 <Header scope="col">Title</Header>
                                 <Header scope="col"><StyledTimer /></Header>
@@ -62,8 +62,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                     <>
                                         <DiscNumberContainer><StyledDiscIcon /> Disc {discNumber}</DiscNumberContainer>
                                         {
-                                            list
-                                                .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
+                                            list?.filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView ? index >= 0 : index <= 10))
                                                 .filter(({ disc_number }) => disc_number === discNumber)
                                                 .map(({ album, name, duration_ms, artists }, index: number) => (
                                                     <>
@@ -79,7 +78,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                                                 >
                                                                     {activeIndex === index ? <StyledPlayIcon /> : index + 1}
                                                                 </Index>
-                                                                {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
+                                                                {!useAlbumView && <td><AvatarImage src={album.images[0].url} /></td>}
                                                                 <TrackDetailsWrapper>
                                                                     <TrackName
                                                                     // $isEllipsis={isEllipsis}
@@ -103,9 +102,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                     </>
                                 )
                             }) :
-
-                            list
-                                .filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
+                            list?.filter((_, index) => (hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10))
                                 .map(({ album, name, duration_ms, artists }, index: number) => (
                                     <>
                                         <ContentRow
@@ -120,7 +117,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                                 >
                                                     {activeIndex === index ? <StyledPlayIcon /> : index + 1}
                                                 </Index>
-                                                {!useAlbumView && <td><Image src={album.images[0].url} /></td>}
+                                                {!useAlbumView && <td><AvatarImage src={album.images[0].url} /></td>}
                                                 <TrackDetailsWrapper>
                                                     <TrackName
                                                     // $isEllipsis={isEllipsis}
