@@ -1,16 +1,16 @@
 import styled, { css } from "styled-components";
 
-interface MainContentprops {
+interface MainContentProps {
     $bannerAvailable: boolean;
     $gradientAvailable: boolean;
-}
+};
 
 export const MainSection = styled.main`
     grid-area: main;
     overflow: hidden;
 `;
 
-export const MainContent = styled.div<MainContentprops>`
+export const MainContent = styled.div<MainContentProps>`
     background-color: ${({ theme }) => theme.colors.black};
     width: 100%;
     border-radius: 10px;
@@ -23,6 +23,6 @@ export const MainContent = styled.div<MainContentprops>`
     `};
 
     ${({ $gradientAvailable }) => $gradientAvailable && css`
-        background: linear-gradient(180deg, rgba(40, 40, 40, 1) 0%, rgba(24, 20, 20, 1) 23%);
+        background: linear-gradient(180deg, rgba(40, 40, 40, 1) 0%, #201e1e 23%);
     `}
 `;
