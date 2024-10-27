@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -6,10 +7,11 @@ export const Container = styled.div`
     grid-template-columns: 204px 1fr;
     border-radius: 10px 10px 0 0;
     padding: 20px;
-    background-color: #58666d;
+    background-color: #878787;
     position: relative;
-    box-shadow: 0 4px 58px 35px #58666da3;
+    box-shadow: 0 4px 58px 35px #87878775;
     z-index: 2;
+    align-items: end;
 `;
 
 export const Details = styled.div`
@@ -18,8 +20,8 @@ export const Details = styled.div`
 `;
 
 export const Title = styled.h1`
-    margin: 12px 0;
-    font-size: 64px;
+    margin: 0;
+    font-size: 32px;
     font-weight: 900;
 `;
 
@@ -30,6 +32,10 @@ export const Caption = styled.p`
 
 `;
 
-export const MetaDatas = styled.p`
+export const SubTitleContent = styled.p`
+    
+`;
+
+export const MetaDatas = styled.span`
     margin: 0;
 `;
