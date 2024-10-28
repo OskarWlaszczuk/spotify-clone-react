@@ -1,3 +1,4 @@
-export interface ArtistName {
-    name: string
+export interface ArtistData {
+    name: string;
+    id?: string;
 };
