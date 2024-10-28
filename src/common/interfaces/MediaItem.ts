@@ -1,4 +1,3 @@
-import { ArtistName } from "./ArtistName";
 import { ImageData } from "./ImageCollection";
 
 export interface MediaItem extends ImageData {
@@ -8,5 +7,5 @@ export interface MediaItem extends ImageData {
     album_group?: string;
     album_type?: string;
     type?: string;
-    artists?: ArtistName[]
+    artists?: any
 };
