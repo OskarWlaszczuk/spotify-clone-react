@@ -1,1 +1,1 @@
-export const isNotEmpty = <T>(array: T[]): boolean => array.length > 0;
+export const isNotEmpty = <T>(array: T[] =[]): boolean => array.length > 0;
