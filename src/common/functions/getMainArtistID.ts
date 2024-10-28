@@ -1,0 +1,1 @@
+export const getMainArtistID = <T extends { id: string }>(artists: T[]) => artists[0].id
