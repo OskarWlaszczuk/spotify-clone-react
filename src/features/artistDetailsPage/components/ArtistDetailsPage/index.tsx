@@ -32,7 +32,7 @@ export const ArtistDetailsPage = () => {
     const compilationsStatus: FetchStatus = useSelector(artistCompilationSelectors.selectStatus);
     const singlesStatus: FetchStatus = useSelector(artistSinglesSelectors.selectStatus);
     const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
-    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus)
+    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus);
 
     const details: Details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
@@ -65,7 +65,7 @@ export const ArtistDetailsPage = () => {
             { fetchAction: fetchArtistSingles, clearAction: clearArtistSingles, endpoint: `artists/${id}${albumGroupsEndpoint}=single&${groupLimit}` },
             { fetchAction: fetchArtistCompilation, clearAction: clearArtistCompilation, endpoint: `artists/${id}${albumGroupsEndpoint}=compilation&${groupLimit}` },
             { fetchAction: fetchArtistAppearsOn, clearAction: clearArtistAppearsOn, endpoint: `artists/${id}${albumGroupsEndpoint}=appears_on&${groupLimit}` },
-        ],
+        ], [id]
     );
 
     return (
@@ -76,7 +76,7 @@ export const ArtistDetailsPage = () => {
                     picture={pictureUrl}
                     title={name}
                     caption="Verified artist"
-                    metaDatas={`${followers?.total?.toLocaleString()} followers`}
+                    subTitleContent={`${followers?.total?.toLocaleString()} followers`}
                     isArtistPictureStyle
                 />)
             }
