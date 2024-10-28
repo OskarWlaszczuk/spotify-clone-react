@@ -12,26 +12,16 @@ import { convertMinutesToHours } from "../../../../common/functions/convertMinut
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { ArtistNameLink } from "./styled";
 import { Table } from "../../../../common/components/Table";
-import { useEffect, useState } from "react";
-import { error, initial, loading, success } from "../../../../common/constants/fetchStatuses";
-import { fetchAccessToken } from "../../../../common/functions/fetchAccessToken";
-import { fetchFromAPI } from "../../../../common/functions/fetchFromAPI";
 import { AvatarImage } from "../../../../common/components/AvatarImage";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
+import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
 
 export const AlbumPage = () => {
-
-    const { id: albumID } = useParams();
-    const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
-
-    const [artistDatasFetchStatus, setAlbumArtistDatasFetchStatus] = useState(initial);
-    const [artistDatas, setArtistDatas] = useState({ image: undefined, name: undefined, restArtistAlbumsList: undefined });
-
-    const { name: artistName, image: artistImage, restArtistAlbumsList } = artistDatas;
 
     const removeDuplicates = (list = []) => {
         const caughtDuplicates = new Set();
@@ -42,22 +32,40 @@ export const AlbumPage = () => {
         });
     };
 
+    const { albumID, artistID } = useParams();
+
+    const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
+    const { fetch: fetchMainArtistDetails, clear: clearMainArtistDetails } = artistDetailsActions;
+    const { fetch: fetchMainArtistAlbumsList, clear: clearMainArtistAlbumsList } = artistAlbumsActions;
+
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
-    const albumDetailsList = useSelector(albumDetailsSelectors.selectDatas)?.datas;
+    const albumDetails = useSelector(albumDetailsSelectors.selectDatas)?.datas;
 
-    useFetchAPI([{ fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` }]);
+    const mainArtistDetailsStatus = useSelector(artistDetailsSelectors.selectStatus);
+    const mainArtistDetails = useSelector(artistDetailsSelectors.selectDatas)?.datas;
 
-    const albumArtistsList = albumDetailsList?.artists;
-    const albumArtistID = albumArtistsList?.map(({ id }) => id)[0];
+    const mainArtistAlbumsListStatus = useSelector(artistAlbumsSelectors.selectStatus);
+    const mainArtistAlbumsList = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
+
+    useFetchAPI([
+        { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
+        { fetchAction: fetchMainArtistDetails, clearAction: clearMainArtistDetails, endpoint: `artists/${artistID}` },
+        { fetchAction: fetchMainArtistAlbumsList, clearAction: clearMainArtistAlbumsList, endpoint: `artists/${artistID}/albums?include_groups=album%2Csingle%2Ccompilation` },
+    ], [albumID, artistID]);
+
+    const mainArtistName = mainArtistDetails?.name;
+    const mainArtistImage = mainArtistDetails?.images[0].url;
+
+    const albumArtistsList = albumDetails?.artists;
     const isAlbumArtistsListLengthEqualsOne = albumArtistsList?.length === 1;
 
-    const albumImage = albumDetailsList?.images[0].url;
-    const albumName = albumDetailsList?.name;
-    const albumType = albumDetailsList?.album_type;
-    const albumReleaseDate = getYear(albumDetailsList?.release_date);
+    const albumImage = albumDetails?.images[0].url;
+    const albumName = albumDetails?.name;
+    const albumType = albumDetails?.album_type;
+    const albumReleaseDate = getYear(albumDetails?.release_date);
 
-    const albumTotalTracks = albumDetailsList?.total_tracks;
-    const albumTracks = albumDetailsList?.tracks.items;
+    const albumTotalTracks = albumDetails?.total_tracks;
+    const albumTracks = albumDetails?.tracks.items;
     const albumTrackDiscNumbers = removeDuplicates(albumTracks?.map(({ disc_number }) => disc_number));
 
     const albumTracksDurations = albumTracks?.map(({ duration_ms }) => duration_ms);
@@ -69,7 +77,7 @@ export const AlbumPage = () => {
         <>
             {isAlbumArtistsListLengthEqualsOne && (
                 <AvatarImage
-                    src={artistImage}
+                    src={mainArtistImage}
                     alt={name}
                     title={name}
                     $smaller
@@ -80,33 +88,9 @@ export const AlbumPage = () => {
         </>
     ));
 
-    useEffect(() => {
-        const fetchArtistsDetails = async () => {
-            try {
-                const accessToken = await fetchAccessToken();
-
-                const response = await Promise.all([
-                    fetchFromAPI({ endpoint: `artists?ids=${albumArtistID}`, accessToken }),
-                    fetchFromAPI({ endpoint: `artists/${albumArtistID}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation`, accessToken })
-                ]);
-
-                setArtistDatas({ image: response[0].artists[0].images[0].url, name: response[0].artists[0].name, restArtistAlbumsList: response[1] });
-                setAlbumArtistDatasFetchStatus(success);
-            } catch {
-                setAlbumArtistDatasFetchStatus(error);
-            }
-        };
-
-        if (albumDetailsStatus === success) {
-            fetchArtistsDetails();
-        }
-        setAlbumArtistDatasFetchStatus(loading)
-
-    }, [albumDetailsList]);
-
     const { setActiveTile, isTileActive } = useActiveTile();
-    const fetchStatus = useFetchStatus([albumDetailsStatus, artistDatasFetchStatus]);
-    console.log(restArtistAlbumsList?.items)
+    const fetchStatus = useFetchStatus([albumDetailsStatus, mainArtistDetailsStatus, mainArtistAlbumsListStatus]);
+
     return (
         <Main
             fetchStatus={fetchStatus}
@@ -123,11 +107,11 @@ export const AlbumPage = () => {
                 <>
                     <Table list={albumTracks} useAlbumView discsNumbers={albumTrackDiscNumbers} />
                     {
-                        isNotEmpty(restArtistAlbumsList?.items) && (
+                        isNotEmpty(mainArtistAlbumsList) && (
                             <TilesList
-                                title={<>More by {artistName}</>}
+                                title={<>More by {mainArtistName}</>}
                                 hideRestListPart
-                                list={restArtistAlbumsList?.items.filter(({ name }) => name !== albumName)}
+                                list={mainArtistAlbumsList.filter(({ name }) => name !== albumName)}
                                 renderItem={
                                     (({ id, images, name, artists = [] }, index) => (
                                         <Tile
@@ -146,7 +130,7 @@ export const AlbumPage = () => {
                                             picture={images[0].url}
                                             title={name}
                                             subInfo={getAlbumArtists(artists)}
-                                            toPage={toAlbum({ id })}
+                                            toPage={toAlbum({ albumID: id, artistID: artists[0].id })}
                                         />
                                     )
                                     )
