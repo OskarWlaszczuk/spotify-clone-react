@@ -1,10 +1,10 @@
-import { ArtistName } from "./ArtistName";
+import { ArtistData } from "./ArtistName";
 import { ImageData } from "./ImageCollection";
 
 interface Followers {
     total: number;
 };
 
-export interface Details extends ArtistName, ImageData {
+export interface Details extends ArtistData, ImageData {
     followers: Followers;
 };
