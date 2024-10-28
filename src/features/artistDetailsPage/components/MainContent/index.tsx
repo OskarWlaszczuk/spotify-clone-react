@@ -40,6 +40,7 @@ import { WithReleaseDate } from "../../../../common/interfaces/WithReleaseDate";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
 import { TrackListItem } from "../../../../common/interfaces/TrackCollection";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
+import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 
 interface MainContentProps {
     name: string;
@@ -220,18 +221,23 @@ export const MainContent = ({ name }: MainContentProps) => {
                             })
                         }
                         hideRestListPart
-                        fullListPathname={toArtist({
-                            id: id!,
-                            additionalPath:
-                                findMatchingValueByKey<string>(
-                                    [
-                                        { key: popularReleasesCategory, value: allParamDiscography },
-                                        { key: albumsCategory, value: albumsParamDiscography },
-                                        { key: compilationsCategory, value: compilationParamDiscography },
-                                        { key: singlesCategory, value: singleParamDiscography },
-                                    ], currentCategoryData.category
-                                )?.value
-                        })}
+                        fullListData={
+                            {
+                                pathname: toArtist({
+                                    id: id!,
+                                    additionalPath:
+                                        findMatchingValueByKey<string>(
+                                            [
+                                                { key: popularReleasesCategory, value: allParamDiscography },
+                                                { key: albumsCategory, value: albumsParamDiscography },
+                                                { key: compilationsCategory, value: compilationParamDiscography },
+                                                { key: singlesCategory, value: singleParamDiscography },
+                                            ], currentCategoryData.category
+                                        )?.value
+                                }),
+                                text: fullListLinkText,
+                            }
+                        }
                     />
                     {
                         isNotEmpty(relatedArtists) && (
@@ -260,10 +266,10 @@ export const MainContent = ({ name }: MainContentProps) => {
                                     />
                                 )}
                                 hideRestListPart
-                                fullListPathname={toArtist({
-                                    id: id!,
-                                    additionalPath: relatedArtistsParam
-                                })}
+                                fullListData={{
+                                    pathname: toArtist({ id: id!, additionalPath: relatedArtistsParam }),
+                                    text: fullListLinkText
+                                }}
                             />
                         )
                     }
@@ -294,10 +300,13 @@ export const MainContent = ({ name }: MainContentProps) => {
                                     />
                                 )}
                                 hideRestListPart
-                                fullListPathname={toArtist({
-                                    id: id!,
-                                    additionalPath: artistAppearsOnParam,
-                                })}
+                                fullListData={{
+                                    pathname: toArtist({
+                                        id: id!,
+                                        additionalPath: artistAppearsOnParam,
+                                    }),
+                                    text: fullListLinkText,
+                                }}
                             />
                         )
                     }
