@@ -5,11 +5,13 @@ interface AlbumData extends ReleaseInfo, ImageData { };
 
 interface ArtistList {
     name: string;
+    id:string;
 };
 
 export interface TrackListItem {
     name: string;
     duration_ms: number;
     artists: ArtistList[];
-    album: AlbumData,
+    album: ImageData;
+    disc_number:number;
 };
