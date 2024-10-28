@@ -3,6 +3,11 @@ import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTil
 import { ReactElement, ReactNode } from "react";
 import { MediaItem } from "../../interfaces/MediaItem";
 
+interface FullListData {
+    pathname: string;
+    text: string;
+};
+
 interface TilesListProps {
     title: ReactNode;
     subExtraContent?: ReactElement;
@@ -11,7 +16,7 @@ interface TilesListProps {
     list: MediaItem[] | undefined;
     //generyczny typ do list
     renderItem: (list: MediaItem, index: number) => ReactElement;
-    fullListPathname?: string;
+    fullListData?: FullListData;
 };
 
 export const TilesList = ({
@@ -20,7 +25,7 @@ export const TilesList = ({
     hideRestListPart,
     list,
     renderItem,
-    fullListPathname,
+    fullListData,
 }: TilesListProps
 ) => {
 
@@ -34,8 +39,8 @@ export const TilesList = ({
     );
 
     const titleElement = (
-        fullListPathname ?
-            <TitleAsLink to={fullListPathname}>{title}</TitleAsLink> :
+        fullListData ?
+            <TitleAsLink to={fullListData}>{title}</TitleAsLink> :
             <Title>{title}</Title>
     );
 
@@ -43,7 +48,7 @@ export const TilesList = ({
         <StyledSection>
             <TitleContent>
                 {titleElement}
-                {fullListPathname && <FullListLink to={fullListPathname}>Show all</FullListLink>}
+                {fullListData && <FullListLink to={fullListData}>Show all</FullListLink>}
             </TitleContent >
             <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>
             <List ref={containerRef} >
