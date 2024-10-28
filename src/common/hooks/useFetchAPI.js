@@ -3,9 +3,8 @@ import { useDispatch } from "react-redux";
 import { fetchAccessToken } from "../functions/fetchAccessToken";
 import { useParams } from "react-router-dom";
 
-export const useFetchAPI = (fetchConfigs) => {
+export const useFetchAPI = (fetchConfigs, dependencies = []) => {
     const dispatch = useDispatch();
-    const { id } = useParams();
 
     useEffect(() => {
 
@@ -19,10 +18,8 @@ export const useFetchAPI = (fetchConfigs) => {
 
         fetchAccessTokenAndData();
 
-        return () => {
-            fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
-        };
+        return () => fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
 
-    }, [dispatch, id]);
+    }, [dispatch, ...dependencies]);
 
 };
