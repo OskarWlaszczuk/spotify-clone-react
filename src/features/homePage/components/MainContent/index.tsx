@@ -10,13 +10,14 @@ import { nanoid } from "nanoid";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { MediaItem } from "../../../../common/interfaces/MediaItem";
+import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 
 export const MainContent = () => {
     const { type = "" } = useParams<{ type: string }>();
-
-    const popularAlbums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
-    const popularArtists = useSelector(artistsSelectors.selectDatas)?.datas.artists;
     const { setActiveTile, isTileActive } = useActiveTile();
+
+    const popularAlbums: MediaItem[] = useSelector(albumsSelectors.selectDatas)?.datas.albums;
+    const popularArtists: MediaItem[] = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
     const popularAlbumsParam = "popular-albums";
     const popularArtistsParam = "popular-artists";
@@ -39,7 +40,7 @@ export const MainContent = () => {
                         title={fullListTitle || undefined}
                         list={fullListContent || undefined}
                         renderItem={
-                            (({ id, name, images, album_type = "" }, index) => (
+                            (({ id, name, images, album_type = "", artists }, index) => (
                                 <Tile
                                     isActive={isTileActive(index, 0)}
                                     mouseEventHandlers={{
@@ -53,7 +54,11 @@ export const MainContent = () => {
                                         }),
                                     }}
                                     key={nanoid()}
-                                    toPage={toArtist({ id })}
+                                    toPage={
+                                        isFullListArtistsList ?
+                                            toArtist({ id }) :
+                                            toAlbum({ albumID: id, artistID: getMainArtistID(artists) })
+                                    }
                                     picture={images[0].url}
                                     title={name}
                                     subInfo={album_type}
@@ -85,7 +90,7 @@ export const MainContent = () => {
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={getAlbumArtists(artists)}
-                                        toPage={toAlbum()}
+                                        toPage={toAlbum({ albumID: id, artistID: getMainArtistID(artists) })}
                                     />
                                 )
                                 )
