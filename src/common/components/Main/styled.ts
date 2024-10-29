@@ -8,6 +8,7 @@ interface MainContentProps {
 export const MainSection = styled.main`
     grid-area: main;
     overflow: hidden;
+    border-radius: 10px;
 `;
 
 export const MainContent = styled.div<MainContentProps>`
