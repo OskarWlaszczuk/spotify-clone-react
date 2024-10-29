@@ -21,9 +21,16 @@ export const Container = styled(Link)`
     };
 `;
 
-export const Title = styled.header`
-    font-size: 13px;
-    font-weight: 500;
+export const Title = styled(Link)`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+
+  &:hover{
+    text-decoration: underline;
+  }
 `;
 
 export const SubInfo = styled.span`
