@@ -1,4 +1,8 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+interface TitleProps {
+    $larger?: boolean;
+}
 
 export const Container = styled.div`
     display: grid;
@@ -18,10 +22,14 @@ export const Details = styled.div`
     align-content: center;
 `;
 
-export const Title = styled.h1`
+export const Title = styled.h1<TitleProps>`
     margin: 0;
     font-size: 32px;
     font-weight: 900;
+
+    ${({ $larger }) => $larger && css`
+        font-size: 64px;
+    `};
 `;
 
 export const Caption = styled.p`
