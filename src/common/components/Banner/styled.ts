@@ -2,17 +2,16 @@ import styled, { css } from "styled-components";
 
 interface TitleProps {
     $larger?: boolean;
-}
+};
 
 export const Container = styled.div`
     display: grid;
     grid-gap: 30px;
-    grid-template-columns: 204px 1fr;
-    border-radius: 10px 10px 0 0;
+    grid-template-columns: 204px 55%;
     padding: 20px;
-    background-color: #878787;
+    background-color: #474747;
     position: relative;
-    box-shadow: 0 4px 58px 35px #87878775;
+    box-shadow: 0 4px 58px 35px #5a59596b;
     z-index: 2;
     align-items: end;
 `;
@@ -40,9 +39,12 @@ export const Caption = styled.p`
 `;
 
 export const SubTitleContent = styled.p`
-    
+    font-weight: 550;
+    font-size: 14px;
 `;
 
 export const MetaDatas = styled.span`
-    margin: 0;
+    color: ${({ theme }) => theme.colors.nobel};
+    font-weight: 400;
+    font-size: 14px;
 `;
