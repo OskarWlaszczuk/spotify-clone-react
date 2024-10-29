@@ -20,6 +20,7 @@ import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
+import { allParamDiscography } from "../../../artistDetailsPage/constants/params";
 
 export const AlbumPage = () => {
 
@@ -38,6 +39,12 @@ export const AlbumPage = () => {
     const { fetch: fetchMainArtistDetails, clear: clearMainArtistDetails } = artistDetailsActions;
     const { fetch: fetchMainArtistAlbumsList, clear: clearMainArtistAlbumsList } = artistAlbumsActions;
 
+    useFetchAPI([
+        { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
+        { fetchAction: fetchMainArtistDetails, clearAction: clearMainArtistDetails, endpoint: `artists/${artistID}` },
+        { fetchAction: fetchMainArtistAlbumsList, clearAction: clearMainArtistAlbumsList, endpoint: `artists/${artistID}/albums?include_groups=album%2Csingle%2Ccompilation` },
+    ], [albumID, artistID]);
+
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
     const albumDetails = useSelector(albumDetailsSelectors.selectDatas)?.datas;
 
@@ -46,12 +53,6 @@ export const AlbumPage = () => {
 
     const mainArtistAlbumsListStatus = useSelector(artistAlbumsSelectors.selectStatus);
     const mainArtistAlbumsList = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
-
-    useFetchAPI([
-        { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
-        { fetchAction: fetchMainArtistDetails, clearAction: clearMainArtistDetails, endpoint: `artists/${artistID}` },
-        { fetchAction: fetchMainArtistAlbumsList, clearAction: clearMainArtistAlbumsList, endpoint: `artists/${artistID}/albums?include_groups=album%2Csingle%2Ccompilation` },
-    ], [albumID, artistID]);
 
     const mainArtistName = mainArtistDetails?.name;
     const mainArtistImage = mainArtistDetails?.images[0].url;
@@ -135,7 +136,7 @@ export const AlbumPage = () => {
                                     )
                                     )
                                 }
-                            // fullListPathname={toAlbum({ additionalPath: popularAlbumsParam })}
+                                fullListData={toArtist({ id: artistID, additionalPath: allParamDiscography })}
                             />
                         )
                     }
