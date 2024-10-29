@@ -1,4 +1,4 @@
-interface ImageURL {
+export interface ImageURL {
     url: string;
 };
 
