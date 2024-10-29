@@ -50,7 +50,7 @@ export const TilesList = ({
                 {titleElement}
                 {fullListData && <FullListLink to={fullListData}>Show all</FullListLink>}
             </TitleContent >
-            <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>
+            {subExtraContent && <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>}
             <List ref={containerRef} >
                 {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
             </List >
