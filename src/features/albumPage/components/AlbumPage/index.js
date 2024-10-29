@@ -76,16 +76,18 @@ export const AlbumPage = () => {
     const metaDatasContent = [albumReleaseDate, `${albumTotalTracks} songs, ${albumTotalDurationConverted}`].join(" • ");
     const subTitleContent = albumArtistsList?.map(({ name, id }, index) => (
         <>
-            {isAlbumArtistsListLengthEqualsOne && (
-                <AvatarImage
-                    src={mainArtistImage}
-                    alt={name}
-                    title={name}
-                    $smaller
-                    $useArtistPictureStyle
-                />
-            )}
-            <ArtistNameLink to={toArtist({ id })}> {index !== 0 && " • "}{name} </ArtistNameLink>
+            {
+                isAlbumArtistsListLengthEqualsOne && (
+                    <AvatarImage
+                        src={mainArtistImage}
+                        alt={name}
+                        title={name}
+                        $smaller
+                        $useArtistPictureStyle
+                    />
+                )
+            }
+            {" "}{index !== 0 && "• "}<ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
         </>
     ));
 
@@ -114,7 +116,7 @@ export const AlbumPage = () => {
                                 hideRestListPart
                                 list={mainArtistAlbumsList.filter(({ name }) => name !== albumName)}
                                 renderItem={
-                                    (({ id, images, name, artists = [] }, index) => (
+                                    (({ id, images, name, artists = [], release_date }, index) => (
                                         <Tile
                                             isActive={isTileActive(index, 1)}
                                             mouseEventHandlers={{
@@ -130,7 +132,7 @@ export const AlbumPage = () => {
                                             key={id}
                                             picture={images[0].url}
                                             title={name}
-                                            subInfo={getAlbumArtists(artists)}
+                                            subInfo={getYear(release_date)}
                                             toPage={toAlbum({ albumID: id, artistID: artists[0].id })}
                                         />
                                     )
