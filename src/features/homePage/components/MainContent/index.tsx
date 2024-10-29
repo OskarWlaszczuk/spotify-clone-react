@@ -11,6 +11,7 @@ import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { MediaItem } from "../../../../common/interfaces/MediaItem";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
+import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 
 export const MainContent = () => {
     const { type = "" } = useParams<{ type: string }>();
@@ -96,7 +97,10 @@ export const MainContent = () => {
                                 )
                             }
                             hideRestListPart
-                            fullListPathname={toHome({ additionalPath: popularAlbumsParam })}
+                            fullListData={{
+                                pathname:toHome({ additionalPath: popularAlbumsParam }),
+                                text:fullListLinkText,
+                            }}
                         />
 
                         <TilesList
@@ -124,7 +128,10 @@ export const MainContent = () => {
                                 />
                             )}
                             hideRestListPart
-                            fullListPathname={toHome({ additionalPath: popularArtistsParam })}
+                            fullListData={{
+                                pathname: toHome({ additionalPath: popularArtistsParam }),
+                                text: fullListLinkText
+                            }}
                         />
                     </>
             }
