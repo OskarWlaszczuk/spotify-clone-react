@@ -37,7 +37,7 @@ export const Tile = (
         <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} >
             {isActive && <PlayPauseButton isLargerAndDarkerIcon />}
         </Picture>
-        <Title>{title}</Title>
+        <Title to={toPage}>{title}</Title>
         <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
     </Container>
 );
