@@ -17,7 +17,7 @@ export const Banner = ({ picture, metaDatas, title, caption, isArtistPictureStyl
             <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} />
             <Details>
                 <Caption>{capitalizeFirstLetter(caption)}</Caption>
-                <Title>{title}</Title>
+                <Title $larger={title?.length <= 22}>{title}</Title>
                 <SubTitleContent>{subTitleContent}<MetaDatas>{metaDatas && " • "}{metaDatas}</MetaDatas></SubTitleContent>
             </Details>
         </Container>
