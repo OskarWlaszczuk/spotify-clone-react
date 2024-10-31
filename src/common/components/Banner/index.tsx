@@ -13,7 +13,7 @@ interface BannerProps {
 
 export const Banner = ({ picture, metaDatas, title, caption, isArtistPictureStyle, subTitleContent }: BannerProps) => {
     return (
-        <Container>
+        <Container $useAlbumLayout={!isArtistPictureStyle}>
             <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} />
             <Details>
                 <Caption>{capitalizeFirstLetter(caption)}</Caption>
