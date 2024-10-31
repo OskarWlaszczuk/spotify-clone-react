@@ -11,7 +11,7 @@ interface ContainerProps {
 export const Container = styled.div<ContainerProps>`
     display: grid;
     grid-gap: 30px;
-    grid-template-columns: 140px 55%;
+    grid-template-columns: calc(20% * 585 / 582) 1fr;
     padding: 20px;
     background-color: #474747;
     position: relative;
@@ -30,11 +30,11 @@ export const Details = styled.div`
 
 export const Title = styled.h1<TitleProps>`
     margin: 0;
-    font-size: 32px;
+    font-size: clamp(23px, 30px, 64px);
     font-weight: 900;
 
     ${({ $larger }) => $larger && css`
-        font-size: 64px;
+    font-size: clamp(23px, 30px, 64px);
     `};
 `;
 
