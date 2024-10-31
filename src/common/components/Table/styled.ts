@@ -28,15 +28,12 @@ export const StyledTimer = styled(Timer)`
 `;
 
 export const Wrapper = styled.article`
-    width: 100%;
-    margin-bottom: 10px;
     position: relative;
     z-index: 3;
 `;
 
 export const StyledTable = styled.table`
     width: 100%;
-    margin-bottom: 10px;
 `;
 
 export const Caption = styled.caption`
@@ -52,6 +49,7 @@ export const HeaderRow = styled.tr<HeaderRowProps>`
     justify-items: start;
     grid-gap: 10px;
     border-bottom: 1px solid #555050b3;
+    padding: 5px 20px;
 
     ${({ $albumViewNotAvailable: $isAlbumView }) => $isAlbumView && css`
         margin-bottom: 20px;
@@ -72,8 +70,8 @@ export const ContentRow = styled.tr`
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    padding: 7px 0;
     border-radius: 8px;
+    padding: 7px 20px;
 
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
