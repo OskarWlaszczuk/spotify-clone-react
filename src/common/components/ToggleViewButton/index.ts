@@ -6,6 +6,7 @@ export const ToggleViewButton = styled.button`
     font-weight: 600;
     background-color: transparent;
     border: none;
+    margin-top: 10px;
 
     &:hover{
         filter: brightness(120%);
