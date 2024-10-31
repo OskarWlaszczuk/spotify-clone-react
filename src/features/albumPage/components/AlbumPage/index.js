@@ -20,7 +20,8 @@ import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
-import { allParamDiscography } from "../../../artistDetailsPage/constants/params";
+import { allParamDiscography } from "../../../../common/constants/params";
+import { Copyrights } from "../../../../common/components/Copyrights";
 
 export const AlbumPage = () => {
 
@@ -60,10 +61,11 @@ export const AlbumPage = () => {
     const albumArtistsList = albumDetails?.artists;
     const isAlbumArtistsListLengthEqualsOne = albumArtistsList?.length === 1;
 
+    const albumCopyrights = albumDetails?.copyrights;
     const albumImage = albumDetails?.images[0].url;
     const albumName = albumDetails?.name;
     const albumType = albumDetails?.album_type;
-    const albumReleaseDate = getYear(albumDetails?.release_date);
+    const albumReleaseDate = albumDetails?.release_date;
 
     const albumTotalTracks = albumDetails?.total_tracks;
     const albumTracks = albumDetails?.tracks.items;
@@ -73,7 +75,7 @@ export const AlbumPage = () => {
     const albumTotalDuration = fromMillisecondsToMinutes(albumTracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
     const albumTotalDurationConverted = albumTotalDuration >= 60 ? convertMinutesToHours(albumTotalDuration) : convertToMinutesAndSeconds(albumTotalDuration);
 
-    const metaDatasContent = [albumReleaseDate, `${albumTotalTracks} songs, ${albumTotalDurationConverted}`].join(" • ");
+    const metaDatasContent = [getYear(albumReleaseDate), `${albumTotalTracks} songs, ${albumTotalDurationConverted}`].join(" • ");
     const subTitleContent = albumArtistsList?.map(({ name, id }, index) => (
         <>
             {
@@ -109,6 +111,7 @@ export const AlbumPage = () => {
             content={
                 <>
                     <Table list={albumTracks} useAlbumView discsNumbers={albumTrackDiscNumbers} />
+                    <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
                         isNotEmpty(mainArtistAlbumsList) && (
                             <TilesList
