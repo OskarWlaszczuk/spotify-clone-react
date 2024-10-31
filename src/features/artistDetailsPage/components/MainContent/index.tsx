@@ -35,12 +35,13 @@ import {
     singleParamDiscography,
     artistAppearsOnParam,
     compilationParamDiscography
-} from "../../constants/params";
+} from "../../../../common/constants/params";
 import { WithReleaseDate } from "../../../../common/interfaces/WithReleaseDate";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
 import { TrackListItem } from "../../../../common/interfaces/TrackCollection";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
+import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 
 interface MainContentProps {
     name: string;
@@ -65,12 +66,6 @@ export const MainContent = ({ name }: MainContentProps) => {
         });
     };
 
-    const setNewestPopularReleaseItemFirstIfIsLatestRelease = <T extends WithReleaseDate>(newestPopularReleaseItem: T | undefined) => (
-        newestPopularReleaseItem && isLatestReleased(newestPopularReleaseItem)
-            ? [{ ...newestPopularReleaseItem }, ...(popularReleases?.slice() ?? [])]
-            : popularReleases || []
-    );
-
     const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
     const albums = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
     const compilations = useSelector(artistCompilationSelectors.selectDatas)?.datas.items;
@@ -79,9 +74,9 @@ export const MainContent = ({ name }: MainContentProps) => {
     const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
 
     //Dodać typ do album
-    const popularReleases: MediaItem[] = topTracks?.map(({ album }: any) => album);
+    const popularReleases = topTracks?.map(({ album }: any) => album);
     const newestPopularReleaseItem = sortFromOldestToNewest(popularReleases)[0];
-    const updatedPopularReleases = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestPopularReleaseItem);
+    const updatedPopularReleases = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestPopularReleaseItem, popularReleases);
 
     const allCategoriesList = [
         ...updatedPopularReleases,
@@ -92,7 +87,9 @@ export const MainContent = ({ name }: MainContentProps) => {
     const sortedAllCategoriesListFromOldestToNewest = sortFromOldestToNewest(allCategoriesList);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({ key: popularReleasesCategory, value: allCategoriesList });
+
     const { setActiveTile, isTileActive } = useActiveTile();
+
     const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
         { key: allParamDiscography, value: sortedAllCategoriesListFromOldestToNewest },
         { key: albumsParamDiscography, value: albums },
@@ -109,7 +106,7 @@ export const MainContent = ({ name }: MainContentProps) => {
                     title={fullListTitle || name}
                     list={removeDuplicates(fullListContent)}
                     renderItem={
-                        (({ id, name, images, album_type = "", artists }: MediaItem, index: number) => (
+                        (({ id, name, images, album_type = "", artists, release_date, type }: MediaItem, index: number) => (
                             <Tile
                                 isActive={isTileActive(index, 0)}
                                 mouseEventHandlers={{
@@ -126,7 +123,7 @@ export const MainContent = ({ name }: MainContentProps) => {
                                 toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ albumID: id, artistID: getMainArtistID(artists) })}
                                 picture={images[0].url}
                                 title={name}
-                                subInfo={album_type}
+                                subInfo={isFullListArtistsList ? `${type}` : `${album_type} • ${getYear(release_date)}`}
                                 isArtistPictureStyle={isFullListArtistsList || false}
                             />
                         ))
@@ -212,7 +209,7 @@ export const MainContent = ({ name }: MainContentProps) => {
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={`
-                                                ${index === 0 && isLatestReleased(item) ? replaceReleaseDateIfCurrentYear(item).release_date : getYear(release_date)}
+                                                ${index === 0 && isLatestReleased(item) ? replaceReleaseDateIfCurrentYear(item).release_date : getYear(release_date)} •
                                                 ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
                                             `}
                                         isArtistPictureStyle={false}
