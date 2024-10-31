@@ -4,21 +4,28 @@ interface TitleProps {
     $larger?: boolean;
 };
 
-export const Container = styled.div`
+interface ContainerProps {
+    $useAlbumLayout?: boolean;
+};
+
+export const Container = styled.div<ContainerProps>`
     display: grid;
     grid-gap: 30px;
-    grid-template-columns: 204px 55%;
+    grid-template-columns: 140px 55%;
     padding: 20px;
     background-color: #474747;
     position: relative;
     box-shadow: 0 4px 58px 35px #5a59596b;
     z-index: 2;
-    align-items: end;
+
+    ${({ $useAlbumLayout }) => $useAlbumLayout && css`
+        align-items: end;
+    `};
 `;
 
 export const Details = styled.div`
     display: grid;
-    align-content: center;
+    align-content: space-between;
 `;
 
 export const Title = styled.h1<TitleProps>`
