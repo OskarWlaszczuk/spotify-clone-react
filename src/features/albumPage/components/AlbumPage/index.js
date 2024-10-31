@@ -16,23 +16,14 @@ import { AvatarImage } from "../../../../common/components/AvatarImage";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
-import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
 import { allParamDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
+import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 
 export const AlbumPage = () => {
-
-    const removeDuplicates = (list = []) => {
-        const caughtDuplicates = new Set();
-
-        return list.filter(disc => {
-            const keyValue = disc;
-            return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
-        });
-    };
 
     const { albumID, artistID } = useParams();
 
@@ -69,7 +60,9 @@ export const AlbumPage = () => {
 
     const albumTotalTracks = albumDetails?.total_tracks;
     const albumTracks = albumDetails?.tracks.items;
-    const albumTrackDiscNumbers = removeDuplicates(albumTracks?.map(({ disc_number }) => disc_number));
+
+    const albumTracksDiscNumbersDuplicatesList = albumTracks?.map(({ disc_number }) => disc_number);
+    const albumTracksDiscNumbersNoDuplicates = removeDuplicates(albumTracksDiscNumbersDuplicatesList, "disc_number");
 
     const albumTracksDurations = albumTracks?.map(({ duration_ms }) => duration_ms);
     const albumTotalDuration = fromMillisecondsToMinutes(albumTracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
@@ -110,7 +103,7 @@ export const AlbumPage = () => {
             }
             content={
                 <>
-                    <Table list={albumTracks} useAlbumView discsNumbers={albumTrackDiscNumbers} />
+                    <Table list={albumTracks} useAlbumView discsNumbers={albumTracksDiscNumbersNoDuplicates} />
                     <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
                         isNotEmpty(mainArtistAlbumsList) && (

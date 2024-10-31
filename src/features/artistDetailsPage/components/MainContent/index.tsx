@@ -42,6 +42,7 @@ import { TrackListItem } from "../../../../common/interfaces/TrackCollection";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
+import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 
 interface MainContentProps {
     name: string;
@@ -55,15 +56,6 @@ export const MainContent = ({ name }: MainContentProps) => {
         return isLatestReleased(listItem) ?
             { ...listItem, release_date: "Latest Release" } :
             listItem;
-    };
-
-    const removeDuplicates = <T extends { name: string }>(list: T[] = []): T[] => {
-        const caughtDuplicates = new Set();
-
-        return list.filter(({ name }) => {
-            const keyValue = name;
-            return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
-        });
     };
 
     const appearsOn = useSelector(artistAppearsOnSelectors.selectDatas)?.datas.items;
@@ -104,7 +96,7 @@ export const MainContent = ({ name }: MainContentProps) => {
             {type ?
                 <TilesList
                     title={fullListTitle || name}
-                    list={removeDuplicates(fullListContent)}
+                    list={removeDuplicates(fullListContent, "name")}
                     renderItem={
                         (({ id, name, images, album_type = "", artists, release_date, type }: MediaItem, index: number) => (
                             <Tile
@@ -186,7 +178,7 @@ export const MainContent = ({ name }: MainContentProps) => {
                                 }
                             </>
                         }
-                        list={removeDuplicates(currentCategoryData.list)}
+                        list={removeDuplicates(currentCategoryData.list, "name")}
                         renderItem={
                             ((item, index) => {
                                 const { id, name, release_date, images, album_group = "", album_type = "", artists } = item;
