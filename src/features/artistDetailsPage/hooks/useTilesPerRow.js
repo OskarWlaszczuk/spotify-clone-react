@@ -6,7 +6,7 @@ export const useTilesPerRow = () => {
     const containerRef = useRef(null);
 
     const calculateTilesPerRow = () => {
-        const containerWidth = containerRef.current.offsetWidth;
+        const containerWidth = containerRef.current?.offsetWidth;
         const tileWidth = 165;
 
         const effectiveTileWidth = tileWidth + 10;
