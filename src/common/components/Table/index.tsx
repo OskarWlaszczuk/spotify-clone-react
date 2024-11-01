@@ -141,7 +141,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                 </tbody>
             </StyledTable>
             {
-                !useAlbumView && (
+                (!useAlbumView && list?.length > 5) && (
                     <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
                         See {hideRestTracks ? <>more</> : <>less</>}
                     </ToggleViewButton>
