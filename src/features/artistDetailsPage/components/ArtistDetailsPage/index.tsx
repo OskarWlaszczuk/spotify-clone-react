@@ -1,71 +1,48 @@
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { artistAlbumsSelectors, artistAlbumsActions } from "../../slices/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { Main } from "../../../../common/components/Main";
-import { artistSinglesActions, artistSinglesSelectors } from "../../slices/artistSinglesSlice";
-import { artistCompilationActions, artistCompilationSelectors } from "../../slices/artistCompilationSlice";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
-import { artistAppearsOnActions, artistAppearsOnSelectors } from "../../slices/artistAppearsOnSlice";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { Details } from "../../../../common/interfaces/DetailsCollection";
 import { FetchStatus } from "../../../../common/types/FetchStatus";
+import { useArtistAllReleases } from "../../../../common/hooks/useArtistAllReleases";
+import { useArtistDetails } from "../../../../common/hooks/useArtistDetails";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
 
-    const { fetch: fetchArtistDetails, clear: clearArtistDetails } = artistDetailsActions;
-    const { fetch: fetchArtistAlbums, clear: clearArtistAlbums } = artistAlbumsActions;
     const { fetch: fetchRelatedArtists, clear: clearRelatedArtists } = relatedArtistsActions;
     const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
-    const { fetch: fetchArtistSingles, clear: clearArtistSingles } = artistSinglesActions;
-    const { fetch: fetchArtistCompilation, clear: clearArtistCompilation } = artistCompilationActions;
-    const { fetch: fetchArtistAppearsOn, clear: clearArtistAppearsOn } = artistAppearsOnActions;
-
-    const detailsStatus: FetchStatus = useSelector(artistDetailsSelectors.selectStatus);
-    const appearsOnStatus: FetchStatus = useSelector(artistAppearsOnSelectors.selectStatus);
-    const albumsStatus: FetchStatus = useSelector(artistAlbumsSelectors.selectStatus);
-    const compilationsStatus: FetchStatus = useSelector(artistCompilationSelectors.selectStatus);
-    const singlesStatus: FetchStatus = useSelector(artistSinglesSelectors.selectStatus);
-    const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
-    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus);
-
-    const details: Details = useSelector(artistDetailsSelectors.selectDatas)?.datas;
-
-    const name = details?.name;
-    const followers = details?.followers;
-    const images = details?.images;
-    const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
-
-    const albumGroupsEndpoint = '/albums?include_groups';
-    const groupLimit = "limit=50";
-
-    const fetchStatus = useFetchStatus(
-        [
-            detailsStatus,
-            albumsStatus,
-            relatedArtistsStatus,
-            topTracksStatus,
-            singlesStatus,
-            compilationsStatus,
-            appearsOnStatus
-        ],
-    );
 
     useFetchAPI(
         [
-            { fetchAction: fetchArtistDetails, clearAction: clearArtistDetails, endpoint: `artists/${id}/` },
-            { fetchAction: fetchArtistAlbums, clearAction: clearArtistAlbums, endpoint: `artists/${id}${albumGroupsEndpoint}=album&${groupLimit}` },
             { fetchAction: fetchRelatedArtists, clearAction: clearRelatedArtists, endpoint: `artists/${id}/related-artists` },
             { fetchAction: fetchTopTracks, clearAction: clearTopTracks, endpoint: `artists/${id}/top-tracks` },
-            { fetchAction: fetchArtistSingles, clearAction: clearArtistSingles, endpoint: `artists/${id}${albumGroupsEndpoint}=single&${groupLimit}` },
-            { fetchAction: fetchArtistCompilation, clearAction: clearArtistCompilation, endpoint: `artists/${id}${albumGroupsEndpoint}=compilation&${groupLimit}` },
-            { fetchAction: fetchArtistAppearsOn, clearAction: clearArtistAppearsOn, endpoint: `artists/${id}${albumGroupsEndpoint}=appears_on&${groupLimit}` },
         ], [id]
+    );
+
+    const { artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(id);
+    const { artistDetailsStatus, artistDetails } = useArtistDetails(id);
+
+    const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
+    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus);
+
+    const name = artistDetails?.name;
+    const followers = artistDetails?.followers;
+    const images = artistDetails?.images;
+    const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
+
+
+    const fetchStatus = useFetchStatus(
+        [
+            artistDetailsStatus,
+            artistAllReleasesStatus,
+            relatedArtistsStatus,
+            topTracksStatus,
+        ]
     );
 
     return (
@@ -80,7 +57,7 @@ export const ArtistDetailsPage = () => {
                     isArtistPictureStyle
                 />)
             }
-            content={<MainContent name={name} />}
+            content={<MainContent name={name} allReleases={artistAllReleasesList} />}
         />
     )
 };
