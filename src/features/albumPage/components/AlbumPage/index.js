@@ -17,37 +17,32 @@ import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
-import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
-import { allParamDiscography } from "../../../../common/constants/params";
+import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
+import { useArtistAllReleases } from "../../../../common/hooks/useArtistAllReleases";
+import { useArtistDetails } from "../../../../common/hooks/useArtistDetails";
 
 export const AlbumPage = () => {
 
     const { albumID, artistID } = useParams();
 
     const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
-    const { fetch: fetchMainArtistDetails, clear: clearMainArtistDetails } = artistDetailsActions;
-    const { fetch: fetchMainArtistAlbumsList, clear: clearMainArtistAlbumsList } = artistAlbumsActions;
 
-    useFetchAPI([
-        { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
-        { fetchAction: fetchMainArtistDetails, clearAction: clearMainArtistDetails, endpoint: `artists/${artistID}` },
-        { fetchAction: fetchMainArtistAlbumsList, clearAction: clearMainArtistAlbumsList, endpoint: `artists/${artistID}/albums?include_groups=album%2Csingle%2Ccompilation` },
-    ], [albumID, artistID]);
+    useFetchAPI([{
+        fetchAction: fetchAlbumDetails,
+        clearAction: clearAlbumDetails,
+        endpoint: `albums/${albumID}`
+    }], [albumID, artistID]);
+
+    const { artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(artistID);
+    const { artistDetailsStatus, artistDetails } = useArtistDetails(artistID);
 
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
     const albumDetails = useSelector(albumDetailsSelectors.selectDatas)?.datas;
 
-    const mainArtistDetailsStatus = useSelector(artistDetailsSelectors.selectStatus);
-    const mainArtistDetails = useSelector(artistDetailsSelectors.selectDatas)?.datas;
-
-    const mainArtistAlbumsListStatus = useSelector(artistAlbumsSelectors.selectStatus);
-    const mainArtistAlbumsList = useSelector(artistAlbumsSelectors.selectDatas)?.datas.items;
-
-    const mainArtistName = mainArtistDetails?.name;
-    const mainArtistImage = mainArtistDetails?.images[0].url;
+    const mainArtistName = artistDetails?.name;
+    const mainArtistImage = artistDetails?.images[0].url;
 
     const albumArtistsList = albumDetails?.artists;
     const isAlbumArtistsListLengthEqualsOne = albumArtistsList?.length === 1;
@@ -87,7 +82,7 @@ export const AlbumPage = () => {
     ));
 
     const { setActiveTile, isTileActive } = useActiveTile();
-    const fetchStatus = useFetchStatus([albumDetailsStatus, mainArtistDetailsStatus, mainArtistAlbumsListStatus]);
+    const fetchStatus = useFetchStatus([albumDetailsStatus, artistDetailsStatus, artistAllReleasesStatus]);
 
     return (
         <Main
@@ -106,11 +101,11 @@ export const AlbumPage = () => {
                     <Table list={albumTracks} useAlbumView discsNumbers={albumTracksDiscNumbersNoDuplicates} />
                     <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
-                        isNotEmpty(mainArtistAlbumsList) && (
+                        isNotEmpty(artistAllReleasesList) && (
                             <TilesList
                                 title={<>More by {mainArtistName}</>}
                                 hideRestListPart
-                                list={mainArtistAlbumsList.filter(({ name }) => name !== albumName)}
+                                list={artistAllReleasesList.filter(({ name }) => name !== albumName)}
                                 renderItem={
                                     (({ id, images, name, artists = [], release_date }, index) => (
                                         <Tile
@@ -134,7 +129,10 @@ export const AlbumPage = () => {
                                     )
                                     )
                                 }
-                                fullListData={toArtist({ id: artistID, additionalPath: allParamDiscography })}
+                                fullListData={{
+                                    pathname: toArtist({ id: artistID, additionalPath: allReleaseDiscography }),
+                                    text: "Show discography"
+                                }}
                             />
                         )
                     }
