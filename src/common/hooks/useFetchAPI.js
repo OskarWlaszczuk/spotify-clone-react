@@ -1,25 +1,26 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { fetchAccessToken } from "../functions/fetchAccessToken";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAccessToken, selectAccessToken } from "../slices/authSlice";
 
 export const useFetchAPI = (fetchConfigs, dependencies = []) => {
     const dispatch = useDispatch();
+    const accessToken = useSelector(selectAccessToken);
 
     useEffect(() => {
+        if (!accessToken) {
+            dispatch(fetchAccessToken());
+        }
+    }, [dispatch, accessToken]);
 
-        const fetchAccessTokenAndData = async () => {
-            const accessToken = await fetchAccessToken();
-
+    useEffect(() => {
+        if (accessToken) {
             fetchConfigs.forEach(({ fetchAction, endpoint }) => {
                 dispatch(fetchAction({ endpoint, accessToken }));
             });
+        }
+
+        return () => {
+            fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
         };
-
-        fetchAccessTokenAndData();
-
-        return () => fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
-
-    }, [dispatch, ...dependencies]);
-
+    }, [dispatch, accessToken, ...dependencies]);
 };
