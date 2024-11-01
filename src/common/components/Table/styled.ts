@@ -116,6 +116,10 @@ export const TrackArtists = styled.td`
     max-width: 530px;
 `;
 
+export const ArtistNameContainer = styled.span`
+    color: ${({ theme }) => theme.colors.nobel};
+`;
+
 export const ArtistName = styled(Link) <ArtistNameProps>`
     color: ${({ theme }) => theme.colors.nobel};
     font-weight: 400;
