@@ -13,9 +13,9 @@ export const Container = styled.div<ContainerProps>`
     grid-gap: 30px;
     grid-template-columns: calc(20% * 585 / 582) 1fr;
     padding: 20px;
-    background-color: #474747;
+    background: linear-gradient(180deg, rgba(119,129,138,1) 0%, rgba(79,89,98,1) 54%);
     position: relative;
-    box-shadow: 0 4px 58px 35px #5a59596b;
+    box-shadow: 0 4px 58px 35px #4f596270;
     z-index: 2;
 
     ${({ $useAlbumLayout }) => $useAlbumLayout && css`
