@@ -21,7 +21,7 @@ export const Container = styled(Link)`
     };
 `;
 
-export const Title = styled(Link)`
+export const Title = styled.header`
   color: ${({ theme }) => theme.colors.white};
   font-size: 13px;
   font-weight: 500;
