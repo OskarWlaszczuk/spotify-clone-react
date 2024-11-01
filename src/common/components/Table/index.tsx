@@ -1,4 +1,4 @@
-import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer } from "./styled";
+import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer, ArtistNameContainer } from "./styled";
 import { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
@@ -127,7 +127,10 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                                                     </TrackName>
                                                     {useAlbumView && (
                                                         <TrackArtists>{artists?.map(({ name, id }, artistIndex) => (
-                                                            <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{artistIndex !== 0 && ","}{name}</ArtistName>
+                                                            <ArtistNameContainer>
+                                                                {artistIndex !== 0 && ", "}
+                                                                <ArtistName $rowActive={activeIndex === index} to={toArtist({ id })}>{name}</ArtistName>
+                                                            </ArtistNameContainer>
                                                         ))}
                                                         </TrackArtists>)
                                                     }
