@@ -2,6 +2,7 @@ import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink, Ex
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 import { ReactElement, ReactNode } from "react";
 import { MediaItem } from "../../interfaces/MediaItem";
+import { isNotEmpty } from "../../functions/isNotEmpty";
 
 interface FullListData {
     pathname: string;
@@ -29,6 +30,9 @@ export const TilesList = ({
 }: TilesListProps
 ) => {
 
+    const fullListPathname = fullListData?.pathname;
+    const fullListText = fullListData?.text;
+
     const { tilesPerRow, containerRef } = useTilesPerRow();
 
     const previewList = list?.slice(0, tilesPerRow);
@@ -40,20 +44,26 @@ export const TilesList = ({
 
     const titleElement = (
         fullListData ?
-            <TitleAsLink to={fullListData}>{title}</TitleAsLink> :
+            <TitleAsLink to={fullListPathname!}>{title}</TitleAsLink> :
             <Title>{title}</Title>
     );
 
     return (
-        <StyledSection>
-            <TitleContent>
-                {titleElement}
-                {fullListData && <FullListLink to={fullListData}>Show all</FullListLink>}
-            </TitleContent >
-            {subExtraContent && <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>}
-            <List ref={containerRef} >
-                {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
-            </List >
-        </StyledSection>
+        <>
+            {
+                isNotEmpty(list) && (
+                    <StyledSection>
+                        <TitleContent>
+                            {titleElement}
+                            {fullListData && <FullListLink to={fullListPathname!}>{fullListText}</FullListLink>}
+                        </TitleContent >
+                        {subExtraContent && <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>}
+                        <List ref={containerRef} >
+                            {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
+                        </List >
+                    </StyledSection>
+                )
+            }
+        </>
     );
 };
