@@ -11,6 +11,7 @@ import { artistSinglesReducer } from '../features/artistDetailsPage/slices/artis
 import { artistCompilationReducer } from '../features/artistDetailsPage/slices/artistCompilationSlice';
 import { artistAppearsOnReducer } from '../features/artistDetailsPage/slices/artistAppearsOnSlice';
 import { albumDetailsReducer } from '../features/albumPage/slices/albumDetailsSlice';
+import { authSliceReducer } from '../common/slices/authSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -28,6 +29,8 @@ export const store = configureStore({
         artistAppearsOn: artistAppearsOnReducer,
 
         albumDetails: albumDetailsReducer,
+
+        auth: authSliceReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(sagaMiddleware),
