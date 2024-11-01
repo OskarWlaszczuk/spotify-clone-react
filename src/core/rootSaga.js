@@ -9,6 +9,7 @@ import { watchFetchArtistSinglesSaga } from "../features/artistDetailsPage/sagas
 import { watchFetchArtistCompilationSaga } from "../features/artistDetailsPage/sagas/artistCompilationSaga";
 import { watchFetchArtistAppearsOnSaga } from "../features/artistDetailsPage/sagas/artistAppearsOnSaga";
 import { watchFetchAlbumDetailsSaga } from "../features/albumPage/sagas/albumDetailsSaga";
+import { authSaga } from "../common/sagas/authSaga";
 
 export function* rootSaga() {
     yield all([
@@ -22,5 +23,6 @@ export function* rootSaga() {
         watchFetchArtistCompilationSaga(),
         watchFetchArtistAppearsOnSaga(),
         watchFetchAlbumDetailsSaga(),
+        authSaga(),
     ]);
 };
