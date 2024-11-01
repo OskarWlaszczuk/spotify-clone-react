@@ -8,6 +8,7 @@ import { Library } from "./Library/components";
 import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/ArtistDetailsPage";
 
 export const App = () => {
+
   return (
     <HashRouter>
       <NavigationPanel />
