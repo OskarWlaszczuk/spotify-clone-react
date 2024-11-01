@@ -37,6 +37,7 @@ import { fullListLinkText } from "../../../../common/constants/fullListLinkText 
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
+import { isMatch } from "../../../../common/functions/isMatch";
 interface MainContentProps {
     name: string;
     allReleases: any;
@@ -52,13 +53,14 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
             listItem;
     };
 
+    const filterByAlbumGroup = (targetGroup: string) => allReleases?.filter(({ album_group }: any) => isMatch(album_group, targetGroup));
+    const albums = filterByAlbumGroup("album");
+    const compilations = filterByAlbumGroup("compilation");
+    const singles = filterByAlbumGroup("single");
+    const appearsOn = filterByAlbumGroup("appears_on");
+
     const allReleasesWithoutAppearsOn = allReleases?.filter(({ album_group }: any) => album_group !== "appears_on");
     const sortedAllReleasesFromOldestToNewest = sortFromOldestToNewest(allReleasesWithoutAppearsOn);
-
-    const albums = allReleases?.filter(({ album_group }: any) => album_group === "album");
-    const compilations = allReleases?.filter(({ album_group }: any) => album_group === "compilation");
-    const singles = allReleases?.filter(({ album_group }: any) => album_group === "single");
-    const appearsOn = allReleases?.filter(({ album_group }: any) => album_group === "appears_on");
 
     const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
     const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
