@@ -1,0 +1,1 @@
+export const albumEndpointResource = "albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation&limit=50";
