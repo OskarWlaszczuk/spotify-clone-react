@@ -20,16 +20,18 @@ import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
-import { useArtistAllReleases } from "../../../../common/hooks/useArtistAllReleases";
-import { useArtistDetails } from "../../../../common/hooks/useArtistDetails";
+import { useArtistDatas } from "../../../../common/hooks/useArtistDatas";
+import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
+import { albumEndpointResource } from "../../../../common/constants/albumsEndpointResource";
 
 export const AlbumPage = () => {
     const { albumID, artistID } = useParams();
 
     const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
 
-    const { configs: artistDetailsConfigs, artistDetails, artistDetailsStatus } = useArtistDetails(artistID);
-    const { configs: artistAllReleasesConfigs, artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(artistID);
+    const { configs: artistDetailsConfigs, artistStatus: artistDetailsStatus, artistDatas: artistDetails } = useArtistDatas(artistID, artistDetailsActions, artistDetailsSelectors);
+    const { configs: artistAllReleasesConfigs, artistStatus: artistAllReleasesStatus, artistDatas: artistAllReleasesList } = useArtistDatas(artistID, artistAlbumsActions, artistAlbumsSelectors, albumEndpointResource);
 
     useFetchAPI(
         [
@@ -103,11 +105,11 @@ export const AlbumPage = () => {
                     <Table list={albumTracks} useAlbumView discsNumbers={uniqueAlbumTracksDiscNumbers} />
                     <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
-                        isNotEmpty(artistAllReleasesList) && (
+                        isNotEmpty(artistAllReleasesList?.items) && (
                             <TilesList
                                 title={<>More by {mainArtistName}</>}
                                 hideRestListPart
-                                list={artistAllReleasesList.filter(({ name }) => name !== albumName)}
+                                list={artistAllReleasesList?.items.filter(({ name }) => name !== albumName)}
                                 renderItem={
                                     (({ id, images, name, artists = [], release_date }, index) => (
                                         <Tile
