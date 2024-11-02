@@ -5,3 +5,6 @@ export const compilationParamDiscography = "discography-compilation";
 
 export const relatedArtistsParam = "related";
 export const artistAppearsOnParam = "appears-on";
+
+export const popularAlbumsParam = "popular-albums";
+export const popularArtistsParam = "popular-artists";
