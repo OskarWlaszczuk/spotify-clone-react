@@ -3,7 +3,7 @@ import { initial, loading, success, error } from "../constants/fetchStatuses";
 import { checkFetchStatuses } from "../functions/checkFetchStatuses";
 import { FetchStatus } from "../types/FetchStatus";
 
-export const useFetchStatus = (fetchStatuses: FetchStatus[] = []): FetchStatus => {
+export const useFetchStatus = (fetchStatuses: any[] = []): FetchStatus => {
     const [fetchStatus, setFetchStatus] = useState<FetchStatus>(initial);
 
     useEffect(() => {
