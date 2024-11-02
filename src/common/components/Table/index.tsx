@@ -23,24 +23,26 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
     const handleOnRowMouseEnter = (trackIndex: number): void => setActiveIndex(list.findIndex((_, index: number) => index === trackIndex));
     const handleOnRowMouseLeave = (): void => setActiveIndex(undefined);
 
-    const renderTableContent = ({
-        list,
-        useAlbumView,
-        discsNumbers,
-        hideRestTracks,
-        activeIndex,
-        handleOnRowMouseEnter,
-        handleOnRowMouseLeave
-    }: {
-        list: any
-        useAlbumView: any;
-        discsNumbers: any;
-        hideRestTracks: any
-        activeIndex: any;
-        handleOnRowMouseEnter: any;
-        handleOnRowMouseLeave: any;
-    }) => {
-        const renderRows = (tracks: any) => tracks.map(({ album, name, duration_ms, artists }: { album: any, name: any, duration_ms: any, artists: any }, index: any) => (
+    const renderTableContent = (
+        {
+            list,
+            useAlbumView,
+            discsNumbers,
+            hideRestTracks,
+            activeIndex,
+            handleOnRowMouseEnter,
+            handleOnRowMouseLeave
+        }: {
+            list: any
+            useAlbumView: any;
+            discsNumbers: any;
+            hideRestTracks: any
+            activeIndex: any;
+            handleOnRowMouseEnter: any;
+            handleOnRowMouseLeave: any;
+        }
+    ) => {
+        const renderRows = (tracks: any) => tracks?.map(({ album, name, duration_ms, artists }: { album: any, name: any, duration_ms: any, artists: any }, index: any) => (
             <ContentRow
                 key={nanoid()}
                 onMouseEnter={() => handleOnRowMouseEnter(index)}
@@ -84,7 +86,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
             ));
         }
 
-        return renderRows(list.filter((_: any, index: any) => hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10));
+        return renderRows(list?.filter((_: any, index: any) => hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10));
     };
 
     return (
