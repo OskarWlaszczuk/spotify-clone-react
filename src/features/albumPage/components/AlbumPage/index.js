@@ -24,19 +24,21 @@ import { useArtistAllReleases } from "../../../../common/hooks/useArtistAllRelea
 import { useArtistDetails } from "../../../../common/hooks/useArtistDetails";
 
 export const AlbumPage = () => {
-
     const { albumID, artistID } = useParams();
 
     const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
 
-    useFetchAPI([{
-        fetchAction: fetchAlbumDetails,
-        clearAction: clearAlbumDetails,
-        endpoint: `albums/${albumID}`
-    }], [albumID, artistID]);
+    const { configs: artistDetailsConfigs, artistDetails, artistDetailsStatus } = useArtistDetails(artistID);
+    const { configs: artistAllReleasesConfigs, artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(artistID);
 
-    const { artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(artistID);
-    const { artistDetailsStatus, artistDetails } = useArtistDetails(artistID);
+    useFetchAPI(
+        [
+            { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
+            artistDetailsConfigs,
+            artistAllReleasesConfigs,
+        ],
+        [albumID, artistID]
+    );
 
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
     const albumDetails = useSelector(albumDetailsSelectors.selectDatas)?.datas;
@@ -57,7 +59,7 @@ export const AlbumPage = () => {
     const albumTracks = albumDetails?.tracks.items;
 
     const albumTracksDiscNumbersDuplicatesList = albumTracks?.map(({ disc_number }) => disc_number);
-    const albumTracksDiscNumbersNoDuplicates = removeDuplicates(albumTracksDiscNumbersDuplicatesList, "disc_number");
+    const uniqueAlbumTracksDiscNumbers = removeDuplicates(albumTracksDiscNumbersDuplicatesList);
 
     const albumTracksDurations = albumTracks?.map(({ duration_ms }) => duration_ms);
     const albumTotalDuration = fromMillisecondsToMinutes(albumTracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
@@ -98,7 +100,7 @@ export const AlbumPage = () => {
             }
             content={
                 <>
-                    <Table list={albumTracks} useAlbumView discsNumbers={albumTracksDiscNumbersNoDuplicates} />
+                    <Table list={albumTracks} useAlbumView discsNumbers={uniqueAlbumTracksDiscNumbers} />
                     <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
                         isNotEmpty(artistAllReleasesList) && (
