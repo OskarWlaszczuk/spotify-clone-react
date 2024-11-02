@@ -17,15 +17,17 @@ export const ArtistDetailsPage = () => {
     const { fetch: fetchRelatedArtists, clear: clearRelatedArtists } = relatedArtistsActions;
     const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
 
+    const { configs: artistDetailsConfigs, artistDetails, artistDetailsStatus } = useArtistDetails(id);
+    const { configs: artistAllReleasesConfigs, artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(id);
+
     useFetchAPI(
         [
+            artistDetailsConfigs,
+            artistAllReleasesConfigs,
             { fetchAction: fetchRelatedArtists, clearAction: clearRelatedArtists, endpoint: `artists/${id}/related-artists` },
             { fetchAction: fetchTopTracks, clearAction: clearTopTracks, endpoint: `artists/${id}/top-tracks` },
         ], [id]
     );
-
-    const { artistAllReleasesStatus, artistAllReleasesList } = useArtistAllReleases(id);
-    const { artistDetailsStatus, artistDetails } = useArtistDetails(id);
 
     const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
     const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus);
