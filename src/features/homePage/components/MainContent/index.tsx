@@ -12,6 +12,7 @@ import { getAlbumArtists } from "../../../../common/functions/getAlbumArtists";
 import { MediaItem } from "../../../../common/interfaces/MediaItem";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
+import { popularAlbumsParam, popularArtistsParam } from "../../../../common/constants/params";
 
 export const MainContent = () => {
     const { type = "" } = useParams<{ type: string }>();
@@ -20,18 +21,13 @@ export const MainContent = () => {
     const popularAlbums: MediaItem[] = useSelector(albumsSelectors.selectDatas)?.datas.albums;
     const popularArtists: MediaItem[] = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
-    const popularAlbumsParam = "popular-albums";
-    const popularArtistsParam = "popular-artists";
-
     const popularAlbumsTitle = "Popular albums";
     const popularArtistsTitle = "Popular artists";
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType(
-        [
-            { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
-            { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
-        ], type
-    );
+    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
+        { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
+        { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
+    ], type);
 
     return (
         <>
@@ -98,8 +94,8 @@ export const MainContent = () => {
                             }
                             hideRestListPart
                             fullListData={{
-                                pathname:toHome({ additionalPath: popularAlbumsParam }),
-                                text:fullListLinkText,
+                                pathname: toHome({ additionalPath: popularAlbumsParam }),
+                                text: fullListLinkText,
                             }}
                         />
 
