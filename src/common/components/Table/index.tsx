@@ -1,4 +1,4 @@
-import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer, ArtistNameContainer } from "./styled";
+import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer, ArtistNameContainer, TrackLink, SubCaption } from "./styled";
 import React, { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
@@ -6,7 +6,7 @@ import { getAlbumArtists } from "../../functions/getAlbumArtists";
 import { nanoid } from "nanoid";
 import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
-import { toArtist } from "../../functions/routes";
+import { toArtist, toTrack } from "../../functions/routes";
 import { StyledDiscIcon } from "../StyledDiscIcon";
 import { AvatarImage } from "../AvatarImage";
 
@@ -14,9 +14,11 @@ interface TableProps {
     list: TrackListItem[];
     discsNumbers?: number[];
     useAlbumView?: boolean;
+    caption?: string;
+    subCaption?: string;
 };
 
-export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
+export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption }: TableProps) => {
     const [hideRestTracks, setHideRestTracks] = useState<boolean>(!useAlbumView);
     const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
@@ -42,7 +44,7 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
             handleOnRowMouseLeave: any;
         }
     ) => {
-        const renderRows = (tracks: any) => tracks?.map(({ album, name, duration_ms, artists }: { album: any, name: any, duration_ms: any, artists: any }, index: any) => (
+        const renderRows = (tracks: any) => tracks?.map(({ album, name, duration_ms, artists, id }: { album: any, name: any, duration_ms: any, artists: any, id: any }, index: any) => (
             <ContentRow
                 key={nanoid()}
                 onMouseEnter={() => handleOnRowMouseEnter(index)}
@@ -57,7 +59,9 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
                     </Index>
                     {!useAlbumView && <td><AvatarImage src={album.images[0].url} /></td>}
                     <TrackDetailsWrapper>
-                        <TrackName>{name}</TrackName>
+                        <TrackName>
+                            <TrackLink to={toTrack({ trackID: id, artistsIDs: artists.map(({ id }: any) => id).join(",") })}>{name}</TrackLink>
+                        </TrackName>
                         {useAlbumView && (
                             <TrackArtists>
                                 {artists?.map(({ name, id }: { name: any, id: any }, artistIndex: any) => (
@@ -92,7 +96,12 @@ export const Table = ({ list, useAlbumView, discsNumbers }: TableProps) => {
     return (
         <Wrapper>
             <StyledTable>
-                {!useAlbumView && <Caption>Popular</Caption>}
+                {caption && (
+                    <Caption>
+                        {caption}
+                        {subCaption && <SubCaption>{subCaption}</SubCaption>}
+                    </Caption>
+                )}
                 {
                     useAlbumView && (
                         <thead>
