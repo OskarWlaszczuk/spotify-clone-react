@@ -12,13 +12,14 @@ import { AvatarImage } from "../AvatarImage";
 
 interface TableProps {
     list: TrackListItem[];
+    hideIndex?: boolean,
     discsNumbers?: number[];
     useAlbumView?: boolean;
     caption?: string;
     subCaption?: string;
 };
 
-export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption }: TableProps) => {
+export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, hideIndex, }: TableProps) => {
     const [hideRestTracks, setHideRestTracks] = useState<boolean>(!useAlbumView);
     const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
@@ -51,13 +52,26 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption }:
                 onMouseLeave={handleOnRowMouseLeave}
             >
                 <TrackOverview rowSpan={useAlbumView ? 2 : 1}>
-                    <Index
-                        scope="row"
-                        title={`Play ${name} by ${getAlbumArtists(artists)}`}
-                    >
-                        {activeIndex === index ? <StyledPlayIcon /> : index + 1}
-                    </Index>
-                    {!useAlbumView && <td><AvatarImage src={album.images[0].url} /></td>}
+                    {
+                        !hideIndex && (
+                            <Index
+                                scope="row"
+                                title={`Play ${name} by ${getAlbumArtists(artists)}`}
+                            >
+                                {activeIndex === index ? <StyledPlayIcon /> : index + 1}
+                            </Index>
+                        )
+                    }
+                    {!useAlbumView && (
+                        <td>
+                            <AvatarImage
+                                $picture={album.images[0].url}
+                                $darkened={activeIndex === index && hideIndex}
+                            >
+                                {activeIndex === index && hideIndex ? <StyledPlayIcon /> : ""}
+                            </AvatarImage>
+                        </td>
+                    )}
                     <TrackDetailsWrapper>
                         <TrackName>
                             <TrackLink to={toTrack({ trackID: id, artistsIDs: artists.map(({ id }: any) => id).join(",") })}>{name}</TrackLink>
@@ -90,9 +104,9 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption }:
             ));
         }
 
-        return renderRows(list?.filter((_: any, index: any) => hideRestTracks ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10));
+        return renderRows(list?.filter((_: any, index: any) => hideRestTracks || hideIndex ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10));
     };
-
+    console.log((!useAlbumView && list?.length > 5))
     return (
         <Wrapper>
             <StyledTable>
@@ -126,7 +140,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption }:
                 </tbody>
             </StyledTable>
             {
-                (!useAlbumView && list?.length > 5) && (
+                (!useAlbumView && list?.length > 5 && !hideIndex) && (
                     <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
                         See {hideRestTracks ? <>more</> : <>less</>}
                     </ToggleViewButton>
