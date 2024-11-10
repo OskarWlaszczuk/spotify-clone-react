@@ -24,6 +24,7 @@ import { allReleasesEndpointResource } from "../../../../common/constants/allRel
 import { getImage } from "../../../../common/functions/getImage";
 import { selectAccessToken } from "../../../../common/slices/authSlice";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
+import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 
 export const AlbumPage = () => {
     const { albumID } = useParams();
@@ -85,7 +86,12 @@ export const AlbumPage = () => {
     const albumTotalDuration = fromMillisecondsToMinutes(albumTracksDurations?.reduce((accumulator, currentValue) => accumulator + currentValue, 0));
     const albumTotalDurationConverted = albumTotalDuration >= 60 ? convertMinutesToHours(albumTotalDuration) : convertToMinutesAndSeconds(albumTotalDuration);
 
-    const metaDatasContent = [getYear(albumReleaseDate), `${albumTotalTracks} songs, ${albumTotalDurationConverted}`].join(" • ");
+    const metaDatasContent = renderMetaDatasContent(
+        albumReleaseDate,
+        albumTotalDurationConverted,
+        `${albumTotalTracks} songs`
+    );
+
     const subTitleContent = albumArtistsList?.map(({ name, id }, index) => (
         <>
             {
