@@ -20,39 +20,57 @@ import { isNotEmpty } from "../../../../common/functions/isNotEmpty";
 import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
-import { useArtistDatas } from "../../../../common/hooks/useArtistDatas";
-import { artistDetailsActions, artistDetailsSelectors } from "../../../artistDetailsPage/slices/artistDetailsSlice";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
-import { albumEndpointResource } from "../../../../common/constants/albumsEndpointResource";
+import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
+import { getImage } from "../../../../common/functions/getImage";
+import { selectAccessToken } from "../../../../common/slices/authSlice";
+import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 
 export const AlbumPage = () => {
-    const { albumID, artistID } = useParams();
+    const { albumID } = useParams();
+
+    const accessToken = useSelector(selectAccessToken);
 
     const { fetch: fetchAlbumDetails, clear: clearAlbumDetails } = albumDetailsActions;
-
-    const { configs: artistDetailsConfigs, artistStatus: artistDetailsStatus, artistDatas: artistDetails } = useArtistDatas(artistID, artistDetailsActions, artistDetailsSelectors);
-    const { configs: artistAllReleasesConfigs, artistStatus: artistAllReleasesStatus, artistDatas: artistAllReleasesList } = useArtistDatas(artistID, artistAlbumsActions, artistAlbumsSelectors, albumEndpointResource);
 
     useFetchAPI(
         [
             { fetchAction: fetchAlbumDetails, clearAction: clearAlbumDetails, endpoint: `albums/${albumID}` },
-            artistDetailsConfigs,
-            artistAllReleasesConfigs,
+            // artistDetailsConfigs,
+            // artistAllReleasesConfigs,
         ],
-        [albumID, artistID]
+        [
+            albumID,
+            // artistID
+        ]
     );
 
     const albumDetailsStatus = useSelector(albumDetailsSelectors.selectStatus);
     const albumDetails = useSelector(albumDetailsSelectors.selectDatas)?.datas;
 
-    const mainArtistName = artistDetails?.name;
-    const mainArtistImage = artistDetails?.images[0].url;
-
     const albumArtistsList = albumDetails?.artists;
+    const artistID = albumDetails?.artists[0].id;
+
     const isAlbumArtistsListLengthEqualsOne = albumArtistsList?.length === 1;
+    const isArtistIdTruthy = !!artistID
+
+    const { datas: artistImage, datasStatus: artistImageStatus } = useDependentFetchAPI({
+        endpoint: `artists/${artistID}`,
+        accessToken,
+        fetchCondition: isAlbumArtistsListLengthEqualsOne && isArtistIdTruthy,
+        dependencies: [albumID, artistID],
+    });
+
+    const { datas: allReleases, datasStatus: allReleasesStatus } = useDependentFetchAPI({
+        endpoint: `artists/${artistID}/${allReleasesEndpointResource}`,
+        accessToken,
+        fetchCondition: isArtistIdTruthy,
+        dependencies: [albumID, artistID],
+    });
+    console.log(allReleasesStatus, artistImageStatus, albumDetailsStatus)
+
 
     const albumCopyrights = albumDetails?.copyrights;
-    const albumImage = albumDetails?.images[0].url;
+    const albumImage = getImage(albumDetails?.images);
     const albumName = albumDetails?.name;
     const albumType = albumDetails?.album_type;
     const albumReleaseDate = albumDetails?.release_date;
@@ -73,7 +91,7 @@ export const AlbumPage = () => {
             {
                 isAlbumArtistsListLengthEqualsOne && (
                     <AvatarImage
-                        src={mainArtistImage}
+                        $picture={getImage(artistImage.images)}
                         alt={name}
                         title={name}
                         $smaller
@@ -85,8 +103,14 @@ export const AlbumPage = () => {
         </>
     ));
 
+
     const { setActiveTile, isTileActive } = useActiveTile();
-    const fetchStatus = useFetchStatus([albumDetailsStatus, artistDetailsStatus, artistAllReleasesStatus]);
+    const fetchStatus = useFetchStatus([
+        albumDetailsStatus,
+        allReleasesStatus
+        // artistDetailsStatus,
+        // artistAllReleasesStatus
+    ]);
 
     return (
         <Main
@@ -105,11 +129,11 @@ export const AlbumPage = () => {
                     <Table list={albumTracks} useAlbumView discsNumbers={uniqueAlbumTracksDiscNumbers} />
                     <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
                     {
-                        isNotEmpty(artistAllReleasesList?.items) && (
+                        isNotEmpty(allReleases?.items) && (
                             <TilesList
-                                title={<>More by {mainArtistName}</>}
+                                title={<>More by {albumArtistsList?.[0].name}</>}
                                 hideRestListPart
-                                list={artistAllReleasesList?.items.filter(({ name }) => name !== albumName)}
+                                list={allReleases?.items.filter(({ name }) => name !== albumName)}
                                 renderItem={
                                     (({ id, images, name, artists = [], release_date }, index) => (
                                         <Tile
@@ -125,7 +149,7 @@ export const AlbumPage = () => {
                                                 }),
                                             }}
                                             key={id}
-                                            picture={images[0].url}
+                                            picture={getImage(images)}
                                             title={name}
                                             subInfo={getYear(release_date)}
                                             toPage={toAlbum({ albumID: id, artistID: artists[0].id })}
