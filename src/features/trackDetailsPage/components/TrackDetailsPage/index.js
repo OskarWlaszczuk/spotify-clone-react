@@ -12,7 +12,7 @@ import { ArtistNameLink } from "../../../albumPage/components/AlbumPage/styled";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useApiData } from "../../../../common/hooks/useApiData";
 import { artistsActions, artistsSelectors } from "../../../homePage/slices/artistsSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LyricsLine, LyricsSection } from "../MainContent/Lyrics/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
@@ -21,30 +21,85 @@ import { useLyrics } from "../../hooks/useLyrics";
 import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
 import { trackRecommendationsActions, trackRecommendationsSelectors } from "../../slices/trackRecommendationsSlice";
 import { Table } from "../../../../common/components/Table";
+import { artistTopTracksActions, artistTopTracksSelectors } from "../../../artistDetailsPage/slices/artistTopTracksSlice";
+import { albumsParamDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
+import { nanoid } from "nanoid";
+import { Tile } from "../../../../common/components/Tile";
+import { TilesList } from "../../../../common/components/TilesList";
+import { useActiveTile } from "../../../../common/hooks/useActiveTile";
+import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
+import { relatedArtistsActions, relatedArtistsSelectors } from "../../../artistDetailsPage/slices/relatedArtistsSlice";
+import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
+import { initial } from "../../../../common/constants/fetchStatuses";
+import axios from "axios";
+import { getImage } from "../../../../common/functions/getImage";
+import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 
 export const TrackDetailsPage = () => {
     const { trackID, artistsIDs } = useParams();
+    const mainArtistID = artistsIDs.split(',')[0];
 
     const [hideRestLyrics, setHideRestLyrics] = useState(true);
+    const [artistsAlbums, setArtistsAlbums] = useState([]);
+    const [artistsAlbumsStatus, setArtistsAlbumsStatus] = useState(initial);
 
     const { fetch: fetchTrackDetails, clear: clearTrackDetails } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
+    const { fetch: fetchArtistAlbums, clear: clrearArtistAlbums } = artistAlbumsActions;
 
-    const { configs: artistsDetailsConfigs, status: artistsDetailsStatus, datas: artistsDetails } = useApiData(artistsActions, artistsSelectors, `artists?ids=${artistsIDs}`);
+    const artistsIDsList = artistsIDs.split(",");
+
+    useEffect(() => {
+        setArtistsAlbums(
+            artistsIDsList.map(id => ({
+                fetchAction: fetchArtistAlbums,
+                clearAction: clrearArtistAlbums,
+                endpoint: `/artists/${id}/albums?include_groups=album`
+            }))
+        )
+    }, []);
+
+    console.log(...artistsAlbums);
+
+    const {
+        configs: relatedArtistsConfigs,
+        status: relatedArtistsStatus,
+        datas: relatedArtists
+    } = useApiData(relatedArtistsActions, relatedArtistsSelectors, `artists/${mainArtistID}/related-artists`);
+
+    const {
+        configs: artistsDetailsConfigs,
+        status: artistsDetailsStatus,
+        datas: artistsDetails
+    } = useApiData(artistsActions, artistsSelectors, `artists?ids=${artistsIDs}`);
+
+    const {
+        configs: artistAlbumsConfigs,
+        status: artistAlbumsStatus,
+        datas: artistAlbums
+    } = useApiData(
+        artistAlbumsActions,
+        artistAlbumsSelectors,
+        `artists/${mainArtistID}/albums?include_groups=single%2Calbum&limit=50`
+    );
+
+    const {
+        configs: topTracksConfigs,
+        status: topTracksStatus,
+        datas: topTracks
+    } = useApiData(artistTopTracksActions, artistTopTracksSelectors, `artists/${mainArtistID}/top-tracks`);
+
+    const mainArtistReleases = artistAlbums?.items;
+
+    const mainArtistAlbums = filterByAlbumGroup(mainArtistReleases, "album");
+    const mainArtistSingles = filterByAlbumGroup(mainArtistReleases, "single");
 
     const trackDetailsStatus = useSelector(trackDetailsSelectors.selectStatus);
     const trackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
 
     const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
     const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
-
-    console.log(trackRecommandations?.map(({ name }) => name))
-
-    useFetchAPI([
-        artistsDetailsConfigs,
-        { fetchAction: fetchTrackDetails, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
-        { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
-    ]);
 
     const track = {
         name: trackDetails?.name,
@@ -56,7 +111,7 @@ export const TrackDetailsPage = () => {
 
     const album = {
         name: trackDetails?.album.name,
-        image: trackDetails?.album.images[0].url,
+        image: getImage(trackDetails?.album.images),
         releaseDate: trackDetails?.album.release_date,
         id: trackDetails?.album.id,
     };
@@ -64,14 +119,28 @@ export const TrackDetailsPage = () => {
     const artists = {
         artistsList: artistsDetails?.artists,
     };
-
+    console.log(artists.artistsList)
     const mainArtist = {
         name: artistsDetails?.artists[0].name,
         id: artistsDetails?.artists[0].id,
-        image: artistsDetails?.artists[0].images[0].url,
+        image: "",
     };
 
-    const metaDatasContent = [getYear(album.releaseDate), `${track.duration.replace(".", ":")}, ${track.popularity}/100`].join(" • ");
+    useFetchAPI(
+        [
+            ...artistsAlbums,
+            relatedArtistsConfigs,
+            artistAlbumsConfigs,
+            topTracksConfigs,
+            artistsDetailsConfigs,
+            { fetchAction: fetchTrackDetails, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
+            { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
+        ],
+        [trackID, artistsIDs]
+    );
+
+    const metaDatasContent = renderMetaDatasContent(album.releaseDate, track.duration.replace(".", ":"), `${track.popularity}/100`);
+
     const subTitleContent = <>
         <AvatarImage
             src={mainArtist.image}
@@ -81,12 +150,20 @@ export const TrackDetailsPage = () => {
             $useArtistPictureStyle
         />{" "}
         <ArtistNameLink to={toArtist({ id: mainArtist.id })}>{mainArtist.name}</ArtistNameLink>{" • "}
-        <ArtistNameLink $thinner to={toAlbum({ albumID: album.id, artistID: mainArtist.id })}>{album.name}</ArtistNameLink>
+        <ArtistNameLink $thinner to={toAlbum({ albumID: album.id })}>{album.name}</ArtistNameLink>
     </>
 
     const { lyrics, lyricsFetchStatus } = useLyrics(mainArtist.name, track.name);
 
-    const fetchStatus = useFetchStatus([trackDetailsStatus, artistsDetailsStatus, lyricsFetchStatus, trackRecommandationsStatus]);
+    const fetchStatus = useFetchStatus([
+        relatedArtistsStatus,
+        artistAlbumsStatus,
+        topTracksStatus,
+        trackDetailsStatus,
+        artistsDetailsStatus,
+        lyricsFetchStatus,
+        trackRecommandationsStatus
+    ]);
 
     const previewLyrics = lyrics?.split('\n').slice(0, 13).join('\n');
 
@@ -95,6 +172,8 @@ export const TrackDetailsPage = () => {
             <LyricsLine key={index}>{line}</LyricsLine>
         ));
     };
+
+    const { setActiveTile, isTileActive } = useActiveTile();
 
     return (
         <>
@@ -125,7 +204,7 @@ export const TrackDetailsPage = () => {
                                     artists.artistsList?.map(({ id, name, type, images }) => (
                                         <StyledLink to={toArtist({ id })}>
                                             <ArtistCardContainer>
-                                                <Picture $picture={images[0].url} $useArtistPictureStyle />
+                                                <Picture $picture={getImage(images)} $useArtistPictureStyle />
                                                 <Text>
                                                     <Paragraph>{capitalizeFirstLetter(type)}</Paragraph>
                                                     <Paragraph $specialOnHover>{name}</Paragraph>
@@ -141,6 +220,109 @@ export const TrackDetailsPage = () => {
                             caption="Recommended"
                             subCaption="Based on this song"
                             hideIndex
+                        />
+                        <Table
+                            list={topTracks?.tracks}
+                            caption={mainArtist.name}
+                        />
+                        < TilesList
+                            title={`Popular Albums by ${mainArtist.name}`}
+                            list={mainArtistAlbums}
+                            renderItem={({ images, name, type, id, artists }, index) => (
+                                <Tile
+                                    isActive={isTileActive(index, 1)}
+                                    mouseEventHandlers={{
+                                        enter: () => setActiveTile({
+                                            activeTileIndex: index,
+                                            activeTilesListID: 1,
+                                        }),
+                                        leave: () => setActiveTile({
+                                            activeTileIndex: undefined,
+                                            activeTilesListID: undefined,
+                                        }),
+                                    }}
+                                    key={nanoid()}
+                                    toPage={toAlbum({ albumID: id })}
+                                    picture={getImage(images)}
+                                    title={name}
+                                    subInfo={type || ""}
+                                    isArtistPictureStyle={false}
+                                />
+                            )}
+                            hideRestListPart
+                            fullListData={{
+                                pathname: toArtist({
+                                    id: mainArtistID,
+                                    additionalPath: albumsParamDiscography,
+                                }),
+                                text: fullListLinkText,
+                            }}
+                        />
+                        < TilesList
+                            title={`Popular Singles and EP's by ${mainArtist.name}`}
+                            list={mainArtistSingles}
+                            renderItem={({ images, name, type, id, artists }, index) => (
+                                <Tile
+                                    isActive={isTileActive(index, 2)}
+                                    mouseEventHandlers={{
+                                        enter: () => setActiveTile({
+                                            activeTileIndex: index,
+                                            activeTilesListID: 2,
+                                        }),
+                                        leave: () => setActiveTile({
+                                            activeTileIndex: undefined,
+                                            activeTilesListID: undefined,
+                                        }),
+                                    }}
+                                    key={nanoid()}
+                                    toPage={toAlbum({ albumID: id })}
+                                    picture={getImage(images)}
+                                    title={name}
+                                    subInfo={type || ""}
+                                    isArtistPictureStyle={false}
+                                />
+                            )}
+                            hideRestListPart
+                            fullListData={{
+                                pathname: toArtist({
+                                    id: mainArtistID,
+                                    additionalPath: singleParamDiscography,
+                                }),
+                                text: fullListLinkText,
+                            }}
+                        />
+                        < TilesList
+                            title={`Related artists`}
+                            list={relatedArtists?.artists}
+                            renderItem={({ images, name, type, id }, index) => (
+                                <Tile
+                                    isActive={isTileActive(index, 3)}
+                                    mouseEventHandlers={{
+                                        enter: () => setActiveTile({
+                                            activeTileIndex: index,
+                                            activeTilesListID: 3,
+                                        }),
+                                        leave: () => setActiveTile({
+                                            activeTileIndex: undefined,
+                                            activeTilesListID: undefined,
+                                        }),
+                                    }}
+                                    key={nanoid()}
+                                    toPage={toArtist({ id })}
+                                    picture={getImage(images)}
+                                    title={name}
+                                    subInfo={type || ""}
+                                    isArtistPictureStyle={true}
+                                />
+                            )}
+                            hideRestListPart
+                            fullListData={{
+                                pathname: toArtist({
+                                    id: mainArtistID,
+                                    additionalPath: relatedArtistsParam,
+                                }),
+                                text: fullListLinkText,
+                            }}
                         />
                     </>
                 }
