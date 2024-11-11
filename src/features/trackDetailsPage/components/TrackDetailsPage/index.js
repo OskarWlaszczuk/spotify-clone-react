@@ -35,6 +35,7 @@ import { initial } from "../../../../common/constants/fetchStatuses";
 import axios from "axios";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
+import { renderArtistAvatarImage } from "../../../../common/functions/renderArtistAvatarImage";
 
 export const TrackDetailsPage = () => {
     const { trackID, artistsIDs } = useParams();
@@ -131,13 +132,10 @@ export const TrackDetailsPage = () => {
     const metaDatasContent = renderMetaDatasContent(album.releaseDate, track.duration.replace(".", ":"), `${track.popularity}/100`);
 
     const subTitleContent = <>
-        <AvatarImage
-            $picture={mainArtist.image}
-            alt={mainArtist.name}
-            title={mainArtist.name}
-            $smaller
-            $useArtistPictureStyle
-        />{" "}
+        {renderArtistAvatarImage({
+            image: mainArtist.image,
+            name: mainArtist.name
+        })}{" "}
         <ArtistNameLink to={toArtist({ id: mainArtist.id })}>{mainArtist.name}</ArtistNameLink>{" • "}
         <ArtistNameLink $thinner to={toAlbum({ albumID: album.id })}>{album.name}</ArtistNameLink>
     </>
