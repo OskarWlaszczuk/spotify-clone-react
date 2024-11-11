@@ -21,6 +21,8 @@ import { renderMetaDatasContent } from "../../../../common/functions/renderMetaD
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
+import { renderArtistAvatarImage } from "../../../../common/functions/renderArtistAvatarImage";
+import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 
 export const AlbumPage = () => {
     const { albumID } = useParams();
@@ -63,22 +65,26 @@ export const AlbumPage = () => {
         `${formattedAlbumDetails.totalTracksNumber} songs`
     );
 
-    const subTitleContent = formattedAlbumDetails.artistsList?.map(({ name, id }, index) => (
-        <>
-            {
-                isAlbumArtistsListLengthEqualsOne && (
-                    <AvatarImage
-                        $picture={getImage(artistImage.images)}
-                        alt={name}
-                        title={name}
-                        $smaller
-                        $useArtistPictureStyle
-                    />
-                )
-            }
-            {" "}{index !== 0 && "• "}<ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
-        </>
-    ));
+
+    const subTitleContent = renderSubTitleContent({
+        artistsList: formattedAlbumDetails.artistsList,
+        isAlbumArtistsListLengthEqualsOne,
+        artistImage:getImage(artistImage.images),
+    });
+console.log(getImage(artistImage.images))
+
+    // formattedAlbumDetails.artistsList?.map(({ name, id }, index) => (
+    //     <>
+    //         {
+    //             renderArtistAvatarImage({
+    //                 image: getImage(artistImage.images),
+    //                 name,
+    //                 conditionToRender: isAlbumArtistsListLengthEqualsOne
+    //             })
+    //         }
+    //         {" "}{index !== 0 && "• "}<ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
+    //     </>
+    // ));
 
     return (
         <Main

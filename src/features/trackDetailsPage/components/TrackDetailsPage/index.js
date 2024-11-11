@@ -6,13 +6,10 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
-import { getYear } from "../../../../common/functions/getYear";
-import { AvatarImage } from "../../../../common/components/AvatarImage";
-import { ArtistNameLink } from "../../../albumPage/components/AlbumPage/styled";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useApiData } from "../../../../common/hooks/useApiData";
 import { artistsActions, artistsSelectors } from "../../../homePage/slices/artistsSlice";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LyricsLine, LyricsSection } from "../MainContent/Lyrics/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
@@ -32,10 +29,9 @@ import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetai
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../../artistDetailsPage/slices/relatedArtistsSlice";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
 import { initial } from "../../../../common/constants/fetchStatuses";
-import axios from "axios";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
-import { renderArtistAvatarImage } from "../../../../common/functions/renderArtistAvatarImage";
+import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 
 export const TrackDetailsPage = () => {
     const { trackID, artistsIDs } = useParams();
@@ -131,14 +127,17 @@ export const TrackDetailsPage = () => {
 
     const metaDatasContent = renderMetaDatasContent(album.releaseDate, track.duration.replace(".", ":"), `${track.popularity}/100`);
 
-    const subTitleContent = <>
-        {renderArtistAvatarImage({
-            image: mainArtist.image,
-            name: mainArtist.name
-        })}{" "}
-        <ArtistNameLink to={toArtist({ id: mainArtist.id })}>{mainArtist.name}</ArtistNameLink>{" • "}
-        <ArtistNameLink $thinner to={toAlbum({ albumID: album.id })}>{album.name}</ArtistNameLink>
-    </>
+    const subTitleContent = renderSubTitleContent({
+        albumDetails: {
+            id: album.id,
+            name: album.name,
+        },
+        mainArtistDetails: {
+            id: mainArtist.id,
+            name: mainArtist.name,
+        },
+        artistImage: mainArtist.image,
+    })
 
     const { lyrics, lyricsFetchStatus } = useLyrics(mainArtist.name, track.name);
 
