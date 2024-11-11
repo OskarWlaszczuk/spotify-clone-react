@@ -50,17 +50,7 @@ export const TrackDetailsPage = () => {
 
     const artistsIDsList = artistsIDs.split(",");
 
-    useEffect(() => {
-        setArtistsAlbums(
-            artistsIDsList.map(id => ({
-                fetchAction: fetchArtistAlbums,
-                clearAction: clrearArtistAlbums,
-                endpoint: `/artists/${id}/albums?include_groups=album`
-            }))
-        )
-    }, []);
 
-    console.log(...artistsAlbums);
 
     const {
         configs: relatedArtistsConfigs,
@@ -119,11 +109,10 @@ export const TrackDetailsPage = () => {
     const artists = {
         artistsList: artistsDetails?.artists,
     };
-    console.log(artists.artistsList)
     const mainArtist = {
         name: artistsDetails?.artists[0].name,
         id: artistsDetails?.artists[0].id,
-        image: "",
+        image: getImage(artistsDetails?.artists[0].images),
     };
 
     useFetchAPI(
@@ -143,7 +132,7 @@ export const TrackDetailsPage = () => {
 
     const subTitleContent = <>
         <AvatarImage
-            src={mainArtist.image}
+            $picture={mainArtist.image}
             alt={mainArtist.name}
             title={mainArtist.name}
             $smaller
