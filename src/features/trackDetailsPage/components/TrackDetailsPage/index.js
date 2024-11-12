@@ -35,6 +35,7 @@ import { renderSubTitleContent } from "../../../../common/functions/renderSubTit
 import { selectAccessToken } from "../../../../common/slices/authSlice";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { getYear } from "../../../../common/functions/getYear";
+import { fetchFromAPI } from "../../../../common/functions/fetchFromAPI";
 
 
 const getSpecificKeys = (object, keysToGetList) => {
@@ -58,13 +59,21 @@ const getSpecificKeys = (object, keysToGetList) => {
     })[0];
 };
 
+const formatLyrics = (lyrics) => {
+    return lyrics?.split('\n').map((line, index) => (
+        <LyricsLine key={index}>{line}</LyricsLine>
+    ));
+};
 
 export const TrackDetailsPage = () => {
     const { trackID } = useParams();
+    const accessToken = useSelector(selectAccessToken);
+
+    const { setActiveTile, isTileActive } = useActiveTile();
 
     const rawTrackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
     const trackDetailsStatus = useSelector(trackDetailsSelectors.selectStatus);
-    console.log(rawTrackDetails);
+
     const { fetch: fetchTrackDetails, clear: clearTrackDetails } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
 
@@ -84,42 +93,33 @@ export const TrackDetailsPage = () => {
         dependencies: [trackID],
     });
 
+    const formattedTrackDetails = getSpecificKeys(rawTrackDetails, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
+    const albumData = getSpecificKeys(rawTrackDetails?.album, ["name", "release_date", "id", "images"]);
+    const mainArtistData = getSpecificKeys(artistsDetailsList.artists?.[0], ["name", "id", "images"]);
+
+    const { lyrics, lyricsFetchStatus } = useLyrics(mainArtistData.name, formattedTrackDetails.name);
+    const [hideRestLyrics, setHideRestLyrics] = useState(true);
+    const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
+
     const fetchStatus = useFetchStatus([
         artistsDetailsListStatus,
         trackDetailsStatus,
+        lyricsFetchStatus,
     ]);
 
-
-    const formattedTrackDetails = getSpecificKeys(rawTrackDetails, ["name", "type", "id", "duration_ms", "popularity"]);
-    const formattedTrackAlbumDetails = getSpecificKeys(rawTrackDetails?.album, ["name", "release_date", "id", "images"]);
-    console.log(formattedTrackAlbumDetails)
-    // const track = {
-    //     name: trackDetails?.name,
-    //     type: trackDetails?.type,
-    //     id: trackDetails?.id,
-    //     duration: fromMillisecondsToMinutes(trackDetails?.duration_ms),
-    //     popularity: trackDetails?.popularity,
-    // };
-    // const mainArtistID = artistsIDs.split(',')[0];
-
-    // const [hideRestLyrics, setHideRestLyrics] = useState(true);
-    // const [artistsAlbums, setArtistsAlbums] = useState([]);
-    // const [artistsAlbumsStatus, setArtistsAlbumsStatus] = useState(initial);
+    const { datas: relatedArtistsList, datasStatus: relatedArtistsListStatus } = useDependentFetchAPI({
+        endpoint: `artists/${mainArtistData.id}/related-artists`,
+        fetchCondition: !!mainArtistData.id,
+        dependencies: [trackID],
+    });
 
 
-    // const artistsIDsList = artistsIDs.split(",");
+    // const [artistsAlbumsList, setArtistsAlbumsList] = useState(undefined);
 
-    // const {
-    //     configs: relatedArtistsConfigs,
-    //     status: relatedArtistsStatus,
-    //     datas: relatedArtists
-    // } = useApiData(relatedArtistsActions, relatedArtistsSelectors, `artists/${mainArtistID}/related-artists`);
+    // artistsIds?.forEach(artistId => {
+    //     fetchFromAPI({ endpoint: `artists/${artistId}/albums?include_groups=album`, accessToken })
+    // })
 
-    // const {
-    //     configs: artistsDetailsConfigs,
-    //     status: artistsDetailsStatus,
-    //     datas: artistsDetails
-    // } = useApiData(artistsActions, artistsSelectors, `artists?ids=${artistsIDs}`);
 
     // const {
     //     configs: artistAlbumsConfigs,
@@ -163,34 +163,22 @@ export const TrackDetailsPage = () => {
     // };
 
     const metaDatasContent = renderMetaDatasContent({
-        releaseDate: getYear(formattedTrackAlbumDetails.release_date),
-        duration: fromMillisecondsToMinutes(formattedTrackDetails.duration_ms)?.replace(".", ":"),
+        releaseDate: getYear(albumData.release_date),
+        duration: fromMillisecondsToMinutes(formattedTrackDetails.duration_ms).replace(".", ":"),
         uniqueData: `${formattedTrackDetails.popularity}/100`
     });
 
-    // const subTitleContent = renderSubTitleContent({
-    //     albumDetails: {
-    //         id: album.id,
-    //         name: album.name,
-    //     },
-    //     mainArtistDetails: {
-    //         id: mainArtist.id,
-    //         name: mainArtist.name,
-    //     },
-    //     artistImage: mainArtist.image,
-    // })
-
-    // const { lyrics, lyricsFetchStatus } = useLyrics(mainArtist.name, track.name);
-
-    // const previewLyrics = lyrics?.split('\n').slice(0, 13).join('\n');
-
-    const formatLyrics = (lyrics) => {
-        return lyrics?.split('\n').map((line, index) => (
-            <LyricsLine key={index}>{line}</LyricsLine>
-        ));
-    };
-
-    const { setActiveTile, isTileActive } = useActiveTile();
+    const subTitleContent = renderSubTitleContent({
+        albumDetails: {
+            id: albumData.id,
+            name: albumData.name,
+        },
+        mainArtistDetails: {
+            id: mainArtistData.id,
+            name: mainArtistData.name,
+        },
+        artistImage: getImage(mainArtistData.images),
+    });
 
     return (
         <>
@@ -198,18 +186,18 @@ export const TrackDetailsPage = () => {
                 fetchStatus={fetchStatus}
                 bannerContent={
                     <Banner
-                        picture={""}
-                        title={"track.name"}
-                        caption={"track.type"}
-                        subTitleContent={"subTitleContent"}
+                        picture={getImage(albumData.images)}
+                        title={formattedTrackDetails.name}
+                        caption={formattedTrackDetails.type}
+                        subTitleContent={subTitleContent}
                         metaDatas={metaDatasContent}
                     />
                 }
                 content={
                     <>
-                        {/* <LyricsAndArtistsCardSectionContainer>
+                        <LyricsAndArtistsCardSectionContainer>
                             <LyricsSection>
-                                {formatLyrics(hideRestLyrics ? previewLyrics : lyrics)}
+                                {formatLyrics(hideRestLyrics ? lyricsPreview : lyrics)}
                                 <ToggleViewButton
                                     onClick={() => setHideRestLyrics(hideRestLyrics => !hideRestLyrics)}
                                 >
@@ -218,7 +206,7 @@ export const TrackDetailsPage = () => {
                             </LyricsSection>
                             <ArtistCardSection>
                                 {
-                                    artists.artistsList?.map(({ id, name, type, images }) => (
+                                    artistsDetailsList.artists?.map(({ id, name, type, images }) => (
                                         <StyledLink to={toArtist({ id })}>
                                             <ArtistCardContainer>
                                                 <Picture $picture={getImage(images)} $useArtistPictureStyle />
@@ -232,7 +220,7 @@ export const TrackDetailsPage = () => {
                                 }
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
-                        <Table
+                        {/* <Table
                             list={trackRecommandations}
                             caption="Recommended"
                             subCaption="Based on this song"
@@ -241,8 +229,8 @@ export const TrackDetailsPage = () => {
                         <Table
                             list={topTracks?.tracks}
                             caption={mainArtist.name}
-                        />
-                        < TilesList
+                        /> */}
+                        {/* < TilesList
                             title={`Popular Albums by ${mainArtist.name}`}
                             list={mainArtistAlbums}
                             renderItem={({ images, name, type, id, artists }, index) => (
