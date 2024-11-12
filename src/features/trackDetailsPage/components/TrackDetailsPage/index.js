@@ -32,147 +32,157 @@ import { initial } from "../../../../common/constants/fetchStatuses";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
+import { selectAccessToken } from "../../../../common/slices/authSlice";
+import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
+import { getYear } from "../../../../common/functions/getYear";
+
+
+const getSpecificKeys = (object, keysToGetList) => {
+    const objectArray = Array.isArray(object) ? object : [object];
+
+    const getNestedKey = (object, nestedKeyToGet) => {
+        return nestedKeyToGet.split('.').reduce(
+            (currentObjectKey, keyToGet) => currentObjectKey && currentObjectKey[keyToGet], object
+        );
+    };
+
+    return objectArray.map((objectKey) => {
+        const selectedKeys = {};
+        keysToGetList.forEach(key => {
+            const selectedKeyValue = getNestedKey(objectKey, key);
+            if (selectedKeyValue !== undefined) {
+                selectedKeys[key] = selectedKeyValue;
+            }
+        });
+        return selectedKeys;
+    })[0];
+};
+
 
 export const TrackDetailsPage = () => {
+    const { trackID } = useParams();
 
-    const getSpecificKeys = (object, keysToGetList) => {
-        const objectArray = Array.isArray(object) ? object : [object];
-
-        const getNestedKey = (object, nestedKeyToGet) => {
-            return nestedKeyToGet.split('.').reduce(
-                (currentObjectKey, keyToGet) => currentObjectKey && currentObjectKey[keyToGet], object
-            );
-        };
-
-        return objectArray.map((objectKey) => {
-            const selectedKeys = {};
-            keysToGetList.forEach(key => {
-                const selectedKeyValue = getNestedKey(objectKey, key);
-                if (selectedKeyValue !== undefined) {
-                    selectedKeys[key] = selectedKeyValue;
-                }
-            });
-            return selectedKeys;
-        })[0];
-    };
-
-    const trackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
-    const track = {
-        name: trackDetails?.name,
-        type: trackDetails?.type,
-        id: trackDetails?.id,
-        duration: fromMillisecondsToMinutes(trackDetails?.duration_ms),
-        popularity: trackDetails?.popularity,
-    };
-
-    const { trackID, artistsIDs } = useParams();
-    const mainArtistID = artistsIDs.split(',')[0];
-
-    const [hideRestLyrics, setHideRestLyrics] = useState(true);
-    const [artistsAlbums, setArtistsAlbums] = useState([]);
-    const [artistsAlbumsStatus, setArtistsAlbumsStatus] = useState(initial);
-
+    const rawTrackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
+    const trackDetailsStatus = useSelector(trackDetailsSelectors.selectStatus);
+    console.log(rawTrackDetails);
     const { fetch: fetchTrackDetails, clear: clearTrackDetails } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
-    const { fetch: fetchArtistAlbums, clear: clrearArtistAlbums } = artistAlbumsActions;
 
-    const artistsIDsList = artistsIDs.split(",");
-
-    const {
-        configs: relatedArtistsConfigs,
-        status: relatedArtistsStatus,
-        datas: relatedArtists
-    } = useApiData(relatedArtistsActions, relatedArtistsSelectors, `artists/${mainArtistID}/related-artists`);
-
-    const {
-        configs: artistsDetailsConfigs,
-        status: artistsDetailsStatus,
-        datas: artistsDetails
-    } = useApiData(artistsActions, artistsSelectors, `artists?ids=${artistsIDs}`);
-
-    const {
-        configs: artistAlbumsConfigs,
-        status: artistAlbumsStatus,
-        datas: artistAlbums
-    } = useApiData(
-        artistAlbumsActions,
-        artistAlbumsSelectors,
-        `artists/${mainArtistID}/albums?include_groups=single%2Calbum&limit=50`
-    );
-
-    const {
-        configs: topTracksConfigs,
-        status: topTracksStatus,
-        datas: topTracks
-    } = useApiData(artistTopTracksActions, artistTopTracksSelectors, `artists/${mainArtistID}/top-tracks`);
-
-    const mainArtistReleases = artistAlbums?.items;
-
-    const mainArtistAlbums = filterByAlbumGroup(mainArtistReleases, "album");
-    const mainArtistSingles = filterByAlbumGroup(mainArtistReleases, "single");
-
-    const trackDetailsStatus = useSelector(trackDetailsSelectors.selectStatus);
-
-    const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
-    const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
-
-    const album = {
-        name: trackDetails?.album.name,
-        image: getImage(trackDetails?.album.images),
-        releaseDate: trackDetails?.album.release_date,
-        id: trackDetails?.album.id,
-    };
-
-
-    const artists = {
-        artistsList: artistsDetails?.artists,
-    };
-    const mainArtist = {
-        name: artistsDetails?.artists[0].name,
-        id: artistsDetails?.artists[0].id,
-        image: getImage(artistsDetails?.artists[0].images),
-    };
-    console.log(trackDetails, artistsDetails)
     useFetchAPI(
         [
-            ...artistsAlbums,
-            relatedArtistsConfigs,
-            artistAlbumsConfigs,
-            topTracksConfigs,
-            artistsDetailsConfigs,
             { fetchAction: fetchTrackDetails, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
             { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
         ],
-        [trackID, artistsIDs]
+        [trackID]
     );
 
-    const metaDatasContent = renderMetaDatasContent(album.releaseDate, track.duration.replace(".", ":"), `${track.popularity}/100`);
+    const artistsIds = rawTrackDetails?.artists.map(({ id }) => id);
 
-    const subTitleContent = renderSubTitleContent({
-        albumDetails: {
-            id: album.id,
-            name: album.name,
-        },
-        mainArtistDetails: {
-            id: mainArtist.id,
-            name: mainArtist.name,
-        },
-        artistImage: mainArtist.image,
-    })
-
-    const { lyrics, lyricsFetchStatus } = useLyrics(mainArtist.name, track.name);
+    const { datas: artistsDetailsList, datasStatus: artistsDetailsListStatus } = useDependentFetchAPI({
+        endpoint: `artists?ids=${artistsIds}`,
+        fetchCondition: !!artistsIds,
+        dependencies: [trackID],
+    });
 
     const fetchStatus = useFetchStatus([
-        relatedArtistsStatus,
-        artistAlbumsStatus,
-        topTracksStatus,
+        artistsDetailsListStatus,
         trackDetailsStatus,
-        artistsDetailsStatus,
-        lyricsFetchStatus,
-        trackRecommandationsStatus
     ]);
 
-    const previewLyrics = lyrics?.split('\n').slice(0, 13).join('\n');
+
+    const formattedTrackDetails = getSpecificKeys(rawTrackDetails, ["name", "type", "id", "duration_ms", "popularity"]);
+    const formattedTrackAlbumDetails = getSpecificKeys(rawTrackDetails?.album, ["name", "release_date", "id", "images"]);
+    console.log(formattedTrackAlbumDetails)
+    // const track = {
+    //     name: trackDetails?.name,
+    //     type: trackDetails?.type,
+    //     id: trackDetails?.id,
+    //     duration: fromMillisecondsToMinutes(trackDetails?.duration_ms),
+    //     popularity: trackDetails?.popularity,
+    // };
+    // const mainArtistID = artistsIDs.split(',')[0];
+
+    // const [hideRestLyrics, setHideRestLyrics] = useState(true);
+    // const [artistsAlbums, setArtistsAlbums] = useState([]);
+    // const [artistsAlbumsStatus, setArtistsAlbumsStatus] = useState(initial);
+
+
+    // const artistsIDsList = artistsIDs.split(",");
+
+    // const {
+    //     configs: relatedArtistsConfigs,
+    //     status: relatedArtistsStatus,
+    //     datas: relatedArtists
+    // } = useApiData(relatedArtistsActions, relatedArtistsSelectors, `artists/${mainArtistID}/related-artists`);
+
+    // const {
+    //     configs: artistsDetailsConfigs,
+    //     status: artistsDetailsStatus,
+    //     datas: artistsDetails
+    // } = useApiData(artistsActions, artistsSelectors, `artists?ids=${artistsIDs}`);
+
+    // const {
+    //     configs: artistAlbumsConfigs,
+    //     status: artistAlbumsStatus,
+    //     datas: artistAlbums
+    // } = useApiData(
+    //     artistAlbumsActions,
+    //     artistAlbumsSelectors,
+    //     `artists/${mainArtistID}/albums?include_groups=single%2Calbum&limit=50`
+    // );
+
+    // const {
+    //     configs: topTracksConfigs,
+    //     status: topTracksStatus,
+    //     datas: topTracks
+    // } = useApiData(artistTopTracksActions, artistTopTracksSelectors, `artists/${mainArtistID}/top-tracks`);
+
+    // const mainArtistReleases = artistAlbums?.items;
+
+    // const mainArtistAlbums = filterByAlbumGroup(mainArtistReleases, "album");
+    // const mainArtistSingles = filterByAlbumGroup(mainArtistReleases, "single");
+
+    // const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
+    // const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
+
+    // const album = {
+    //     name: trackDetails?.album.name,
+    //     image: getImage(trackDetails?.album.images),
+    //     releaseDate: trackDetails?.album.release_date,
+    //     id: trackDetails?.album.id,
+    // };
+
+
+    // const artists = {
+    //     artistsList: artistsDetails?.artists,
+    // };
+    // const mainArtist = {
+    //     name: artistsDetails?.artists[0].name,
+    //     id: artistsDetails?.artists[0].id,
+    //     image: getImage(artistsDetails?.artists[0].images),
+    // };
+
+    const metaDatasContent = renderMetaDatasContent({
+        releaseDate: getYear(formattedTrackAlbumDetails.release_date),
+        duration: fromMillisecondsToMinutes(formattedTrackDetails.duration_ms)?.replace(".", ":"),
+        uniqueData: `${formattedTrackDetails.popularity}/100`
+    });
+
+    // const subTitleContent = renderSubTitleContent({
+    //     albumDetails: {
+    //         id: album.id,
+    //         name: album.name,
+    //     },
+    //     mainArtistDetails: {
+    //         id: mainArtist.id,
+    //         name: mainArtist.name,
+    //     },
+    //     artistImage: mainArtist.image,
+    // })
+
+    // const { lyrics, lyricsFetchStatus } = useLyrics(mainArtist.name, track.name);
+
+    // const previewLyrics = lyrics?.split('\n').slice(0, 13).join('\n');
 
     const formatLyrics = (lyrics) => {
         return lyrics?.split('\n').map((line, index) => (
@@ -188,16 +198,16 @@ export const TrackDetailsPage = () => {
                 fetchStatus={fetchStatus}
                 bannerContent={
                     <Banner
-                        picture={album.image}
-                        title={track.name}
-                        caption={track.type}
-                        subTitleContent={subTitleContent}
+                        picture={""}
+                        title={"track.name"}
+                        caption={"track.type"}
+                        subTitleContent={"subTitleContent"}
                         metaDatas={metaDatasContent}
                     />
                 }
                 content={
                     <>
-                        <LyricsAndArtistsCardSectionContainer>
+                        {/* <LyricsAndArtistsCardSectionContainer>
                             <LyricsSection>
                                 {formatLyrics(hideRestLyrics ? previewLyrics : lyrics)}
                                 <ToggleViewButton
@@ -330,7 +340,7 @@ export const TrackDetailsPage = () => {
                                 }),
                                 text: fullListLinkText,
                             }}
-                        />
+                        /> */}
                     </>
                 }
             />
