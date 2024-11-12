@@ -34,6 +34,37 @@ import { renderMetaDatasContent } from "../../../../common/functions/renderMetaD
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 
 export const TrackDetailsPage = () => {
+
+    const getSpecificKeys = (object, keysToGetList) => {
+        const objectArray = Array.isArray(object) ? object : [object];
+
+        const getNestedKey = (object, nestedKeyToGet) => {
+            return nestedKeyToGet.split('.').reduce(
+                (currentObjectKey, keyToGet) => currentObjectKey && currentObjectKey[keyToGet], object
+            );
+        };
+
+        return objectArray.map((objectKey) => {
+            const selectedKeys = {};
+            keysToGetList.forEach(key => {
+                const selectedKeyValue = getNestedKey(objectKey, key);
+                if (selectedKeyValue !== undefined) {
+                    selectedKeys[key] = selectedKeyValue;
+                }
+            });
+            return selectedKeys;
+        })[0];
+    };
+
+    const trackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
+    const track = {
+        name: trackDetails?.name,
+        type: trackDetails?.type,
+        id: trackDetails?.id,
+        duration: fromMillisecondsToMinutes(trackDetails?.duration_ms),
+        popularity: trackDetails?.popularity,
+    };
+
     const { trackID, artistsIDs } = useParams();
     const mainArtistID = artistsIDs.split(',')[0];
 
@@ -46,8 +77,6 @@ export const TrackDetailsPage = () => {
     const { fetch: fetchArtistAlbums, clear: clrearArtistAlbums } = artistAlbumsActions;
 
     const artistsIDsList = artistsIDs.split(",");
-
-
 
     const {
         configs: relatedArtistsConfigs,
@@ -83,18 +112,9 @@ export const TrackDetailsPage = () => {
     const mainArtistSingles = filterByAlbumGroup(mainArtistReleases, "single");
 
     const trackDetailsStatus = useSelector(trackDetailsSelectors.selectStatus);
-    const trackDetails = useSelector(trackDetailsSelectors.selectDatas)?.datas;
 
     const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
     const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
-
-    const track = {
-        name: trackDetails?.name,
-        type: trackDetails?.type,
-        id: trackDetails?.id,
-        duration: fromMillisecondsToMinutes(trackDetails?.duration_ms),
-        popularity: trackDetails?.popularity,
-    };
 
     const album = {
         name: trackDetails?.album.name,
@@ -102,6 +122,7 @@ export const TrackDetailsPage = () => {
         releaseDate: trackDetails?.album.release_date,
         id: trackDetails?.album.id,
     };
+
 
     const artists = {
         artistsList: artistsDetails?.artists,
@@ -111,7 +132,7 @@ export const TrackDetailsPage = () => {
         id: artistsDetails?.artists[0].id,
         image: getImage(artistsDetails?.artists[0].images),
     };
-
+    console.log(trackDetails, artistsDetails)
     useFetchAPI(
         [
             ...artistsAlbums,
