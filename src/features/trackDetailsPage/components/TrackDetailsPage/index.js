@@ -120,10 +120,10 @@ export const TrackDetailsPage = () => {
     const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesItemsList, "album");
     const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesItemsList, "single");
 
-    const mainArtistGroupedReleases = [
-        { type: "Releases", list: mainArtistAllReleasesItemsList },
-        { type: "Albums", list: mainArtistAlbums },
-        { type: "Singles", list: mainArtistSingles },
+    const mainArtistGroupedReleasesList = [
+        { type: "Releases", list: mainArtistAllReleasesItemsList, listId: 1 },
+        { type: "Albums", list: mainArtistAlbums, listId: 2 },
+        { type: "Singles and EP's", list: mainArtistSingles, listId: 3 },
     ];
 
     const [secondaryArtistsAllReleasesList, setArtistsAlbumsDatasList] = useState(undefined);
@@ -263,39 +263,44 @@ export const TrackDetailsPage = () => {
                                 }
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
-                        <TilesList
-                            title={mainArtistData.name}
-                            list={mainArtistAllReleasesItemsList}
-                            renderItem={({ images, name, type, id }, index) => (
-                                <Tile
-                                    isActive={isTileActive(index, 1)}
-                                    mouseEventHandlers={{
-                                        enter: () => setActiveTile({
-                                            activeTileIndex: index,
-                                            activeTilesListID: 1,
+
+                        {
+                            mainArtistGroupedReleasesList?.map(({ type, list, listId }) => (
+                                <TilesList
+                                    title={`Popular ${type} by ${mainArtistData.name}`}
+                                    list={list}
+                                    renderItem={({ images, name, type, id }, index) => (
+                                        <Tile
+                                            isActive={isTileActive(index, listId)}
+                                            mouseEventHandlers={{
+                                                enter: () => setActiveTile({
+                                                    activeTileIndex: index,
+                                                    activeTilesListID: listId,
+                                                }),
+                                                leave: () => setActiveTile({
+                                                    activeTileIndex: undefined,
+                                                    activeTilesListID: undefined,
+                                                }),
+                                            }}
+                                            key={nanoid()}
+                                            toPage={toAlbum({ albumID: id })}
+                                            picture={getImage(images)}
+                                            title={name}
+                                            subInfo={type || ""}
+                                            isArtistPictureStyle={false}
+                                        />
+                                    )}
+                                    hideRestListPart
+                                    fullListData={{
+                                        pathname: toArtist({
+                                            id: mainArtistData.id,
+                                            additionalPath: allReleaseDiscography,
                                         }),
-                                        leave: () => setActiveTile({
-                                            activeTileIndex: undefined,
-                                            activeTilesListID: undefined,
-                                        }),
+                                        text: fullListLinkText,
                                     }}
-                                    key={nanoid()}
-                                    toPage={toAlbum({ albumID: id })}
-                                    picture={getImage(images)}
-                                    title={name}
-                                    subInfo={type || ""}
-                                    isArtistPictureStyle={false}
                                 />
-                            )}
-                            hideRestListPart
-                            fullListData={{
-                                pathname: toArtist({
-                                    id: mainArtistData.id,
-                                    additionalPath: allReleaseDiscography,
-                                }),
-                                text: fullListLinkText,
-                            }}
-                        />
+                            ))
+                        }
                         {
                             secondaryArtistsAllReleasesList?.map(({ list, name, id }, albumIndex) => (
                                 <TilesList
