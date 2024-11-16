@@ -115,11 +115,10 @@ export const TrackDetailsPage = () => {
         dependencies: [trackID],
     });
 
-    const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesData?.items, "album");
-    const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesData?.items, "single");
- 
+    const mainArtistAllReleasesItemsList = mainArtistAllReleasesData?.items;
 
-    console.log(mainArtistAllReleasesData);
+    const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesItemsList, "album");
+    const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesItemsList, "single");
 
     const [secondaryArtistsAllReleasesList, setArtistsAlbumsDatasList] = useState(undefined);
     const [secondaryArtistsAllReleasesListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
@@ -260,7 +259,7 @@ export const TrackDetailsPage = () => {
                         </LyricsAndArtistsCardSectionContainer>
                         <TilesList
                             title={mainArtistData.name}
-                            list={mainArtistAllReleasesData?.items}
+                            list={mainArtistAllReleasesItemsList}
                             renderItem={({ images, name, type, id }, index) => (
                                 <Tile
                                     isActive={isTileActive(index, 1)}
