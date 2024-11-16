@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { fetchFromAPI } from "../functions/fetchFromAPI";
 import { error, initial, loading, success } from "../constants/fetchStatuses";
+import { useSelector } from "react-redux";
+import { selectAccessToken } from "../slices/authSlice";
 
-export const useDependentFetchAPI = ({ endpoint, accessToken, fetchCondition, dependencies = [] }) => {
+export const useDependentFetchAPI = ({ endpoint, fetchCondition, dependencies = [] }) => {
+    const accessToken = useSelector(selectAccessToken);
 
     const [datas, setDatas] = useState("");
     const [datasStatus, setDatasStatus] = useState(initial);
 
     useEffect(() => {
-        // Przerwij działanie useEffect, jeśli fetchCondition jest fałszywe
         if (!fetchCondition || !accessToken) return;
 
         const fetchArtistDetails = async () => {
