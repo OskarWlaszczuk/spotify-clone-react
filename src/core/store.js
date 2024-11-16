@@ -12,6 +12,9 @@ import { artistCompilationReducer } from '../features/artistDetailsPage/slices/a
 import { artistAppearsOnReducer } from '../features/artistDetailsPage/slices/artistAppearsOnSlice';
 import { albumDetailsReducer } from '../features/albumPage/slices/albumDetailsSlice';
 import { authSliceReducer } from '../common/slices/authSlice';
+import { userPlaylistsReducer } from '../common/slices/userPlaylistSlice';
+import { trackDetailsReducer } from '../features/trackDetailsPage/slices/trackDetailsSlice';
+import { trackRecommendationsReducer } from '../features/trackDetailsPage/slices/trackRecommendationsSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -27,10 +30,11 @@ export const store = configureStore({
         artistSingles: artistSinglesReducer,
         artistCompilation: artistCompilationReducer,
         artistAppearsOn: artistAppearsOnReducer,
-
         albumDetails: albumDetailsReducer,
-
         auth: authSliceReducer,
+        userPlaylists: userPlaylistsReducer,
+        trackDetails: trackDetailsReducer,
+        trackRecommendations: trackRecommendationsReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(sagaMiddleware),
