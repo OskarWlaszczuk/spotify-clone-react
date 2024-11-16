@@ -6,6 +6,7 @@ import { Search } from "../../features/Search";
 import { AlbumPage } from "../../features/albumPage/components/AlbumPage";
 import { Library } from "./Library/components";
 import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/ArtistDetailsPage";
+import { TrackDetailsPage } from "../../features/trackDetailsPage/components/TrackDetailsPage";
 
 export const App = () => {
 
@@ -16,7 +17,8 @@ export const App = () => {
       <Routes>
         <Route path="/home/:type?" element={<HomePage />} />
         <Route path={toSearch()} element={<Search />} />
-        <Route path="/album/:albumID/artist/:artistID" element={<AlbumPage />} />
+        <Route path="/track/:trackID" element={<TrackDetailsPage />} />
+        <Route path="/album/:albumID" element={<AlbumPage />} />
         <Route path="/artist/:id/:type?" element={<ArtistDetailsPage />} />
         <Route path="*" element={<Navigate to={toHome()} />} />
       </Routes>
