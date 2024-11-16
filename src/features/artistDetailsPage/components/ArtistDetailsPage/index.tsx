@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
@@ -7,55 +6,64 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { FetchStatus } from "../../../../common/types/FetchStatus";
-import { useArtistDatas } from "../../../../common/hooks/useArtistDatas";
+import { useApiData } from "../../../../common/hooks/useApiData";
 import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
-import { albumEndpointResource } from "../../../../common/constants/albumsEndpointResource";
+import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
+import { useArtistPopularReleases } from "../../../../common/hooks/useArtistPopularReleases";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
 
-    const { fetch: fetchRelatedArtists, clear: clearRelatedArtists } = relatedArtistsActions;
-    const { fetch: fetchTopTracks, clear: clearTopTracks } = artistTopTracksActions;
+    const {
+        configs: relatedArtistsConfigs,
+        status: relatedArtistsStatus,
+        datas: relatedArtists
+    } = useApiData(relatedArtistsActions, relatedArtistsSelectors, `artists/${id}/related-artists`);
+    // const {
+    //     configs: topTracksConfigs,
+    //     status: topTracksStatus,
+    //     datas: topTracks
+    // } = useApiData(artistTopTracksActions, artistTopTracksSelectors, `artists/${id}/top-tracks`);
+
+    const {
+        rawArtistTopTracksDatasStatus,
+        topTracksAsAlbumsList,
+        topTracksDatasList
+    } = useArtistPopularReleases({artistId:id});
 
     const {
         configs: artistDetailsConfigs,
-        artistStatus: artistDetailsStatus,
-        artistDatas: artistDetails
-    } = useArtistDatas(id, artistDetailsActions, artistDetailsSelectors);
+        status: artistDetailsStatus,
+        datas: artistDetails
+    } = useApiData(artistDetailsActions, artistDetailsSelectors, `artists/${id}`);
     const {
         configs: artistAllReleasesConfigs,
-        artistStatus: artistAllReleasesStatus,
-        artistDatas: artistAllReleasesList
-    } = useArtistDatas(id, artistAlbumsActions, artistAlbumsSelectors, albumEndpointResource);
+        status: artistAllReleasesStatus,
+        datas: artistAllReleasesList
+    } = useApiData(artistAlbumsActions, artistAlbumsSelectors, `artists/${id}/${allReleasesEndpointResource}`);
 
     useFetchAPI(
         [
             artistDetailsConfigs,
             artistAllReleasesConfigs,
-            { fetchAction: fetchRelatedArtists, clearAction: clearRelatedArtists, endpoint: `artists/${id}/related-artists` },
-            { fetchAction: fetchTopTracks, clearAction: clearTopTracks, endpoint: `artists/${id}/top-tracks` },
-        ], [id]
+            relatedArtistsConfigs
+        ],
+        [id]
     );
-
-    const relatedArtistsStatus: FetchStatus = useSelector(relatedArtistsSelectors.selectStatus);
-    const topTracksStatus: FetchStatus = useSelector(artistTopTracksSelectors.selectStatus);
 
     const name = artistDetails?.name;
     const followers = artistDetails?.followers;
     const images = artistDetails?.images;
     const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
 
-
-    const fetchStatus = useFetchStatus(
-        [
-            artistDetailsStatus,
-            artistAllReleasesStatus,
-            relatedArtistsStatus,
-            topTracksStatus,
-        ]
-    );
+    const fetchStatus = useFetchStatus([
+        artistDetailsStatus,
+        artistAllReleasesStatus,
+        relatedArtistsStatus,
+        rawArtistTopTracksDatasStatus,
+        relatedArtistsStatus,
+    ]);
 
     return (
         <Main
@@ -69,7 +77,15 @@ export const ArtistDetailsPage = () => {
                     isArtistPictureStyle
                 />)
             }
-            content={<MainContent name={name} allReleases={artistAllReleasesList?.items} />}
+            content={
+                <MainContent
+                    name={name}
+                    allReleases={artistAllReleasesList?.items}
+                    topTracksAsAlbumsList={topTracksAsAlbumsList}
+                    topTracksDatasList={topTracksDatasList}
+                    relatedArtists={relatedArtists?.artists}
+                />
+            }
         />
     )
 };
