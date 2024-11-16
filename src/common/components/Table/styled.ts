@@ -43,6 +43,12 @@ export const Caption = styled.caption`
     margin-bottom: 20px;
 `;
 
+export const SubCaption = styled.p`
+   color: ${({ theme }) => theme.colors.nobel};
+   font-size: 12px;
+   margin: 0;
+`;
+
 export const HeaderRow = styled.tr<HeaderRowProps>`
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -105,7 +111,12 @@ export const TrackName = styled.td`
     font-weight: 400;
     font-size: 15px;
     max-width: 530px;
+`;
 
+export const TrackLink = styled(Link)`
+    color: ${({ theme }) => theme.colors.white};
+    text-decoration: none;
+    
     &:hover {
         cursor: pointer;
         text-decoration: underline;
