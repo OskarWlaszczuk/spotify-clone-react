@@ -1,4 +1,4 @@
-export const allReleaseDiscography = "discography";
+export const allReleaseDiscography = "discography-all";
 export const albumsParamDiscography = "discography-album";
 export const singleParamDiscography = "discography-single";
 export const compilationParamDiscography = "discography-compilation";
