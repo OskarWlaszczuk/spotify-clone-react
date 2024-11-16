@@ -14,12 +14,11 @@ import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { popularAlbumsParam, popularArtistsParam } from "../../../../common/constants/params";
 
-export const MainContent = () => {
+export const MainContent = ({ artistsDetailsList: popularArtists }: { artistsDetailsList: any }) => {
     const { type = "" } = useParams<{ type: string }>();
     const { setActiveTile, isTileActive } = useActiveTile();
 
     const popularAlbums: MediaItem[] = useSelector(albumsSelectors.selectDatas)?.datas.albums;
-    const popularArtists: MediaItem[] = useSelector(artistsSelectors.selectDatas)?.datas.artists;
 
     const popularAlbumsTitle = "Popular albums";
     const popularArtistsTitle = "Popular artists";
@@ -54,7 +53,7 @@ export const MainContent = () => {
                                     toPage={
                                         isFullListArtistsList ?
                                             toArtist({ id }) :
-                                            toAlbum({ albumID: id, artistID: getMainArtistID(artists) })
+                                            toAlbum({ albumID: id })
                                     }
                                     picture={images[0].url}
                                     title={name}
@@ -87,7 +86,7 @@ export const MainContent = () => {
                                         picture={images[0].url}
                                         title={name}
                                         subInfo={getAlbumArtists(artists)}
-                                        toPage={toAlbum({ albumID: id, artistID: getMainArtistID(artists) })}
+                                        toPage={toAlbum({ albumID: id })}
                                     />
                                 )
                                 )
