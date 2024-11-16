@@ -9,9 +9,10 @@ import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMin
 import { toArtist, toTrack } from "../../functions/routes";
 import { StyledDiscIcon } from "../StyledDiscIcon";
 import { AvatarImage } from "../AvatarImage";
+import { getImage } from "../../functions/getImage";
 
 interface TableProps {
-    list: TrackListItem[];
+    list: TrackListItem[] | undefined;
     hideIndex?: boolean,
     discsNumbers?: number[];
     useAlbumView?: boolean;
@@ -23,7 +24,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
     const [hideRestTracks, setHideRestTracks] = useState<boolean>(!useAlbumView);
     const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
-    const handleOnRowMouseEnter = (trackIndex: number): void => setActiveIndex(list.findIndex((_, index: number) => index === trackIndex));
+    const handleOnRowMouseEnter = (trackIndex: number): void => setActiveIndex(list?.findIndex((_, index: number) => index === trackIndex));
     const handleOnRowMouseLeave = (): void => setActiveIndex(undefined);
 
     const renderTableContent = (
@@ -65,7 +66,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                     {!useAlbumView && (
                         <td>
                             <AvatarImage
-                                $picture={album.images[0].url}
+                                $picture={getImage(album.images)}
                                 $darkened={activeIndex === index && hideIndex}
                             >
                                 {activeIndex === index && hideIndex ? <StyledPlayIcon /> : ""}
@@ -74,7 +75,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                     )}
                     <TrackDetailsWrapper>
                         <TrackName>
-                            <TrackLink to={toTrack({ trackID: id, artistsIDs: artists.map(({ id }: any) => id).join(",") })}>{name}</TrackLink>
+                            <TrackLink to={toTrack({ trackID: id })}>{name}</TrackLink>
                         </TrackName>
                         {useAlbumView && (
                             <TrackArtists>
@@ -89,7 +90,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                     </TrackDetailsWrapper>
                 </TrackOverview>
                 <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
-            </ContentRow>
+            </ContentRow >
         ));
 
         if (discsNumbers && discsNumbers.length > 1) {
@@ -106,46 +107,52 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
 
         return renderRows(list?.filter((_: any, index: any) => hideRestTracks || hideIndex ? index < 5 : useAlbumView || !hideRestTracks ? index >= 0 : index <= 10));
     };
-    console.log((!useAlbumView && list?.length > 5))
+
     return (
-        <Wrapper>
-            <StyledTable>
-                {caption && (
-                    <Caption>
-                        {caption}
-                        {subCaption && <SubCaption>{subCaption}</SubCaption>}
-                    </Caption>
-                )}
-                {
-                    useAlbumView && (
-                        <thead>
-                            <HeaderRow $albumViewNotAvailable={!!useAlbumView}>
-                                <Header $larger scope="col">#</Header>
-                                <Header scope="col">Title</Header>
-                                <Header scope="col"><StyledTimer /></Header>
-                            </HeaderRow>
-                        </thead>
-                    )
-                }
-                <tbody>
-                    {renderTableContent({
-                        list,
-                        useAlbumView,
-                        discsNumbers,
-                        hideRestTracks,
-                        activeIndex,
-                        handleOnRowMouseEnter,
-                        handleOnRowMouseLeave
-                    })}
-                </tbody>
-            </StyledTable>
+        <>
             {
-                (!useAlbumView && list?.length > 5 && !hideIndex) && (
-                    <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
-                        See {hideRestTracks ? <>more</> : <>less</>}
-                    </ToggleViewButton>
+                list && (
+                    <Wrapper>
+                        <StyledTable>
+                            {caption && (
+                                <Caption>
+                                    {caption}
+                                    {subCaption && <SubCaption>{subCaption}</SubCaption>}
+                                </Caption>
+                            )}
+                            {
+                                useAlbumView && (
+                                    <thead>
+                                        <HeaderRow $albumViewNotAvailable={!!useAlbumView}>
+                                            <Header $larger scope="col">#</Header>
+                                            <Header scope="col">Title</Header>
+                                            <Header scope="col"><StyledTimer /></Header>
+                                        </HeaderRow>
+                                    </thead>
+                                )
+                            }
+                            <tbody>
+                                {renderTableContent({
+                                    list,
+                                    useAlbumView,
+                                    discsNumbers,
+                                    hideRestTracks,
+                                    activeIndex,
+                                    handleOnRowMouseEnter,
+                                    handleOnRowMouseLeave
+                                })}
+                            </tbody>
+                        </StyledTable>
+                        {
+                            (!useAlbumView && list?.length > 5 && !hideIndex) && (
+                                <ToggleViewButton onClick={() => setHideRestTracks(hideRestTracks => !hideRestTracks)}>
+                                    See {hideRestTracks ? <>more</> : <>less</>}
+                                </ToggleViewButton>
+                            )
+                        }
+                    </Wrapper >
                 )
             }
-        </Wrapper >
+        </>
     );
 };
