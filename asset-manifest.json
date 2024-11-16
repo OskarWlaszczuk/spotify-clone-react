@@ -1,15 +1,19 @@
 {
   "files": {
-    "main.js": "/spotify-clone-react/static/js/main.b883838b.js",
+    "main.js": "/spotify-clone-react/static/js/main.8a50f13e.js",
     "static/js/453.3ea199fe.chunk.js": "/spotify-clone-react/static/js/453.3ea199fe.chunk.js",
     "static/media/Home.svg": "/spotify-clone-react/static/media/Home.535d78df767fcbc5ab2b3ae270c2ff7f.svg",
     "index.html": "/spotify-clone-react/index.html",
-    "static/media/MyLibrary.svg": "/spotify-clone-react/static/media/MyLibrary.21607f1b065d5be092e17383cde5a4f5.svg",
+    "static/media/Disc.svg": "/spotify-clone-react/static/media/Disc.34003b3ba624903f5524ea559381b937.svg",
+    "static/media/Pause.svg": "/spotify-clone-react/static/media/Pause.e9e90cc6ea816211eafae80a2fcca604.svg",
+    "static/media/library.svg": "/spotify-clone-react/static/media/library.21607f1b065d5be092e17383cde5a4f5.svg",
     "static/media/Search.svg": "/spotify-clone-react/static/media/Search.5cc6eaadf4786c48f09bf9c7e13be307.svg",
-    "main.b883838b.js.map": "/spotify-clone-react/static/js/main.b883838b.js.map",
+    "static/media/Timer.svg": "/spotify-clone-react/static/media/Timer.6a3ef12dc6e2b13b6adb7fa9cded709d.svg",
+    "static/media/Play.svg": "/spotify-clone-react/static/media/Play.55113c0fd92668d464bdaa4889a7069b.svg",
+    "main.8a50f13e.js.map": "/spotify-clone-react/static/js/main.8a50f13e.js.map",
     "453.3ea199fe.chunk.js.map": "/spotify-clone-react/static/js/453.3ea199fe.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.b883838b.js"
+    "static/js/main.8a50f13e.js"
   ]
 }
