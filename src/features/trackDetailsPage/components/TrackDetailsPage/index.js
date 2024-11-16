@@ -325,6 +325,36 @@ export const TrackDetailsPage = () => {
                                 />
                             ))
                         }
+                        < TilesList
+                            title="Fans also like"
+                            list={relatedArtistsList?.artists}
+                            renderItem={({ images, name, type, id }, index) => (
+                                <Tile
+                                    isActive={isTileActive(index, 4)}
+                                    mouseEventHandlers={{
+                                        enter: () => setActiveTile({
+                                            activeTileIndex: index,
+                                            activeTilesListID: 4,
+                                        }),
+                                        leave: () => setActiveTile({
+                                            activeTileIndex: undefined,
+                                            activeTilesListID: undefined,
+                                        }),
+                                    }}
+                                    key={nanoid()}
+                                    picture={getImage(images)}
+                                    title={name}
+                                    subInfo={type || ""}
+                                    toPage={toArtist({ id })}
+                                    isArtistPictureStyle
+                                />
+                            )}
+                            hideRestListPart
+                            fullListData={{
+                                pathname: toArtist({ id: mainArtistData.id, additionalPath: relatedArtistsParam }),
+                                text: fullListLinkText
+                            }}
+                        />
                     </>
                 }
             />
