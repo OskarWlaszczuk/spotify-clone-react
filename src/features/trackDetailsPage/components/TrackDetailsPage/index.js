@@ -80,6 +80,9 @@ export const TrackDetailsPage = () => {
     const { fetch: fetchTrackDetails, clear: clearTrackDetails } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
 
+    const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
+    const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
+
     const artistsIds = rawTrackDetails?.artists.map(({ id }) => id);
     const secondaryArtistIds = artistsIds?.slice(1);
 
@@ -177,48 +180,8 @@ export const TrackDetailsPage = () => {
         lyricsFetchStatus,
         secondaryArtistsAllReleasesListStatus,
         mainArtistAllReleasesDataStatus,
+        trackRecommandationsStatus,
     ]);
-
-    // const {
-    //     configs: artistAlbumsConfigs,
-    //     status: artistAlbumsStatus,
-    //     datas: artistAlbums
-    // } = useApiData(
-    //     artistAlbumsActions,
-    //     artistAlbumsSelectors,
-    //     `artists/${mainArtistID}/albums?include_groups=single%2Calbum&limit=50`
-    // );
-
-    // const {
-    //     configs: topTracksConfigs,
-    //     status: topTracksStatus,
-    //     datas: topTracks
-    // } = useApiData(artistTopTracksActions, artistTopTracksSelectors, `artists/${mainArtistID}/top-tracks`);
-
-    // const mainArtistReleases = artistAlbums?.items;
-
-    // const mainArtistAlbums = filterByAlbumGroup(mainArtistReleases, "album");
-    // const mainArtistSingles = filterByAlbumGroup(mainArtistReleases, "single");
-
-    // const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
-    // const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
-
-    // const album = {
-    //     name: trackDetails?.album.name,
-    //     image: getImage(trackDetails?.album.images),
-    //     releaseDate: trackDetails?.album.release_date,
-    //     id: trackDetails?.album.id,
-    // };
-
-
-    // const artists = {
-    //     artistsList: artistsDetails?.artists,
-    // };
-    // const mainArtist = {
-    //     name: artistsDetails?.artists[0].name,
-    //     id: artistsDetails?.artists[0].id,
-    //     image: getImage(artistsDetails?.artists[0].images),
-    // };
 
     const metaDatasContent = renderMetaDatasContent({
         releaseDate: getYear(albumData.release_date),
@@ -278,12 +241,12 @@ export const TrackDetailsPage = () => {
                                 }
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
-                        {/* <Table
+                        <Table
                             list={trackRecommandations}
                             caption="Recommended"
                             subCaption="Based on this song"
                             hideIndex
-                        /> */}
+                        />
                         <Table
                             list={topTracksDatasList}
                             caption={mainArtistData.name}
