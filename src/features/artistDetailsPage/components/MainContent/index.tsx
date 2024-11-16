@@ -38,11 +38,12 @@ import { getImage } from "../../../../common/functions/getImage";
 interface MainContentProps {
     name: string;
     allReleases: any;
-    topTracks: any;
     relatedArtists: any;
+    topTracksAsAlbumsList:any;
+    topTracksDatasList:any;
 };
 
-export const MainContent = ({ name, allReleases, topTracks, relatedArtists }: MainContentProps) => {
+export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTracksDatasList, relatedArtists }: MainContentProps) => {
 
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
@@ -58,15 +59,13 @@ export const MainContent = ({ name, allReleases, topTracks, relatedArtists }: Ma
     const appearsOn = filterByAlbumGroup(allReleases, "appears_on");
 
     const allReleasesWithoutAppearsOn = allReleases?.filter(({ album_group }: any) => album_group !== "appears_on");
-    const sortedAllReleasesFromOldestToNewest = sortFromOldestToNewest(allReleasesWithoutAppearsOn);
 
-    const topTracksAlbumsList = topTracks?.map(({ album }: any) => album);
-    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
-    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestTopTrackAlbumItem, topTracksAlbumsList);
+    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAsAlbumsList)[0];
+    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestTopTrackAlbumItem, topTracksAsAlbumsList);
 
     const popularReleases = [...updatedTopTracksAlbumsList || [], ...allReleasesWithoutAppearsOn || []];
     const uniquePopularReleases = removeDuplicates(popularReleases, "name");
-    console.log(uniquePopularReleases);
+
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({ key: popularReleasesCategory, value: uniquePopularReleases });
     const { setActiveTile, isTileActive } = useActiveTile();
 
@@ -111,7 +110,7 @@ export const MainContent = ({ name, allReleases, topTracks, relatedArtists }: Ma
                 />
                 :
                 <>
-                    <Table list={topTracks} caption="Popular" />
+                    <Table list={topTracksDatasList} caption="Popular" />
                     <TilesList
                         title="Discography"
                         subExtraContent={
