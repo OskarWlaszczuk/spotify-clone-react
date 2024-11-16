@@ -86,6 +86,7 @@ export const TrackDetailsPage = () => {
     );
 
     const artistsIds = rawTrackDetails?.artists.map(({ id }) => id);
+    const secondaryArtistIds = artistsIds?.slice(1);
 
     const { datas: rawArtistsDetailsList, datasStatus: artistsDetailsListStatus } = useDependentFetchAPI({
         endpoint: `artists?ids=${artistsIds}`,
@@ -118,24 +119,25 @@ export const TrackDetailsPage = () => {
     const [artistsAlbumsDatasList, setArtistsAlbumsDatasList] = useState(undefined);
     const [artistsAlbumsDatasListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
 
-
     useEffect(() => {
         const fetchArtistsAlbumsList = async () => {
-            if (artistsIds && accessToken) {
+            if (secondaryArtistIds && accessToken) {
                 try {
                     setArtistsAlbumsDatasListStatus(loading);
-                    const responses = await Promise.all(artistsIds.map((artistId) => {
+                    const responses = await Promise.all(secondaryArtistIds.map(id => {
                         return fetchFromAPI({
-                            endpoint: `artists/${artistId}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
+                            endpoint: `artists/${id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
                             accessToken
                         })
                     }));
 
                     setArtistsAlbumsDatasListStatus(success);
                     setArtistsAlbumsDatasList(
-                        rawArtistsDetailsList.artists.map(({ id, name }, index) => (
-                            { id, name, list: responses[index].items }
-                        ))
+                        secondaryArtistIds.map((artistId, index) => ({
+                            id: artistId,
+                            name: rawArtistsDetailsList.artists.find(artist => artist.id === artistId)?.name || '',
+                            list: responses[index]?.items || []
+                        }))
                     );
                 } catch {
                     setArtistsAlbumsDatasListStatus(error);
