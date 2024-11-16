@@ -1,13 +1,10 @@
-import { useSelector } from "react-redux";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { useParams } from "react-router-dom";
 import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { getYear } from "../../../../common/functions/getYear";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { ArtistNameLink } from "./styled";
 import { Table } from "../../../../common/components/Table";
-import { AvatarImage } from "../../../../common/components/AvatarImage";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
@@ -15,19 +12,16 @@ import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
 import { getImage } from "../../../../common/functions/getImage";
-import { selectAccessToken } from "../../../../common/slices/authSlice";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
-import { renderArtistAvatarImage } from "../../../../common/functions/renderArtistAvatarImage";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
+
 
 export const AlbumPage = () => {
     const { albumID } = useParams();
-
-    const accessToken = useSelector(selectAccessToken);
 
     const { formattedAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumID);
 
@@ -38,14 +32,12 @@ export const AlbumPage = () => {
 
     const { datas: artistImage, datasStatus: artistImageStatus } = useDependentFetchAPI({
         endpoint: `artists/${artistID}`,
-        accessToken,
         fetchCondition: isAlbumArtistsListLengthEqualsOne && isArtistIdExists,
         dependencies: [albumID, artistID],
     });
 
     const { datas: allReleasesDetailsList, datasStatus: allReleasesDetailsListStatus } = useDependentFetchAPI({
         endpoint: `artists/${artistID}/${allReleasesEndpointResource}`,
-        accessToken,
         fetchCondition: isArtistIdExists,
         dependencies: [albumID, artistID],
     });
@@ -58,33 +50,18 @@ export const AlbumPage = () => {
         ...(isAlbumArtistsListLengthEqualsOne ? [artistImageStatus] : []),
     ]);
 
-
-    const metaDatasContent = renderMetaDatasContent(
-        formattedAlbumDetails.releaseDate,
-        calculateTotalDuration(formattedAlbumDetails.tracksList),
-        `${formattedAlbumDetails.totalTracksNumber} songs`
-    );
+    const metaDatasContent = renderMetaDatasContent({
+        releaseDate: formattedAlbumDetails.releaseDate,
+        duration: calculateTotalDuration(formattedAlbumDetails.tracksList),
+        uniqueData: `${formattedAlbumDetails.totalTracksNumber} songs`
+    });
 
 
     const subTitleContent = renderSubTitleContent({
         artistsList: formattedAlbumDetails.artistsList,
         isAlbumArtistsListLengthEqualsOne,
-        artistImage:getImage(artistImage.images),
+        artistImage: getImage(artistImage.images),
     });
-console.log(getImage(artistImage.images))
-
-    // formattedAlbumDetails.artistsList?.map(({ name, id }, index) => (
-    //     <>
-    //         {
-    //             renderArtistAvatarImage({
-    //                 image: getImage(artistImage.images),
-    //                 name,
-    //                 conditionToRender: isAlbumArtistsListLengthEqualsOne
-    //             })
-    //         }
-    //         {" "}{index !== 0 && "• "}<ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
-    //     </>
-    // ));
 
     return (
         <Main
