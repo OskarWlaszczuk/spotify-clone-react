@@ -1,7 +1,4 @@
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
-import { artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { TilesList } from "../../../../common/components/TilesList";
 import { Tile } from "../../../../common/components/Tile";
 import { Table } from "../../../../common/components/Table";
@@ -31,19 +28,21 @@ import {
 } from "../../../../common/constants/params";
 import { WithReleaseDate } from "../../../../common/interfaces/WithReleaseDate";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
-import { TrackListItem } from "../../../../common/interfaces/TrackCollection";
 import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
-import { isMatch } from "../../../../common/functions/isMatch";
+import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
+import { getImage } from "../../../../common/functions/getImage";
 interface MainContentProps {
     name: string;
     allReleases: any;
+    topTracks: any;
+    relatedArtists: any;
 };
 
-export const MainContent = ({ name, allReleases }: MainContentProps) => {
+export const MainContent = ({ name, allReleases, topTracks, relatedArtists }: MainContentProps) => {
 
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
@@ -53,17 +52,13 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
             listItem;
     };
 
-    const filterByAlbumGroup = (targetGroup: string) => allReleases?.filter(({ album_group }: any) => isMatch(album_group, targetGroup));
-    const albums = filterByAlbumGroup("album");
-    const compilations = filterByAlbumGroup("compilation");
-    const singles = filterByAlbumGroup("single");
-    const appearsOn = filterByAlbumGroup("appears_on");
+    const albums = filterByAlbumGroup(allReleases, "album");
+    const compilations = filterByAlbumGroup(allReleases, "compilation");
+    const singles = filterByAlbumGroup(allReleases, "single");
+    const appearsOn = filterByAlbumGroup(allReleases, "appears_on");
 
     const allReleasesWithoutAppearsOn = allReleases?.filter(({ album_group }: any) => album_group !== "appears_on");
     const sortedAllReleasesFromOldestToNewest = sortFromOldestToNewest(allReleasesWithoutAppearsOn);
-
-    const relatedArtists = useSelector(relatedArtistsSelectors.selectDatas)?.datas.artists;
-    const topTracks: TrackListItem[] = useSelector(artistTopTracksSelectors.selectDatas)?.datas.tracks;
 
     const topTracksAlbumsList = topTracks?.map(({ album }: any) => album);
     const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
@@ -71,13 +66,12 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
 
     const popularReleases = [...updatedTopTracksAlbumsList || [], ...allReleasesWithoutAppearsOn || []];
     const uniquePopularReleases = removeDuplicates(popularReleases, "name");
-
+    console.log(uniquePopularReleases);
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({ key: popularReleasesCategory, value: uniquePopularReleases });
-
     const { setActiveTile, isTileActive } = useActiveTile();
 
     const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
-        { key: allReleaseDiscography, value: sortedAllReleasesFromOldestToNewest },
+        { key: allReleaseDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
         { key: albumsParamDiscography, value: albums },
         { key: compilationParamDiscography, value: compilations },
         { key: singleParamDiscography, value: singles },
@@ -106,8 +100,8 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
                                     }),
                                 }}
                                 key={nanoid()}
-                                toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ albumID: id, artistID: getMainArtistID(artists) })}
-                                picture={images[0].url}
+                                toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ albumID: id })}
+                                picture={getImage(images)}
                                 title={name}
                                 subInfo={isFullListArtistsList ? `${type}` : `${album_type} • ${getYear(release_date)}`}
                                 isArtistPictureStyle={isFullListArtistsList || false}
@@ -117,7 +111,7 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
                 />
                 :
                 <>
-                    <Table list={topTracks} />
+                    <Table list={topTracks} caption="Popular" />
                     <TilesList
                         title="Discography"
                         subExtraContent={
@@ -151,8 +145,8 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
                                             }),
                                         }}
                                         key={nanoid()}
-                                        toPage={toAlbum({ albumID: id, artistID: getMainArtistID(artists) })}
-                                        picture={images[0].url}
+                                        toPage={toAlbum({ albumID: id })}
+                                        picture={getImage(images)}
                                         title={name}
                                         subInfo={`
                                                 ${index === 0 && isLatestReleased(item) ? replaceReleaseDateIfCurrentYear(item).release_date : getYear(release_date)} •
@@ -199,7 +193,7 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
                                     }),
                                 }}
                                 key={nanoid()}
-                                picture={images[0].url}
+                                picture={getImage(images)}
                                 title={name}
                                 subInfo={type || ""}
                                 toPage={toArtist({ id })}
@@ -229,8 +223,8 @@ export const MainContent = ({ name, allReleases }: MainContentProps) => {
                                     }),
                                 }}
                                 key={nanoid()}
-                                toPage={toAlbum({ albumID: id, artistID: artists[0].id! })}
-                                picture={images[0].url}
+                                toPage={toAlbum({ albumID: id })}
+                                picture={getImage(images)}
                                 title={name}
                                 subInfo={type || ""}
                                 isArtistPictureStyle={false}
