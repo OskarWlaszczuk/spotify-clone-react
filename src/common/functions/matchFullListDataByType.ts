@@ -4,7 +4,7 @@ import { findMatchingValueByKey } from "./findMatchingValueByKey";
 
 interface MatchFullListDataByTypeReturnValues {
     fullListTitle: string | undefined;
-    fullListContent: MediaItem[] | undefined;
+    fullListContent: any;
     isFullListArtistsList: boolean | undefined;
 };
 
