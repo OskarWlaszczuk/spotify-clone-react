@@ -9,7 +9,7 @@ import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMill
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useApiData } from "../../../../common/hooks/useApiData";
 import { artistsActions, artistsSelectors } from "../../../homePage/slices/artistsSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LyricsLine, LyricsSection } from "../MainContent/Lyrics/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
@@ -19,7 +19,7 @@ import { ToggleViewButton } from "../../../../common/components/ToggleViewButton
 import { trackRecommendationsActions, trackRecommendationsSelectors } from "../../slices/trackRecommendationsSlice";
 import { Table } from "../../../../common/components/Table";
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../../artistDetailsPage/slices/artistTopTracksSlice";
-import { albumsParamDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
+import { albumsParamDiscography, allReleaseDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
 import { nanoid } from "nanoid";
 import { Tile } from "../../../../common/components/Tile";
 import { TilesList } from "../../../../common/components/TilesList";
@@ -28,7 +28,7 @@ import { fullListLinkText } from "../../../../common/constants/fullListLinkText 
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../../artistDetailsPage/slices/relatedArtistsSlice";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
-import { initial } from "../../../../common/constants/fetchStatuses";
+import { error, initial, loading, success } from "../../../../common/constants/fetchStatuses";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
@@ -87,7 +87,7 @@ export const TrackDetailsPage = () => {
 
     const artistsIds = rawTrackDetails?.artists.map(({ id }) => id);
 
-    const { datas: artistsDetailsList, datasStatus: artistsDetailsListStatus } = useDependentFetchAPI({
+    const { datas: rawArtistsDetailsList, datasStatus: artistsDetailsListStatus } = useDependentFetchAPI({
         endpoint: `artists?ids=${artistsIds}`,
         fetchCondition: !!artistsIds,
         dependencies: [trackID],
@@ -95,17 +95,11 @@ export const TrackDetailsPage = () => {
 
     const formattedTrackDetails = getSpecificKeys(rawTrackDetails, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
     const albumData = getSpecificKeys(rawTrackDetails?.album, ["name", "release_date", "id", "images"]);
-    const mainArtistData = getSpecificKeys(artistsDetailsList.artists?.[0], ["name", "id", "images"]);
+    const mainArtistData = getSpecificKeys(rawArtistsDetailsList.artists?.[0], ["name", "id", "images"]);
 
     const { lyrics, lyricsFetchStatus } = useLyrics(mainArtistData.name, formattedTrackDetails.name);
     const [hideRestLyrics, setHideRestLyrics] = useState(true);
     const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
-
-    const fetchStatus = useFetchStatus([
-        artistsDetailsListStatus,
-        trackDetailsStatus,
-        lyricsFetchStatus,
-    ]);
 
     const { datas: relatedArtistsList, datasStatus: relatedArtistsListStatus } = useDependentFetchAPI({
         endpoint: `artists/${mainArtistData.id}/related-artists`,
@@ -113,13 +107,50 @@ export const TrackDetailsPage = () => {
         dependencies: [trackID],
     });
 
+    // const { datas: mainArtistAlbumsDatasList, datasStatus: mainArtistAlbumsDatasListStatus } = useDependentFetchAPI({
+    //     endpoint: `artists/${mainArtistData.id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
+    //     fetchCondition: !!mainArtistData.id,
+    //     dependencies: [trackID],
+    // });
 
-    // const [artistsAlbumsList, setArtistsAlbumsList] = useState(undefined);
+    // console.log(mainArtistAlbumsDatasList)
 
-    // artistsIds?.forEach(artistId => {
-    //     fetchFromAPI({ endpoint: `artists/${artistId}/albums?include_groups=album`, accessToken })
-    // })
+    const [artistsAlbumsDatasList, setArtistsAlbumsDatasList] = useState(undefined);
+    const [artistsAlbumsDatasListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
 
+
+    useEffect(() => {
+        const fetchArtistsAlbumsList = async () => {
+            if (artistsIds && accessToken) {
+                try {
+                    setArtistsAlbumsDatasListStatus(loading);
+                    const responses = await Promise.all(artistsIds.map((artistId) => {
+                        return fetchFromAPI({
+                            endpoint: `artists/${artistId}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
+                            accessToken
+                        })
+                    }));
+
+                    setArtistsAlbumsDatasListStatus(success);
+                    setArtistsAlbumsDatasList(
+                        rawArtistsDetailsList.artists.map(({ id, name }, index) => (
+                            { id, name, list: responses[index].items }
+                        ))
+                    );
+                } catch {
+                    setArtistsAlbumsDatasListStatus(error);
+                }
+            }
+        };
+        fetchArtistsAlbumsList();
+    }, [trackID, accessToken, rawArtistsDetailsList]);
+
+    const fetchStatus = useFetchStatus([
+        artistsDetailsListStatus,
+        trackDetailsStatus,
+        lyricsFetchStatus,
+        artistsAlbumsDatasListStatus,
+    ]);
 
     // const {
     //     configs: artistAlbumsConfigs,
@@ -206,7 +237,7 @@ export const TrackDetailsPage = () => {
                             </LyricsSection>
                             <ArtistCardSection>
                                 {
-                                    artistsDetailsList.artists?.map(({ id, name, type, images }) => (
+                                    rawArtistsDetailsList.artists?.map(({ id, name, type, images }) => (
                                         <StyledLink to={toArtist({ id })}>
                                             <ArtistCardContainer>
                                                 <Picture $picture={getImage(images)} $useArtistPictureStyle />
@@ -220,6 +251,45 @@ export const TrackDetailsPage = () => {
                                 }
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
+
+                        {
+                            artistsAlbumsDatasList?.map(({ list, name, id }, albumIndex) => (
+                                <TilesList
+                                    title={name}
+                                    list={list}
+                                    renderItem={({ images, name, type, id }, index) => (
+                                        <Tile
+                                            isActive={isTileActive(index, albumIndex)}
+                                            mouseEventHandlers={{
+                                                enter: () => setActiveTile({
+                                                    activeTileIndex: index,
+                                                    activeTilesListID: albumIndex,
+                                                }),
+                                                leave: () => setActiveTile({
+                                                    activeTileIndex: undefined,
+                                                    activeTilesListID: undefined,
+                                                }),
+                                            }}
+                                            key={nanoid()}
+                                            toPage={toAlbum({ albumID: id })}
+                                            picture={getImage(images)}
+                                            title={name}
+                                            subInfo={type || ""}
+                                            isArtistPictureStyle={false}
+                                        />
+                                    )}
+                                    hideRestListPart
+                                    fullListData={{
+                                        pathname: toArtist({
+                                            id,
+                                            additionalPath: allReleaseDiscography,
+                                        }),
+                                        text: fullListLinkText,
+                                    }}
+                                />
+                            ))
+                        }
+
                         {/* <Table
                             list={trackRecommandations}
                             caption="Recommended"
