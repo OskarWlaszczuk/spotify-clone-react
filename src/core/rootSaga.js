@@ -10,6 +10,9 @@ import { watchFetchArtistCompilationSaga } from "../features/artistDetailsPage/s
 import { watchFetchArtistAppearsOnSaga } from "../features/artistDetailsPage/sagas/artistAppearsOnSaga";
 import { watchFetchAlbumDetailsSaga } from "../features/albumPage/sagas/albumDetailsSaga";
 import { authSaga } from "../common/sagas/authSaga";
+import { watchFetchUserPlaylistsSaga } from "../common/sagas/userPlaylistSaga";
+import { watchFetchTrackDetails } from "../features/trackDetailsPage/sagas/trackDetailsSaga";
+import { watchFetchTrackRecommendation } from "../features/trackDetailsPage/sagas/trackRecommendationsSaga";
 
 export function* rootSaga() {
     yield all([
@@ -24,5 +27,8 @@ export function* rootSaga() {
         watchFetchArtistAppearsOnSaga(),
         watchFetchAlbumDetailsSaga(),
         authSaga(),
+        watchFetchUserPlaylistsSaga(),
+        watchFetchTrackDetails(),
+        watchFetchTrackRecommendation(),
     ]);
 };
