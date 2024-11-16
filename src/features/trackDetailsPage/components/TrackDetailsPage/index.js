@@ -36,6 +36,7 @@ import { selectAccessToken } from "../../../../common/slices/authSlice";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { getYear } from "../../../../common/functions/getYear";
 import { fetchFromAPI } from "../../../../common/functions/fetchFromAPI";
+import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
 
 
 const getSpecificKeys = (object, keysToGetList) => {
@@ -108,16 +109,20 @@ export const TrackDetailsPage = () => {
         dependencies: [trackID],
     });
 
-    // const { datas: mainArtistAlbumsDatasList, datasStatus: mainArtistAlbumsDatasListStatus } = useDependentFetchAPI({
-    //     endpoint: `artists/${mainArtistData.id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
-    //     fetchCondition: !!mainArtistData.id,
-    //     dependencies: [trackID],
-    // });
+    const { datas: mainArtistAllReleasesData, datasStatus: mainArtistAllReleasesDataStatus } = useDependentFetchAPI({
+        endpoint: `artists/${mainArtistData.id}/${allReleasesEndpointResource}`,
+        fetchCondition: !!mainArtistData.id,
+        dependencies: [trackID],
+    });
 
-    // console.log(mainArtistAlbumsDatasList)
+    const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesData?.items, "album");
+    const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesData?.items, "single");
+ 
 
-    const [artistsAlbumsDatasList, setArtistsAlbumsDatasList] = useState(undefined);
-    const [artistsAlbumsDatasListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
+    console.log(mainArtistAllReleasesData);
+
+    const [secondaryArtistsAllReleasesList, setArtistsAlbumsDatasList] = useState(undefined);
+    const [secondaryArtistsAllReleasesListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
 
     useEffect(() => {
         const fetchArtistsAlbumsList = async () => {
@@ -151,7 +156,7 @@ export const TrackDetailsPage = () => {
         artistsDetailsListStatus,
         trackDetailsStatus,
         lyricsFetchStatus,
-        artistsAlbumsDatasListStatus,
+        secondaryArtistsAllReleasesListStatus,
     ]);
 
     // const {
@@ -253,9 +258,41 @@ export const TrackDetailsPage = () => {
                                 }
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
-
+                        <TilesList
+                            title={mainArtistData.name}
+                            list={mainArtistAllReleasesData?.items}
+                            renderItem={({ images, name, type, id }, index) => (
+                                <Tile
+                                    isActive={isTileActive(index, 1)}
+                                    mouseEventHandlers={{
+                                        enter: () => setActiveTile({
+                                            activeTileIndex: index,
+                                            activeTilesListID: 1,
+                                        }),
+                                        leave: () => setActiveTile({
+                                            activeTileIndex: undefined,
+                                            activeTilesListID: undefined,
+                                        }),
+                                    }}
+                                    key={nanoid()}
+                                    toPage={toAlbum({ albumID: id })}
+                                    picture={getImage(images)}
+                                    title={name}
+                                    subInfo={type || ""}
+                                    isArtistPictureStyle={false}
+                                />
+                            )}
+                            hideRestListPart
+                            fullListData={{
+                                pathname: toArtist({
+                                    id: mainArtistData.id,
+                                    additionalPath: allReleaseDiscography,
+                                }),
+                                text: fullListLinkText,
+                            }}
+                        />
                         {
-                            artistsAlbumsDatasList?.map(({ list, name, id }, albumIndex) => (
+                            secondaryArtistsAllReleasesList?.map(({ list, name, id }, albumIndex) => (
                                 <TilesList
                                     title={name}
                                     list={list}
