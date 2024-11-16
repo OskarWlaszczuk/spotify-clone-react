@@ -120,6 +120,12 @@ export const TrackDetailsPage = () => {
     const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesItemsList, "album");
     const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesItemsList, "single");
 
+    const mainArtistGroupedReleases = [
+        { type: "Releases", list: mainArtistAllReleasesItemsList },
+        { type: "Albums", list: mainArtistAlbums },
+        { type: "Singles", list: mainArtistSingles },
+    ];
+
     const [secondaryArtistsAllReleasesList, setArtistsAlbumsDatasList] = useState(undefined);
     const [secondaryArtistsAllReleasesListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
 
