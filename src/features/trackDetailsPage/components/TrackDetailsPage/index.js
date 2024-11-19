@@ -7,26 +7,20 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { useApiData } from "../../../../common/hooks/useApiData";
-import { artistsActions, artistsSelectors } from "../../../homePage/slices/artistsSlice";
 import { useEffect, useState } from "react";
-import { LyricsLine, LyricsSection } from "../MainContent/Lyrics/styled";
+import { LyricsSection } from "../MainContent/Lyrics/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { Picture } from "../../../../common/components/Picture";
 import { useLyrics } from "../../hooks/useLyrics";
-import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
 import { trackRecommendationsActions, trackRecommendationsSelectors } from "../../slices/trackRecommendationsSlice";
 import { Table } from "../../../../common/components/Table";
-import { artistTopTracksActions, artistTopTracksSelectors } from "../../../artistDetailsPage/slices/artistTopTracksSlice";
-import { albumsParamDiscography, allReleaseDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
+import { allReleaseDiscography, relatedArtistsParam } from "../../../../common/constants/params";
 import { nanoid } from "nanoid";
 import { Tile } from "../../../../common/components/Tile";
 import { TilesList } from "../../../../common/components/TilesList";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
-import { relatedArtistsActions, relatedArtistsSelectors } from "../../../artistDetailsPage/slices/relatedArtistsSlice";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
 import { error, initial, loading, success } from "../../../../common/constants/fetchStatuses";
 import { getImage } from "../../../../common/functions/getImage";
@@ -39,34 +33,7 @@ import { fetchFromAPI } from "../../../../common/functions/fetchFromAPI";
 import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
 import { useArtistPopularReleases } from "../../../../common/hooks/useArtistPopularReleases";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
-
-
-const getSpecificKeys = (object, keysToGetList) => {
-    const objectArray = Array.isArray(object) ? object : [object];
-
-    const getNestedKey = (object, nestedKeyToGet) => {
-        return nestedKeyToGet.split('.').reduce(
-            (currentObjectKey, keyToGet) => currentObjectKey && currentObjectKey[keyToGet], object
-        );
-    };
-
-    return objectArray.map((objectKey) => {
-        const selectedKeys = {};
-        keysToGetList.forEach(key => {
-            const selectedKeyValue = getNestedKey(objectKey, key);
-            if (selectedKeyValue !== undefined) {
-                selectedKeys[key] = selectedKeyValue;
-            }
-        });
-        return selectedKeys;
-    })[0];
-};
-
-const formatLyrics = (lyrics) => {
-    return lyrics?.split('\n').map((line, index) => (
-        <LyricsLine key={index}>{line}</LyricsLine>
-    ));
-};
+import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 
 export const TrackDetailsPage = () => {
     const { trackID } = useParams();
@@ -77,7 +44,7 @@ export const TrackDetailsPage = () => {
     const rawTrackData = useSelector(trackDetailsSelectors.selectDatas)?.datas;
     const trackDataStatus = useSelector(trackDetailsSelectors.selectStatus);
 
-    const { fetch: fetchTrackDetails, clear: clearTrackDetails } = trackDetailsActions;
+    const { fetch: fetchTrackData, clear: clearTrackDetails } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
 
     const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
@@ -104,7 +71,7 @@ export const TrackDetailsPage = () => {
 
     useFetchAPI(
         [
-            { fetchAction: fetchTrackDetails, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
+            { fetchAction: fetchTrackData, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
             { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
         ],
         [trackID]
