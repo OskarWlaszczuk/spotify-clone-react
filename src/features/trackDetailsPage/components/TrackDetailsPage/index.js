@@ -44,24 +44,25 @@ export const TrackDetailsPage = () => {
     const rawTrackData = useSelector(trackDetailsSelectors.selectDatas)?.datas;
     const trackDataStatus = useSelector(trackDetailsSelectors.selectStatus);
 
-    const { fetch: fetchTrackData, clear: clearTrackDetails } = trackDetailsActions;
+    const { fetch: fetchTrackData, clear: clearTrackData } = trackDetailsActions;
     const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
 
-    const trackRecommandationsStatus = useSelector(trackRecommendationsSelectors.selectStatus);
-    const trackRecommandations = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
+    const trackRecommandationsDatasListStatus = useSelector(trackRecommendationsSelectors.selectStatus);
+    const rawTrackRecommandationsDatasList = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
 
-    const artistsIds = rawTrackData?.artists.map(({ id }) => id);
-    const secondaryArtistsIds = artistsIds?.slice(1);
+    console.log(rawTrackRecommandationsDatasList)
+    const artistsIdsList = rawTrackData?.artists.map(({ id }) => id);
+    const secondaryArtistsIdsList = artistsIdsList?.slice(1);
 
-    const { datas: rawArtistsDetailsList, datasStatus: artistsDetailsListStatus } = useDependentFetchAPI({
-        endpoint: `artists?ids=${artistsIds}`,
-        fetchCondition: !!artistsIds,
+    const { datas: rawArtistsDatasList, datasStatus: artistsDatasListStatus } = useDependentFetchAPI({
+        endpoint: `artists?ids=${artistsIdsList}`,
+        fetchCondition: !!artistsIdsList,
         dependencies: [trackID],
     });
 
-    const formattedTrackDetails = getSpecificKeys(rawTrackData, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
+    const formattedTrackData = getSpecificKeys(rawTrackData, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
     const albumData = getSpecificKeys(rawTrackData?.album, ["name", "release_date", "id", "images"]);
-    const mainArtistData = getSpecificKeys(rawArtistsDetailsList.artists?.[0], ["name", "id", "images"]);
+    const mainArtistData = getSpecificKeys(rawArtistsDatasList.artists?.[0], ["name", "id", "images"]);
 
     const {
         rawArtistTopTracksDatasStatus,
@@ -71,14 +72,13 @@ export const TrackDetailsPage = () => {
 
     useFetchAPI(
         [
-            { fetchAction: fetchTrackData, clearAction: clearTrackDetails, endpoint: `tracks/${trackID}` },
+            { fetchAction: fetchTrackData, clearAction: clearTrackData, endpoint: `tracks/${trackID}` },
             { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
         ],
         [trackID]
     );
 
-    const { lyrics, lyricsFetchStatus } = useLyrics(mainArtistData.name, formattedTrackDetails.name, trackID);
-    console.log(lyrics)
+    const { lyrics, lyricsFetchStatus } = useLyrics(mainArtistData.name, formattedTrackData.name, trackID);
     // const [hideRestLyrics, setHideRestLyrics] = useState(true);
     const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
 
@@ -112,10 +112,10 @@ export const TrackDetailsPage = () => {
 
     useEffect(() => {
         const fetchArtistsAlbumsList = async () => {
-            if (secondaryArtistsIds && accessToken) {
+            if (secondaryArtistsIdsList && accessToken) {
                 try {
                     setArtistsAlbumsDatasListStatus(loading);
-                    const responses = await Promise.all(secondaryArtistsIds.map(id => {
+                    const responses = await Promise.all(secondaryArtistsIdsList.map(id => {
                         return fetchFromAPI({
                             endpoint: `artists/${id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
                             accessToken
@@ -124,9 +124,9 @@ export const TrackDetailsPage = () => {
 
                     setArtistsAlbumsDatasListStatus(success);
                     setArtistsAlbumsDatasList(
-                        secondaryArtistsIds.map((artistId, index) => ({
+                        secondaryArtistsIdsList.map((artistId, index) => ({
                             id: artistId,
-                            name: rawArtistsDetailsList.artists.find(artist => artist.id === artistId)?.name || '',
+                            name: rawArtistsDatasList.artists.find(artist => artist.id === artistId)?.name || '',
                             list: responses[index]?.items || []
                         }))
                     );
@@ -136,23 +136,23 @@ export const TrackDetailsPage = () => {
             }
         };
         fetchArtistsAlbumsList();
-    }, [trackID, accessToken, rawArtistsDetailsList]);
+    }, [trackID, accessToken, rawArtistsDatasList]);
 
     const fetchStatus = useFetchStatus([
         rawArtistTopTracksDatasStatus,
-        artistsDetailsListStatus,
+        artistsDatasListStatus,
         trackDataStatus,
         // lyricsFetchStatus,
         secondaryArtistsAllReleasesListStatus,
         mainArtistAllReleasesDataStatus,
-        trackRecommandationsStatus,
+        trackRecommandationsDatasListStatus,
         relatedArtistsListStatus,
     ]);
 
     const metaDatasContent = renderMetaDatasContent({
         releaseDate: getYear(albumData.release_date),
-        duration: fromMillisecondsToMinutes(formattedTrackDetails.duration_ms).replace(".", ":"),
-        uniqueData: `${formattedTrackDetails.popularity}/100`
+        duration: fromMillisecondsToMinutes(formattedTrackData.duration_ms).replace(".", ":"),
+        uniqueData: `${formattedTrackData.popularity}/100`
     });
 
     const subTitleContent = renderSubTitleContent({
@@ -174,8 +174,8 @@ export const TrackDetailsPage = () => {
                 bannerContent={
                     <Banner
                         picture={getImage(albumData.images)}
-                        title={formattedTrackDetails.name}
-                        caption={formattedTrackDetails.type}
+                        title={formattedTrackData.name}
+                        caption={formattedTrackData.type}
                         subTitleContent={subTitleContent}
                         metaDatas={metaDatasContent}
                     />
@@ -194,7 +194,7 @@ export const TrackDetailsPage = () => {
                             </LyricsSection>
                             <ArtistCardSection>
                                 {
-                                    rawArtistsDetailsList.artists?.map(({ id, name, type, images }) => (
+                                    rawArtistsDatasList.artists?.map(({ id, name, type, images }) => (
                                         <StyledLink to={toArtist({ id })}>
                                             <ArtistCardContainer>
                                                 <Picture $picture={getImage(images)} $useArtistPictureStyle />
@@ -209,7 +209,7 @@ export const TrackDetailsPage = () => {
                             </ArtistCardSection>
                         </LyricsAndArtistsCardSectionContainer>
                         <Table
-                            list={trackRecommandations}
+                            list={rawTrackRecommandationsDatasList}
                             caption="Recommended"
                             subCaption="Based on this song"
                             hideIndex
