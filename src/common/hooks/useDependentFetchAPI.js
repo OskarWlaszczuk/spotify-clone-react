@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchFromAPI } from "../functions/fetchFromAPI";
 import { error, initial, loading, success } from "../constants/fetchStatuses";
 import { useSelector } from "react-redux";
 import { selectAccessToken } from "../slices/authSlice";
 
-export const useDependentFetchAPI = ({ endpoint, fetchCondition, dependencies = [] }) => {
-    const accessToken = useSelector(selectAccessToken);
+const useMemoizeEndpoint = (endpoint, dependencies) => useMemo(() => endpoint, dependencies);
 
-    const [datas, setDatas] = useState("");
+export const useDependentFetchAPI = ({ endpointConfig: { routePath, params }, fetchCondition, dependencies = [] }) => {
+    const accessToken = useSelector(selectAccessToken);
+    const memoizedEndpoint = useMemoizeEndpoint(routePath, [params]);
+
+    const [datas, setDatas] = useState(null);
     const [datasStatus, setDatasStatus] = useState(initial);
 
     useEffect(() => {
@@ -16,7 +19,7 @@ export const useDependentFetchAPI = ({ endpoint, fetchCondition, dependencies = 
         const fetchArtistDetails = async () => {
             setDatasStatus(loading);
             try {
-                const response = await fetchFromAPI({ endpoint, accessToken });
+                const response = await fetchFromAPI({ endpoint: memoizedEndpoint, accessToken });
                 setDatas(response);
                 setDatasStatus(success);
             } catch {
@@ -25,7 +28,13 @@ export const useDependentFetchAPI = ({ endpoint, fetchCondition, dependencies = 
         };
 
         fetchArtistDetails();
-    }, [...dependencies, accessToken, fetchCondition, endpoint]);
+
+        return () => {
+            setDatas(null);
+            setDatasStatus(initial);
+        };
+
+    }, [...dependencies, accessToken, fetchCondition, memoizedEndpoint]);
 
 
     return { datas, datasStatus };
