@@ -9,7 +9,6 @@ import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMill
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useEffect, useMemo, useState } from "react";
 import { LyricsSection } from "./TrackLyricsSection/styled";
-import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { Picture } from "../../../../common/components/Picture";
 import { useLyrics } from "../../hooks/useLyrics";
@@ -39,6 +38,8 @@ import { ToggleViewButton } from "../../../../common/components/ToggleViewButton
 import { formatLyrics } from "../../functions/formatLyrics";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { TrackLyricsSection } from "./TrackLyricsSection";
+import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
+import { LyricsAndArtistsSection } from "./styled";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -51,6 +52,8 @@ export const TrackDetailsPage = () => {
 
     const rawTrackRecommandationsDatasList = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
     const trackRecommandationsDatasListStatus = useSelector(trackRecommendationsSelectors.selectStatus);
+
+    // console.log(rawTrackRecommandationsDatasList)
 
     const rawTrackData = useSelector(trackDetailsSelectors.selectDatas)?.datas;
     const trackDataStatus = useSelector(trackDetailsSelectors.selectStatus);
@@ -76,6 +79,7 @@ export const TrackDetailsPage = () => {
         topTracksAsAlbumsDatasList,
         rawTopTracksDatasList,
     } = useArtistPopularReleases({ artistId: formattedMainArtistData.id, dependencies: [trackId] });
+console.log(rawTopTracksDatasList)
 
     useFetchAPI(
         [
@@ -170,34 +174,23 @@ export const TrackDetailsPage = () => {
                 }
                 content={
                     <>
-                        <LyricsAndArtistsCardSectionContainer>
-                            <TrackLyricsSection lyrics={lyrics} />
-                            <ArtistCardSection>
-                                {
-                                    rawArtistsDatasList?.artists.map(({ id, name, type, images }) => (
-                                        <StyledLink to={toArtist({ id })}>
-                                            <ArtistCardContainer>
-                                                <Picture $picture={getImage(images)} $useArtistPictureStyle />
-                                                <Text>
-                                                    <Paragraph>{capitalizeFirstLetter(type)}</Paragraph>
-                                                    <Paragraph $specialOnHover>{name}</Paragraph>
-                                                </Text>
-                                            </ArtistCardContainer>
-                                        </StyledLink>
-                                    ))
-                                }
-                            </ArtistCardSection>
-                        </LyricsAndArtistsCardSectionContainer>
-                        <Table
+                        <LyricsAndArtistsSection>
+                            {lyrics && <TrackLyricsSection lyrics={lyrics} />}
+                            <TrackArtistsCardsSection artistsDatasList={rawArtistsDatasList?.artists} />
+                        </LyricsAndArtistsSection>
+
+                        {/* <Table
                             list={rawTrackRecommandationsDatasList}
                             caption="Recommended"
                             subCaption="Based on this song"
                             hideIndex
-                        />
+                        /> */}
+
                         <Table
                             list={rawTopTracksDatasList}
                             caption={formattedMainArtistData.name}
                         />
+
                         {
                             mainArtistGroupedReleasesList?.map(({ type, list, listId, additionalPath }) => (
                                 renderTilesList([{
