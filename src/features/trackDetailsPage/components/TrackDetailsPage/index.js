@@ -7,35 +7,23 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { useEffect, useMemo, useState } from "react";
-import { LyricsSection } from "./TrackLyricsSection/styled";
-import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
-import { Picture } from "../../../../common/components/Picture";
 import { useLyrics } from "../../hooks/useLyrics";
 import { trackRecommendationsActions, trackRecommendationsSelectors } from "../../slices/trackRecommendationsSlice";
 import { Table } from "../../../../common/components/Table";
 import { albumsParamDiscography, allReleaseDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
-import { nanoid } from "nanoid";
-import { Tile } from "../../../../common/components/Tile";
-import { TilesList } from "../../../../common/components/TilesList";
 import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
-import { error, initial, loading, success } from "../../../../common/constants/fetchStatuses";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
-import { selectAccessToken } from "../../../../common/slices/authSlice";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { getYear } from "../../../../common/functions/getYear";
-import { fetchFromAPI } from "../../../../common/functions/fetchFromAPI";
 import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
 import { useArtistPopularReleases } from "../../../../common/hooks/useArtistPopularReleases";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { useArtistsAlbumsDatasList } from "../../hooks/useArtistsAlbumsDatasList";
-import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
-import { formatLyrics } from "../../functions/formatLyrics";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { TrackLyricsSection } from "./TrackLyricsSection";
 import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
@@ -43,8 +31,6 @@ import { LyricsAndArtistsSection } from "./styled";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
-
-    const { setActiveTile, isTileActive } = useActiveTile();
     const renderTilesList = useRenderTilesList();
 
     const { fetch: fetchTrackData, clear: clearTrackData } = trackDetailsActions;
@@ -79,7 +65,7 @@ export const TrackDetailsPage = () => {
         topTracksAsAlbumsDatasList,
         rawTopTracksDatasList,
     } = useArtistPopularReleases({ artistId: formattedMainArtistData.id, dependencies: [trackId] });
-console.log(rawTopTracksDatasList)
+    console.log(rawTopTracksDatasList)
 
     useFetchAPI(
         [
