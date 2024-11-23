@@ -8,7 +8,7 @@ import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useEffect, useMemo, useState } from "react";
-import { LyricsSection } from "../MainContent/Lyrics/styled";
+import { LyricsSection } from "./TrackLyricsSection/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
 import { Picture } from "../../../../common/components/Picture";
@@ -38,6 +38,7 @@ import { useArtistsAlbumsDatasList } from "../../hooks/useArtistsAlbumsDatasList
 import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
 import { formatLyrics } from "../../functions/formatLyrics";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
+import { TrackLyricsSection } from "./TrackLyricsSection";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -85,9 +86,6 @@ export const TrackDetailsPage = () => {
     );
 
     const { lyrics, lyricsFetchStatus } = useLyrics(formattedMainArtistData.name, formattedTrackData.name, trackId);
-    const [isHideLyrics, setIsHideLyrics] = useState(true);
-
-    const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
 
     const { datas: relatedArtistsDatasList, datasStatus: relatedArtistsDatasListStatus } = useDependentFetchAPI({
         endpointConfig: {
@@ -133,7 +131,7 @@ export const TrackDetailsPage = () => {
         artistTopTracksDatasListStatus,
         artistsDatasListStatus,
         trackDataStatus,
-        lyricsFetchStatus,
+        // lyricsFetchStatus,
         secondaryArtistsAllReleasesListStatus,
         mainArtistAllReleasesDataStatus,
         trackRecommandationsDatasListStatus,
@@ -173,14 +171,7 @@ export const TrackDetailsPage = () => {
                 content={
                     <>
                         <LyricsAndArtistsCardSectionContainer>
-                            <LyricsSection>
-                                {formatLyrics(isHideLyrics ? lyricsPreview : lyrics)}
-                                <ToggleViewButton
-                                    onClick={() => setIsHideLyrics(hideRestLyrics => !hideRestLyrics)}
-                                >
-                                    {isHideLyrics ? "...Show more" : "Show less lyrics"}
-                                </ToggleViewButton>
-                            </LyricsSection>
+                            <TrackLyricsSection lyrics={lyrics} />
                             <ArtistCardSection>
                                 {
                                     rawArtistsDatasList?.artists.map(({ id, name, type, images }) => (
