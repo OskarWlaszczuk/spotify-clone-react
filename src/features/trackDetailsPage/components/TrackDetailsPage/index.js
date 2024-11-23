@@ -38,10 +38,8 @@ import { useArtistsAlbumsDatasList } from "../../hooks/useArtistsAlbumsDatasList
 import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
 import { formatLyrics } from "../../functions/formatLyrics";
 
-const useMemoizeEndpoint = (endpoint, dependencies) => useMemo(() => endpoint, dependencies);
-
 export const TrackDetailsPage = () => {
-    const { trackID } = useParams();
+    const { id: trackId } = useParams();
 
     const { setActiveTile, isTileActive } = useActiveTile();
 
@@ -63,7 +61,7 @@ export const TrackDetailsPage = () => {
             params: [artistsIdsList],
         },
         fetchCondition: !!artistsIdsList,
-        dependencies: [trackID],
+        dependencies: [trackId],
     });
 
     const formattedTrackData = getSpecificKeys(rawTrackData, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
@@ -74,26 +72,22 @@ export const TrackDetailsPage = () => {
         artistTopTracksDatasListStatus,
         topTracksAsAlbumsDatasList,
         rawTopTracksDatasList,
-    } = useArtistPopularReleases({ artistId: formattedMainArtistData.id, dependencies: [trackID] });
+    } = useArtistPopularReleases({ artistId: formattedMainArtistData.id, dependencies: [trackId] });
 
     useFetchAPI(
         [
-            { fetchAction: fetchTrackData, clearAction: clearTrackData, endpoint: `tracks/${trackID}` },
-            { fetchAction: fetchTrackRecommandationsDatasList, clearAction: clearTrackRecommandationsDatasList, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
+            { fetchAction: fetchTrackData, clearAction: clearTrackData, endpoint: `tracks/${trackId}` },
+            { fetchAction: fetchTrackRecommandationsDatasList, clearAction: clearTrackRecommandationsDatasList, endpoint: `recommendations?limit=10&seed_tracks=${trackId}` },
         ],
-        [trackID]
+        [trackId]
     );
 
-    const { lyrics, lyricsFetchStatus } = useLyrics(formattedMainArtistData.name, formattedTrackData.name, trackID);
+    const { lyrics, lyricsFetchStatus } = useLyrics(formattedMainArtistData.name, formattedTrackData.name, trackId);
     const [isHideLyrics, setIsHideLyrics] = useState(true);
 
     const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
 
-    // useEffect(() => {
-    //     if (isHideLyrics) setLyrics(lyricsPreview);
 
-    //     return () => setIsHideLyrics(false)
-    // });
     console.log(lyrics)
 
     const { datas: relatedArtistsDatasList, datasStatus: relatedArtistsDatasListStatus } = useDependentFetchAPI({
@@ -102,7 +96,7 @@ export const TrackDetailsPage = () => {
             params: [formattedMainArtistData.id],
         },
         fetchCondition: !!formattedMainArtistData.id,
-        dependencies: [trackID],
+        dependencies: [trackId],
     });
 
     const { datas: mainArtistAllReleasesData, datasStatus: mainArtistAllReleasesDataStatus } = useDependentFetchAPI({
@@ -111,7 +105,7 @@ export const TrackDetailsPage = () => {
             params: [formattedMainArtistData.id, allReleasesEndpointResource],
         },
         fetchCondition: !!formattedMainArtistData.id,
-        dependencies: [trackID],
+        dependencies: [trackId],
     });
 
     const mainArtistAllReleasesItemsList = mainArtistAllReleasesData?.items;
@@ -133,7 +127,7 @@ export const TrackDetailsPage = () => {
     } = useArtistsAlbumsDatasList({
         artistsIdsList: secondaryArtistsIdsList,
         artistsDatasList: rawArtistsDatasList,
-        trackId: trackID
+        trackId: trackId
     });
 
     const fetchStatus = useFetchStatus([
@@ -233,7 +227,7 @@ export const TrackDetailsPage = () => {
                                                 }),
                                             }}
                                             key={nanoid()}
-                                            toPage={toAlbum({ albumID: id })}
+                                            toPage={toAlbum({ id: id })}
                                             picture={getImage(images)}
                                             title={name}
                                             subInfo={type || ""}
@@ -270,7 +264,7 @@ export const TrackDetailsPage = () => {
                                                 }),
                                             }}
                                             key={nanoid()}
-                                            toPage={toAlbum({ albumID: id })}
+                                            toPage={toAlbum({ id: id })}
                                             picture={getImage(images)}
                                             title={name}
                                             subInfo={type || ""}
