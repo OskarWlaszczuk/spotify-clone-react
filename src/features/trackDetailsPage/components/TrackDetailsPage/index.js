@@ -7,7 +7,7 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LyricsSection } from "../MainContent/Lyrics/styled";
 import { ArtistCardContainer, ArtistCardSection, LyricsAndArtistsCardSectionContainer, Paragraph, StyledLink, Text } from "../../../../common/components/ArtistCard";
 import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
@@ -34,63 +34,83 @@ import { allReleasesEndpointResource } from "../../../../common/constants/allRel
 import { useArtistPopularReleases } from "../../../../common/hooks/useArtistPopularReleases";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
+import { useArtistsAlbumsDatasList } from "../../hooks/useArtistsAlbumsDatasList";
+import { ToggleViewButton } from "../../../../common/components/ToggleViewButton";
+import { formatLyrics } from "../../functions/formatLyrics";
+
+const useMemoizeEndpoint = (endpoint, dependencies) => useMemo(() => endpoint, dependencies);
 
 export const TrackDetailsPage = () => {
     const { trackID } = useParams();
-    const accessToken = useSelector(selectAccessToken);
 
     const { setActiveTile, isTileActive } = useActiveTile();
+
+    const { fetch: fetchTrackData, clear: clearTrackData } = trackDetailsActions;
+    const { fetch: fetchTrackRecommandationsDatasList, clear: clearTrackRecommandationsDatasList } = trackRecommendationsActions;
+
+    const rawTrackRecommandationsDatasList = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
+    const trackRecommandationsDatasListStatus = useSelector(trackRecommendationsSelectors.selectStatus);
 
     const rawTrackData = useSelector(trackDetailsSelectors.selectDatas)?.datas;
     const trackDataStatus = useSelector(trackDetailsSelectors.selectStatus);
 
-    const { fetch: fetchTrackData, clear: clearTrackData } = trackDetailsActions;
-    const { fetch: fetchTrackRecommandations, clear: clrearTrackRecommandations } = trackRecommendationsActions;
-
-    const trackRecommandationsDatasListStatus = useSelector(trackRecommendationsSelectors.selectStatus);
-    const rawTrackRecommandationsDatasList = useSelector(trackRecommendationsSelectors.selectDatas)?.datas.tracks;
-
-    console.log(rawTrackRecommandationsDatasList)
     const artistsIdsList = rawTrackData?.artists.map(({ id }) => id);
     const secondaryArtistsIdsList = artistsIdsList?.slice(1);
 
     const { datas: rawArtistsDatasList, datasStatus: artistsDatasListStatus } = useDependentFetchAPI({
-        endpoint: `artists?ids=${artistsIdsList}`,
+        endpointConfig: {
+            routePath: `artists?ids=${artistsIdsList}`,
+            params: [artistsIdsList],
+        },
         fetchCondition: !!artistsIdsList,
         dependencies: [trackID],
     });
 
     const formattedTrackData = getSpecificKeys(rawTrackData, ["name", "type", "id", "duration_ms", "popularity", "artists"]);
-    const albumData = getSpecificKeys(rawTrackData?.album, ["name", "release_date", "id", "images"]);
-    const mainArtistData = getSpecificKeys(rawArtistsDatasList.artists?.[0], ["name", "id", "images"]);
+    const formattedAlbumData = getSpecificKeys(rawTrackData?.album, ["name", "release_date", "id", "images"]);
+    const formattedMainArtistData = getSpecificKeys(rawArtistsDatasList?.artists[0], ["name", "id", "images"]);
 
     const {
-        rawArtistTopTracksDatasStatus,
-        topTracksAsAlbumsList,
-        topTracksDatasList
-    } = useArtistPopularReleases({ artistId: mainArtistData.id, dependencies: [trackID] });
+        artistTopTracksDatasListStatus,
+        topTracksAsAlbumsDatasList,
+        rawTopTracksDatasList,
+    } = useArtistPopularReleases({ artistId: formattedMainArtistData.id, dependencies: [trackID] });
 
     useFetchAPI(
         [
             { fetchAction: fetchTrackData, clearAction: clearTrackData, endpoint: `tracks/${trackID}` },
-            { fetchAction: fetchTrackRecommandations, clearAction: clrearTrackRecommandations, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
+            { fetchAction: fetchTrackRecommandationsDatasList, clearAction: clearTrackRecommandationsDatasList, endpoint: `recommendations?limit=10&seed_tracks=${trackID}` },
         ],
         [trackID]
     );
 
-    const { lyrics, lyricsFetchStatus } = useLyrics(mainArtistData.name, formattedTrackData.name, trackID);
-    // const [hideRestLyrics, setHideRestLyrics] = useState(true);
+    const { lyrics, lyricsFetchStatus } = useLyrics(formattedMainArtistData.name, formattedTrackData.name, trackID);
+    const [isHideLyrics, setIsHideLyrics] = useState(true);
+
     const lyricsPreview = lyrics?.split('\n').slice(0, 13).join('\n');
 
-    const { datas: relatedArtistsList, datasStatus: relatedArtistsListStatus } = useDependentFetchAPI({
-        endpoint: `artists/${mainArtistData.id}/related-artists`,
-        fetchCondition: !!mainArtistData.id,
+    // useEffect(() => {
+    //     if (isHideLyrics) setLyrics(lyricsPreview);
+
+    //     return () => setIsHideLyrics(false)
+    // });
+    console.log(lyrics)
+
+    const { datas: relatedArtistsDatasList, datasStatus: relatedArtistsDatasListStatus } = useDependentFetchAPI({
+        endpointConfig: {
+            routePath: `artists/${formattedMainArtistData.id}/related-artists`,
+            params: [formattedMainArtistData.id],
+        },
+        fetchCondition: !!formattedMainArtistData.id,
         dependencies: [trackID],
     });
 
     const { datas: mainArtistAllReleasesData, datasStatus: mainArtistAllReleasesDataStatus } = useDependentFetchAPI({
-        endpoint: `artists/${mainArtistData.id}/${allReleasesEndpointResource}`,
-        fetchCondition: !!mainArtistData.id,
+        endpointConfig: {
+            routePath: `artists/${formattedMainArtistData.id}/${allReleasesEndpointResource}`,
+            params: [formattedMainArtistData.id, allReleasesEndpointResource],
+        },
+        fetchCondition: !!formattedMainArtistData.id,
         dependencies: [trackID],
     });
 
@@ -99,7 +119,7 @@ export const TrackDetailsPage = () => {
     const mainArtistAlbums = filterByAlbumGroup(mainArtistAllReleasesItemsList, "album");
     const mainArtistSingles = filterByAlbumGroup(mainArtistAllReleasesItemsList, "single");
 
-    const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesItemsList || []];
+    const popularReleases = [...topTracksAsAlbumsDatasList || [], ...mainArtistAllReleasesItemsList || []];
 
     const mainArtistGroupedReleasesList = [
         { type: "Releases", list: removeDuplicates(popularReleases, "name"), listId: 1 },
@@ -107,64 +127,41 @@ export const TrackDetailsPage = () => {
         { type: "Singles and EP's", list: mainArtistSingles, listId: 3 },
     ];
 
-    const [secondaryArtistsAllReleasesList, setArtistsAlbumsDatasList] = useState(undefined);
-    const [secondaryArtistsAllReleasesListStatus, setArtistsAlbumsDatasListStatus] = useState(initial);
-
-    useEffect(() => {
-        const fetchArtistsAlbumsList = async () => {
-            if (secondaryArtistsIdsList && accessToken) {
-                try {
-                    setArtistsAlbumsDatasListStatus(loading);
-                    const responses = await Promise.all(secondaryArtistsIdsList.map(id => {
-                        return fetchFromAPI({
-                            endpoint: `artists/${id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
-                            accessToken
-                        })
-                    }));
-
-                    setArtistsAlbumsDatasListStatus(success);
-                    setArtistsAlbumsDatasList(
-                        secondaryArtistsIdsList.map((artistId, index) => ({
-                            id: artistId,
-                            name: rawArtistsDatasList.artists.find(artist => artist.id === artistId)?.name || '',
-                            list: responses[index]?.items || []
-                        }))
-                    );
-                } catch {
-                    setArtistsAlbumsDatasListStatus(error);
-                }
-            }
-        };
-        fetchArtistsAlbumsList();
-    }, [trackID, accessToken, rawArtistsDatasList]);
+    const {
+        artistsAllReleasesDatasList: secondaryArtistsAllReleasesList,
+        artistsAllReleasesDatasListStatus: secondaryArtistsAllReleasesListStatus
+    } = useArtistsAlbumsDatasList({
+        artistsIdsList: secondaryArtistsIdsList,
+        artistsDatasList: rawArtistsDatasList,
+        trackId: trackID
+    });
 
     const fetchStatus = useFetchStatus([
-        rawArtistTopTracksDatasStatus,
+        artistTopTracksDatasListStatus,
         artistsDatasListStatus,
         trackDataStatus,
-        // lyricsFetchStatus,
+        lyricsFetchStatus,
         secondaryArtistsAllReleasesListStatus,
         mainArtistAllReleasesDataStatus,
         trackRecommandationsDatasListStatus,
-        relatedArtistsListStatus,
+        relatedArtistsDatasListStatus,
     ]);
 
     const metaDatasContent = renderMetaDatasContent({
-        releaseDate: getYear(albumData.release_date),
+        releaseDate: getYear(formattedAlbumData.release_date),
         duration: fromMillisecondsToMinutes(formattedTrackData.duration_ms).replace(".", ":"),
-        uniqueData: `${formattedTrackData.popularity}/100`
+        uniqueData: `${formattedTrackData.popularity} / 100`
     });
-
     const subTitleContent = renderSubTitleContent({
         albumDetails: {
-            id: albumData.id,
-            name: albumData.name,
+            id: formattedAlbumData.id,
+            name: formattedAlbumData.name,
         },
         mainArtistDetails: {
-            id: mainArtistData.id,
-            name: mainArtistData.name,
+            id: formattedMainArtistData.id,
+            name: formattedMainArtistData.name,
         },
-        artistImage: getImage(mainArtistData.images),
+        artistImage: getImage(formattedMainArtistData.images),
     });
 
     return (
@@ -173,7 +170,7 @@ export const TrackDetailsPage = () => {
                 fetchStatus={fetchStatus}
                 bannerContent={
                     <Banner
-                        picture={getImage(albumData.images)}
+                        picture={getImage(formattedAlbumData.images)}
                         title={formattedTrackData.name}
                         caption={formattedTrackData.type}
                         subTitleContent={subTitleContent}
@@ -184,17 +181,16 @@ export const TrackDetailsPage = () => {
                     <>
                         <LyricsAndArtistsCardSectionContainer>
                             <LyricsSection>
-                                {lyrics}
-                                {/* {formatLyrics(hideRestLyrics ? lyricsPreview : lyrics)} */}
-                                {/* <ToggleViewButton
-                                    onClick={() => setHideRestLyrics(hideRestLyrics => !hideRestLyrics)}
+                                {formatLyrics(isHideLyrics ? lyricsPreview : lyrics)}
+                                <ToggleViewButton
+                                    onClick={() => setIsHideLyrics(hideRestLyrics => !hideRestLyrics)}
                                 >
-                                    {hideRestLyrics ? "...Show more" : "Show less lyrics"}
-                                </ToggleViewButton> */}
+                                    {isHideLyrics ? "...Show more" : "Show less lyrics"}
+                                </ToggleViewButton>
                             </LyricsSection>
                             <ArtistCardSection>
                                 {
-                                    rawArtistsDatasList.artists?.map(({ id, name, type, images }) => (
+                                    rawArtistsDatasList?.artists.map(({ id, name, type, images }) => (
                                         <StyledLink to={toArtist({ id })}>
                                             <ArtistCardContainer>
                                                 <Picture $picture={getImage(images)} $useArtistPictureStyle />
@@ -215,13 +211,13 @@ export const TrackDetailsPage = () => {
                             hideIndex
                         />
                         <Table
-                            list={topTracksDatasList}
-                            caption={mainArtistData.name}
+                            list={rawTopTracksDatasList}
+                            caption={formattedMainArtistData.name}
                         />
                         {
                             mainArtistGroupedReleasesList?.map(({ type, list, listId }) => (
                                 <TilesList
-                                    title={`Popular ${type} by ${mainArtistData.name}`}
+                                    title={`Popular ${type} by ${formattedMainArtistData.name}`}
                                     list={list}
                                     renderItem={({ images, name, type, id }, index) => (
                                         <Tile
@@ -247,7 +243,7 @@ export const TrackDetailsPage = () => {
                                     hideRestListPart
                                     fullListData={{
                                         pathname: toArtist({
-                                            id: mainArtistData.id,
+                                            id: formattedMainArtistData.id,
                                             additionalPath: allReleaseDiscography,
                                         }),
                                         text: fullListLinkText,
@@ -294,7 +290,7 @@ export const TrackDetailsPage = () => {
                         }
                         < TilesList
                             title="Fans also like"
-                            list={relatedArtistsList?.artists}
+                            list={relatedArtistsDatasList?.artists}
                             renderItem={({ images, name, type, id }, index) => (
                                 <Tile
                                     isActive={isTileActive(index, 4)}
@@ -318,7 +314,7 @@ export const TrackDetailsPage = () => {
                             )}
                             hideRestListPart
                             fullListData={{
-                                pathname: toArtist({ id: mainArtistData.id, additionalPath: relatedArtistsParam }),
+                                pathname: toArtist({ id: formattedMainArtistData.id, additionalPath: relatedArtistsParam }),
                                 text: fullListLinkText
                             }}
                         />
