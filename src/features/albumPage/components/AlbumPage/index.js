@@ -29,16 +29,18 @@ export const AlbumPage = () => {
     const artistId = formattedAlbumDetails.artistsList?.[0].id;
     const isArtistIdExists = !!artistId
 
+    const apiDependencies = [albumId, artistId];
+
     const { depentendApiDatas: rawMainArtistData, depentendApiDatasStatus: rawMainArtistDataStatus } = useDependentFetchAPI({
         endpointsList: [{ endpoint: `artists/${artistId}` }],
         fetchCondition: isAlbumArtistsListLengthEqualsOne && isArtistIdExists,
-        dependencies: [albumId, artistId],
+        dependencies: apiDependencies,
     });
 
     const { depentendApiDatas: rawAllReleasesList, depentendApiDatasStatus: allReleasesListStatus } = useDependentFetchAPI({
         endpointsList: [{ endpoint: `artists/${artistId}/${allReleasesEndpointResource}` }],
         fetchCondition: isArtistIdExists,
-        dependencies: [albumId, artistId],
+        dependencies: apiDependencies,
     });
 
     const mainArtistImage = rawMainArtistData?.[0].images
