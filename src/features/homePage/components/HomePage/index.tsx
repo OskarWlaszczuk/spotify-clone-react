@@ -7,6 +7,14 @@ import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { useParams } from "react-router-dom";
 import { useApiData2 } from "../../../../common/hooks/useApiData";
 
+const formatApiResources = (apiResources: any) => {
+    const configs = apiResources.map(({ configs }: any) => configs);
+    const datas = apiResources.map(({ datas }: any) => datas);
+    const statuses = apiResources.map(({ status }: any) => status);
+
+    return { configs, datas, statuses };
+};
+
 export const HomePage = () => {
     const { type } = useParams();
 
@@ -26,9 +34,7 @@ export const HomePage = () => {
         }
     ]);
 
-    const configs = apiResources.map(({ configs }: any) => configs);
-    const datas = apiResources.map(({ datas }: any) => datas)
-    const statuses = apiResources.map(({ status }: any) => status)
+    const { configs, datas, statuses } = formatApiResources(apiResources);
 
     const popularArtistsList = datas?.[0]?.artists;
     const popularAlbumsList = datas?.[1]?.albums;
