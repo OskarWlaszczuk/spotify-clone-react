@@ -28,22 +28,30 @@ import {
 } from "../../../../common/constants/params";
 import { WithReleaseDate } from "../../../../common/interfaces/WithReleaseDate";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
-import { getMainArtistID } from "../../../../common/functions/getMainArtistID";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
 import { getImage } from "../../../../common/functions/getImage";
+
+interface TopTrackData {
+    topTracksList: any;
+    topTracksAlbumsList: any;
+};
 interface MainContentProps {
-    name: string;
-    allReleases: any;
-    relatedArtists: any;
-    topTracksAsAlbumsList:any;
-    topTracksDatasList:any;
+    artistName: string;
+    artistAllReleas: any;
+    artistRelatedArtists: any;
+    artistTopTrackData: TopTrackData;
 };
 
-export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTracksDatasList, relatedArtists }: MainContentProps) => {
+export const MainContent = ({
+    artistName,
+    artistTopTrackData: { topTracksList, topTracksAlbumsList },
+    artistAllReleas,
+    artistRelatedArtists,
+}: MainContentProps) => {
 
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
 
@@ -53,15 +61,15 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
             listItem;
     };
 
-    const albums = filterByAlbumGroup(allReleases, "album");
-    const compilations = filterByAlbumGroup(allReleases, "compilation");
-    const singles = filterByAlbumGroup(allReleases, "single");
-    const appearsOn = filterByAlbumGroup(allReleases, "appears_on");
+    const albums = filterByAlbumGroup(artistAllReleas, "album");
+    const compilations = filterByAlbumGroup(artistAllReleas, "compilation");
+    const singles = filterByAlbumGroup(artistAllReleas, "single");
+    const appearsOn = filterByAlbumGroup(artistAllReleas, "appears_on");
 
-    const allReleasesWithoutAppearsOn = allReleases?.filter(({ album_group }: any) => album_group !== "appears_on");
+    const allReleasesWithoutAppearsOn = artistAllReleas?.filter(({ album_group }: any) => album_group !== "appears_on");
 
-    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAsAlbumsList)[0];
-    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestTopTrackAlbumItem, topTracksAsAlbumsList);
+    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
+    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestTopTrackAlbumItem, topTracksAlbumsList);
 
     const popularReleases = [...updatedTopTracksAlbumsList || [], ...allReleasesWithoutAppearsOn || []];
     const uniquePopularReleases = removeDuplicates(popularReleases, "name");
@@ -74,7 +82,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
         { key: albumsParamDiscography, value: albums },
         { key: compilationParamDiscography, value: compilations },
         { key: singleParamDiscography, value: singles },
-        { key: relatedArtistsParam, value: relatedArtists, title: "Fans also like", isArtistsList: true },
+        { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
         { key: artistAppearsOnParam, value: appearsOn, title: "Appears On", isArtistsList: false },
     ], type);
 
@@ -82,7 +90,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
         <>
             {type ?
                 <TilesList
-                    title={fullListTitle || name}
+                    title={fullListTitle || artistName}
                     list={removeDuplicates(fullListContent, "name")}
                     renderItem={
                         (({ id, name, images, album_type = "", artists, release_date, type }: MediaItem, index: number) => (
@@ -99,7 +107,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
                                     }),
                                 }}
                                 key={nanoid()}
-                                toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ albumID: id })}
+                                toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ id: id })}
                                 picture={getImage(images)}
                                 title={name}
                                 subInfo={isFullListArtistsList ? `${type}` : `${album_type} • ${getYear(release_date)}`}
@@ -110,7 +118,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
                 />
                 :
                 <>
-                    <Table list={topTracksDatasList} caption="Popular" />
+                    <Table list={topTracksList} caption="Popular" />
                     <TilesList
                         title="Discography"
                         subExtraContent={
@@ -144,7 +152,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
                                             }),
                                         }}
                                         key={nanoid()}
-                                        toPage={toAlbum({ albumID: id })}
+                                        toPage={toAlbum({ id: id })}
                                         picture={getImage(images)}
                                         title={name}
                                         subInfo={`
@@ -177,7 +185,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
                     />
                     < TilesList
                         title="Fans also like"
-                        list={relatedArtists}
+                        list={artistRelatedArtists}
                         renderItem={({ images, name, type, id }, index) => (
                             <Tile
                                 isActive={isTileActive(index, 2)}
@@ -222,7 +230,7 @@ export const MainContent = ({ name, allReleases, topTracksAsAlbumsList, topTrack
                                     }),
                                 }}
                                 key={nanoid()}
-                                toPage={toAlbum({ albumID: id })}
+                                toPage={toAlbum({ id: id })}
                                 picture={getImage(images)}
                                 title={name}
                                 subInfo={type || ""}
