@@ -26,7 +26,6 @@ import {
     artistAppearsOnParam,
     compilationParamDiscography
 } from "../../../../common/constants/params";
-import { WithReleaseDate } from "../../../../common/interfaces/WithReleaseDate";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
@@ -34,6 +33,7 @@ import { removeDuplicates } from "../../../../common/functions/removeDuplicates"
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
 import { getImage } from "../../../../common/functions/getImage";
+import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
 
 interface TopTrackData {
     topTracksList: any;
@@ -54,17 +54,12 @@ export const MainContent = ({
 }: MainContentProps) => {
 
     const { id, type = "" } = useParams<{ id: string; type?: string }>();
+    const { setActiveTile, isTileActive } = useActiveTile();
 
-    const replaceReleaseDateIfCurrentYear = <T extends WithReleaseDate>(listItem: T): T => {
-        return isLatestReleased(listItem) ?
-            { ...listItem, release_date: "Latest Release" } :
-            listItem;
-    };
-
-    const albums = filterByAlbumGroup(artistAllReleas, "album");
-    const compilations = filterByAlbumGroup(artistAllReleas, "compilation");
-    const singles = filterByAlbumGroup(artistAllReleas, "single");
-    const appearsOn = filterByAlbumGroup(artistAllReleas, "appears_on");
+    const albumsList = filterByAlbumGroup(artistAllReleas, "album");
+    const compilationsList = filterByAlbumGroup(artistAllReleas, "compilation");
+    const singlesList = filterByAlbumGroup(artistAllReleas, "single");
+    const appearsOnList = filterByAlbumGroup(artistAllReleas, "appears_on");
 
     const allReleasesWithoutAppearsOn = artistAllReleas?.filter(({ album_group }: any) => album_group !== "appears_on");
 
@@ -74,16 +69,18 @@ export const MainContent = ({
     const popularReleases = [...updatedTopTracksAlbumsList || [], ...allReleasesWithoutAppearsOn || []];
     const uniquePopularReleases = removeDuplicates(popularReleases, "name");
 
-    const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({ key: popularReleasesCategory, value: uniquePopularReleases });
-    const { setActiveTile, isTileActive } = useActiveTile();
+    const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
+        key: popularReleasesCategory,
+        value: uniquePopularReleases,
+    });
 
     const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
         { key: allReleaseDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
-        { key: albumsParamDiscography, value: albums },
-        { key: compilationParamDiscography, value: compilations },
-        { key: singleParamDiscography, value: singles },
+        { key: albumsParamDiscography, value: albumsList },
+        { key: compilationParamDiscography, value: compilationsList },
+        { key: singleParamDiscography, value: singlesList },
         { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
-        { key: artistAppearsOnParam, value: appearsOn, title: "Appears On", isArtistsList: false },
+        { key: artistAppearsOnParam, value: appearsOnList, title: "Appears On", isArtistsList: false },
     ], type);
 
     return (
@@ -93,7 +90,7 @@ export const MainContent = ({
                     title={fullListTitle || artistName}
                     list={removeDuplicates(fullListContent, "name")}
                     renderItem={
-                        (({ id, name, images, album_type = "", artists, release_date, type }: MediaItem, index: number) => (
+                        (({ id, name, images, album_type = "", release_date, type }: MediaItem, index: number) => (
                             <Tile
                                 isActive={isTileActive(index, 0)}
                                 mouseEventHandlers={{
@@ -125,9 +122,9 @@ export const MainContent = ({
                             <ListToggleButtonsSection
                                 listToggleButtonDatasList={[
                                     { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
-                                    { list: albums, category: albumsCategory, text: "Albums" },
-                                    { list: singles, category: singlesCategory, text: "Singles and EPs" },
-                                    { list: compilations, category: compilationsCategory, text: "Compilations" },
+                                    { list: albumsList, category: albumsCategory, text: "Albums" },
+                                    { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
+                                    { list: compilationsList, category: compilationsCategory, text: "Compilations" },
                                 ]}
                                 setCurrentCategoryData={setCurrentCategoryData}
                                 targetCategory={currentCategoryData.category}
@@ -215,7 +212,7 @@ export const MainContent = ({
                     />
                     <TilesList
                         title="Appears on"
-                        list={appearsOn}
+                        list={appearsOnList}
                         renderItem={({ images, name, type, id, artists }, index) => (
                             <Tile
                                 isActive={isTileActive(index, 3)}
