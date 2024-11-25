@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
-import { artistTopTracksActions, artistTopTracksSelectors } from "../../slices/artistTopTracksSlice";
 import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
@@ -11,6 +10,8 @@ import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artis
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
 import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
 import { useArtistPopularReleases } from "../../../../common/hooks/useArtistPopularReleases";
+import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
+import { getImage } from "../../../../common/functions/getImage";
 
 export const ArtistDetailsPage = () => {
     const { type, id } = useParams<{ type: string; id: string; }>();
@@ -22,8 +23,10 @@ export const ArtistDetailsPage = () => {
     ]);
 
     const relatedArtistsList = datas?.[0]?.artists;
-    const artistData = datas?.[1];
+    const artistData: any = datas?.[1];
     const artistAllReleasesList = datas?.[2]?.items;
+
+    const { name, followers, images }: any = getSpecificKeys(artistData, ["name", "followers", "images"]);
 
     const {
         artistTopTracksDatasListStatus,
@@ -31,38 +34,31 @@ export const ArtistDetailsPage = () => {
         rawTopTracksDatasList
     } = useArtistPopularReleases({ artistId: id });
 
-
     useFetchAPI([...configs], [id]);
-
-    // const name = artistDetails?.name;
-    // const followers = artistDetails?.followers;
-    // const images = artistDetails?.images;
-    // const pictureUrl = images && images.length > 0 ? images[0]?.url : "";
 
     const fetchStatus = useFetchStatus([artistTopTracksDatasListStatus, ...statuses]);
 
     return (
-        // <Main
-        //     fetchStatus={fetchStatus}
-        //     bannerContent={!type && (
-        //         <Banner
-        //             picture={pictureUrl}
-        //             title={name}
-        //             caption="Verified artist"
-        //             subTitleContent={`${followers?.total?.toLocaleString()} followers`}
-        //             isArtistPictureStyle
-        //         />)
-        //     }
-        //     content={
-        //         <MainContent
-        //             name={name}
-        //             allReleases={artistAllReleasesList?.items}
-        //             topTracksAsAlbumsList={topTracksAsAlbumsDatasList}
-        //             topTracksDatasList={rawTopTracksDatasList}
-        //             relatedArtists={relatedArtists?.artists}
-        //         />
-        //     }
-        // />
-        <></>
+        <Main
+            fetchStatus={fetchStatus}
+            bannerContent={!type && (
+                <Banner
+                    picture={getImage(images)}
+                    title={name}
+                    caption="Verified artist"
+                    subTitleContent={`${followers} followers`}
+                    isArtistPictureStyle
+                />)
+            }
+            content={
+                <MainContent
+                    name={name}
+                    allReleases={artistAllReleasesList}
+                    topTracksAsAlbumsList={topTracksAsAlbumsDatasList}
+                    topTracksDatasList={rawTopTracksDatasList}
+                    relatedArtists={relatedArtistsList}
+                />
+            }
+        />
     )
 };
