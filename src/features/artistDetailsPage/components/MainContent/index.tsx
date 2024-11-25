@@ -1,17 +1,9 @@
 import { useParams } from "react-router-dom";
-import { TilesList } from "../../../../common/components/TilesList";
-import { Tile } from "../../../../common/components/Tile";
 import { Table } from "../../../../common/components/Table";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { getYear } from "../../../../common/functions/getYear";
-import { capitalizeFirstLetter } from "../../../../common/functions/capitalizeFirstLetter";
-import { isLatestReleased } from "../../../../common/functions/isLatestReleased";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
 import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
-import { nanoid } from "nanoid";
-import { useActiveTile } from "../../../../common/hooks/useActiveTile";
-import { MediaItem } from "../../../../common/interfaces/MediaItem";
 import {
     albumsCategory,
     compilationsCategory,
@@ -32,8 +24,7 @@ import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../c
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
 import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
-import { getImage } from "../../../../common/functions/getImage";
-import { replaceReleaseDateIfCurrentYear } from "../../functions/replaceReleaseDateIfCurrentYear";
+import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 
 interface TopTrackData {
     topTracksList: any;
@@ -53,14 +44,14 @@ export const MainContent = ({
     artistRelatedArtists,
 }: MainContentProps) => {
 
-    const { id, type = "" } = useParams<{ id: string; type?: string }>();
-    const { setActiveTile, isTileActive } = useActiveTile();
+    const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
+    const renderTilesList = useRenderTilesList();
 
     const albumsList = filterByAlbumGroup(artistAllReleas, "album");
     const compilationsList = filterByAlbumGroup(artistAllReleas, "compilation");
     const singlesList = filterByAlbumGroup(artistAllReleas, "single");
     const appearsOnList = filterByAlbumGroup(artistAllReleas, "appears_on");
-
+    console.log(appearsOnList)
     const allReleasesWithoutAppearsOn = artistAllReleas?.filter(({ album_group }: any) => album_group !== "appears_on");
 
     const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
@@ -86,163 +77,77 @@ export const MainContent = ({
     return (
         <>
             {type ?
-                <TilesList
-                    title={fullListTitle || artistName}
-                    list={removeDuplicates(fullListContent, "name")}
-                    renderItem={
-                        (({ id, name, images, album_type = "", release_date, type }: MediaItem, index: number) => (
-                            <Tile
-                                isActive={isTileActive(index, 0)}
-                                mouseEventHandlers={{
-                                    enter: () => setActiveTile({
-                                        activeTileIndex: index,
-                                        activeTilesListID: 0,
-                                    }),
-                                    leave: () => setActiveTile({
-                                        activeTileIndex: undefined,
-                                        activeTilesListID: undefined,
-                                    }),
-                                }}
-                                key={nanoid()}
-                                toPage={isFullListArtistsList ? toArtist({ id }) : toAlbum({ id: id })}
-                                picture={getImage(images)}
-                                title={name}
-                                subInfo={isFullListArtistsList ? `${type}` : `${album_type} • ${getYear(release_date)}`}
-                                isArtistPictureStyle={isFullListArtistsList || false}
-                            />
-                        ))
-                    }
-                />
+                renderTilesList([{
+                    title: fullListTitle || artistName,
+                    list: removeDuplicates(fullListContent, "name"),
+                    toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
+                    isArtistsList: isFullListArtistsList || false,
+                    isHideRestListPart: false,
+                    isRenderSubInfo: true,
+                }])
                 :
                 <>
                     <Table list={topTracksList} caption="Popular" />
-                    <TilesList
-                        title="Discography"
-                        subExtraContent={
-                            <ListToggleButtonsSection
-                                listToggleButtonDatasList={[
-                                    { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
-                                    { list: albumsList, category: albumsCategory, text: "Albums" },
-                                    { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
-                                    { list: compilationsList, category: compilationsCategory, text: "Compilations" },
-                                ]}
-                                setCurrentCategoryData={setCurrentCategoryData}
-                                targetCategory={currentCategoryData.category}
-                            />
-                        }
-                        list={removeDuplicates(currentCategoryData.list, "name")}
-                        renderItem={
-                            ((item, index) => {
-                                const { id, name, release_date, images, album_group = "", album_type = "", artists } = item;
-
-                                return (
-                                    <Tile
-                                        isActive={isTileActive(index, 1)}
-                                        mouseEventHandlers={{
-                                            enter: () => setActiveTile({
-                                                activeTileIndex: index,
-                                                activeTilesListID: 1,
-                                            }),
-                                            leave: () => setActiveTile({
-                                                activeTileIndex: undefined,
-                                                activeTilesListID: undefined,
-                                            }),
-                                        }}
-                                        key={nanoid()}
-                                        toPage={toAlbum({ id: id })}
-                                        picture={getImage(images)}
-                                        title={name}
-                                        subInfo={`
-                                                ${index === 0 && isLatestReleased(item) ? replaceReleaseDateIfCurrentYear(item).release_date : getYear(release_date)} •
-                                                ${capitalizeFirstLetter(album_group) || capitalizeFirstLetter(album_type)}
-                                            `}
-                                        isArtistPictureStyle={false}
-                                    />
-                                )
-                            })
-                        }
-                        hideRestListPart
-                        fullListData={
+                    {
+                        renderTilesList([
                             {
-                                pathname: toArtist({
-                                    id: id!,
-                                    additionalPath:
-                                        findMatchingValueByKey<string>(
-                                            [
-                                                { key: popularReleasesCategory, value: allReleaseDiscography },
-                                                { key: albumsCategory, value: albumsParamDiscography },
-                                                { key: compilationsCategory, value: compilationParamDiscography },
-                                                { key: singlesCategory, value: singleParamDiscography },
-                                            ], currentCategoryData.category
-                                        )?.value
-                                }),
-                                text: fullListLinkText,
-                            }
-                        }
-                    />
-                    < TilesList
-                        title="Fans also like"
-                        list={artistRelatedArtists}
-                        renderItem={({ images, name, type, id }, index) => (
-                            <Tile
-                                isActive={isTileActive(index, 2)}
-                                mouseEventHandlers={{
-                                    enter: () => setActiveTile({
-                                        activeTileIndex: index,
-                                        activeTilesListID: 2,
+                                title: "Discography",
+                                subExtraContent: (
+                                    <ListToggleButtonsSection
+                                        listToggleButtonDatasList={[
+                                            { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
+                                            { list: albumsList, category: albumsCategory, text: "Albums" },
+                                            { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
+                                            { list: compilationsList, category: compilationsCategory, text: "Compilations" },
+                                        ]}
+                                        setCurrentCategoryData={setCurrentCategoryData}
+                                        targetCategory={currentCategoryData.category}
+                                    />
+                                ),
+                                list: removeDuplicates(currentCategoryData.list, "name"),
+                                toPageFunction: toAlbum,
+                                isRenderSubInfo: true,
+                                fullListData: {
+                                    pathname: toArtist({
+                                        id: artistId!,
+                                        additionalPath: (
+                                            findMatchingValueByKey<string>(
+                                                [
+                                                    { key: popularReleasesCategory, value: allReleaseDiscography },
+                                                    { key: albumsCategory, value: albumsParamDiscography },
+                                                    { key: compilationsCategory, value: compilationParamDiscography },
+                                                    { key: singlesCategory, value: singleParamDiscography },
+                                                ], currentCategoryData.category
+                                            )?.value
+                                        )
                                     }),
-                                    leave: () => setActiveTile({
-                                        activeTileIndex: undefined,
-                                        activeTilesListID: undefined,
+                                    text: fullListLinkText
+                                },
+                            },
+                            {
+                                title: "Fans also like",
+                                list: artistRelatedArtists,
+                                toPageFunction: toArtist,
+                                fullListData: {
+                                    pathname: toArtist({ id: artistId!, additionalPath: relatedArtistsParam }),
+                                    text: fullListLinkText
+                                },
+                                isArtistsList: true,
+                            },
+                            {
+                                title: "Appears on",
+                                list: appearsOnList,
+                                toPageFunction: toAlbum,
+                                fullListData: {
+                                    pathname: toArtist({
+                                        id: artistId!,
+                                        additionalPath: artistAppearsOnParam,
                                     }),
-                                }}
-                                key={nanoid()}
-                                picture={getImage(images)}
-                                title={name}
-                                subInfo={type || ""}
-                                toPage={toArtist({ id })}
-                                isArtistPictureStyle
-                            />
-                        )}
-                        hideRestListPart
-                        fullListData={{
-                            pathname: toArtist({ id: id!, additionalPath: relatedArtistsParam }),
-                            text: fullListLinkText
-                        }}
-                    />
-                    <TilesList
-                        title="Appears on"
-                        list={appearsOnList}
-                        renderItem={({ images, name, type, id, artists }, index) => (
-                            <Tile
-                                isActive={isTileActive(index, 3)}
-                                mouseEventHandlers={{
-                                    enter: () => setActiveTile({
-                                        activeTileIndex: index,
-                                        activeTilesListID: 3,
-                                    }),
-                                    leave: () => setActiveTile({
-                                        activeTileIndex: undefined,
-                                        activeTilesListID: undefined,
-                                    }),
-                                }}
-                                key={nanoid()}
-                                toPage={toAlbum({ id: id })}
-                                picture={getImage(images)}
-                                title={name}
-                                subInfo={type || ""}
-                                isArtistPictureStyle={false}
-                            />
-                        )}
-                        hideRestListPart
-                        fullListData={{
-                            pathname: toArtist({
-                                id: id!,
-                                additionalPath: artistAppearsOnParam,
-                            }),
-                            text: fullListLinkText,
-                        }}
-                    />
+                                    text: fullListLinkText,
+                                }
+                            },
+                        ])
+                    }
                 </>
             }
         </>
