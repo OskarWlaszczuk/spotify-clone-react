@@ -52,7 +52,7 @@ export const AlbumPage = () => {
         mainArtistId,
         fetchCondition: isMainArtistIdExists,
         dependencies: apiDependencies,
-    })
+    });
 
     const fetchStatus = useFetchStatus([
         albumDetailsStatus,
@@ -60,16 +60,57 @@ export const AlbumPage = () => {
         ...(isAlbumArtistsListLengthEqualsOne ? [mainArtistDataStatus] : []),
     ]);
 
-    const metaDatasContent = renderMetaDatasContent({
-        releaseDate: release_date,
-        duration: calculateTotalDuration(tracksList),
-        uniqueData: `${total_tracks} songs`
+    const renderBannerContent = ({
+        metaData: {
+            releaseDate,
+            tracksList,
+            uniqueData,
+        },
+        subTitleData: {
+            artistImage,
+            mainArtistDetails = null,
+            albumDetails = null,
+            artistsList = [],
+        },
+    }) => {
+        const metaDataContent = renderMetaDatasContent({
+            uniqueData,
+            releaseDate,
+            duration: calculateTotalDuration(tracksList),
+        });
+
+        const subTitleContent = renderSubTitleContent({
+            artistsList,
+            artistImage: getImage(artistImage),
+            mainArtistDetails,
+            albumDetails,
+        });
+
+        return { metaDataContent, subTitleContent };
+    };
+
+    const { metaDataContent, subTitleContent } = renderBannerContent({
+        metaData: {
+            tracksList,
+            releaseDate: release_date,
+            uniqueData: `${total_tracks} songs`,
+        },
+        subTitleData: {
+            artistsList,
+            artistImage: mainArtistImage,
+        },
     });
-    const subTitleContent = renderSubTitleContent({
-        artistsList: artistsList,
-        isAlbumArtistsListLengthEqualsOne,
-        artistImage: getImage(mainArtistImage),
-    });
+
+    // const metaDatasContent = renderMetaDatasContent({
+    //     releaseDate: release_date,
+    //     duration: calculateTotalDuration(tracksList),
+    //     uniqueData: `${total_tracks} songs`
+    // });
+    // const subTitleContent = renderSubTitleContent({
+    //     artistsList: artistsList,
+    //     isAlbumArtistsListLengthEqualsOne,
+    //     artistImage: getImage(mainArtistImage),
+    // });
 
     return (
         <Main
@@ -78,7 +119,7 @@ export const AlbumPage = () => {
                 <Banner
                     picture={getImage(images)}
                     subTitleContent={subTitleContent}
-                    metaDatas={metaDatasContent}
+                    metaDatas={metaDataContent}
                     title={name}
                     caption={type}
                 />
