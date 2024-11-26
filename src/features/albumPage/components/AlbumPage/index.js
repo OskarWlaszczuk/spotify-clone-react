@@ -4,10 +4,9 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { Table } from "../../../../common/components/Table";
-import { useActiveTile } from "../../../../common/hooks/useActiveTile";
 import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
-import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
+import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
 import { getImage } from "../../../../common/functions/getImage";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
@@ -38,7 +37,7 @@ export const AlbumPage = () => {
     });
 
     const { depentendApiDatas: rawAllReleasesList, depentendApiDatasStatus: allReleasesListStatus } = useDependentFetchAPI({
-        endpointsList: [{ endpoint: `artists/${artistId}/${allReleasesEndpointResource}` }],
+        endpointsList: [{ endpoint: `artists/${artistId}/${getArtistReleasesEndpointResource()}` }],
         fetchCondition: isArtistIdExists,
         dependencies: apiDependencies,
     });
@@ -57,8 +56,6 @@ export const AlbumPage = () => {
         duration: calculateTotalDuration(formattedAlbumDetails.tracksList),
         uniqueData: `${formattedAlbumDetails.totalTracksNumber} songs`
     });
-
-
     const subTitleContent = renderSubTitleContent({
         artistsList: formattedAlbumDetails.artistsList,
         isAlbumArtistsListLengthEqualsOne,
