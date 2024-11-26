@@ -23,7 +23,7 @@ import { fullListLinkText } from "../../../../common/constants/fullListLinkText 
 import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
-import { filterByAlbumGroup } from "../../../../common/functions/filterByAlbumGroup";
+import { filterReleasesByGroups } from "../../../../common/functions/filterReleasesByGroups";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 
 interface TopTrackData {
@@ -47,11 +47,11 @@ export const MainContent = ({
     const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
     const renderTilesList = useRenderTilesList();
 
-    const albumsList = filterByAlbumGroup(artistAllReleas, "album");
-    const compilationsList = filterByAlbumGroup(artistAllReleas, "compilation");
-    const singlesList = filterByAlbumGroup(artistAllReleas, "single");
-    const appearsOnList = filterByAlbumGroup(artistAllReleas, "appears_on");
-    console.log(appearsOnList)
+    const [albumsList, compilationsList, singlesList, appearsOnList] = filterReleasesByGroups(
+        artistAllReleas,
+        ["album", "compilation", "single", "appears_on"]
+    );
+
     const allReleasesWithoutAppearsOn = artistAllReleas?.filter(({ album_group }: any) => album_group !== "appears_on");
 
     const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
