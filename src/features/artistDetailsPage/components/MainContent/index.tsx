@@ -20,11 +20,11 @@ import {
 } from "../../../../common/constants/params";
 import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
-import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
-import { filterReleasesByGroups } from "../../../../common/functions/filterReleasesByGroups";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
+import { prepareReleases } from "../../functions/prepareReleases";
+import { preparePopularReleases } from "../../functions/preparePopularReleases";
 
 interface TopTrackData {
     topTracksList: any;
@@ -38,32 +38,6 @@ interface MainContentProps {
     artistTopTrackData: TopTrackData;
 };
 
-const prepareReleases = (artistAllReleas: any) => {
-    const [albumsList, compilationsList, singlesList, appearsOnList] = filterReleasesByGroups(
-        artistAllReleas,
-        ["album", "compilation", "single", "appears_on"]
-    );
-
-    const allReleasesWithoutAppearsOn = artistAllReleas?.filter(
-        ({ album_group }: any) => album_group !== "appears_on"
-    );
-
-    return { albumsList, compilationsList, singlesList, appearsOnList, allReleasesWithoutAppearsOn };
-};
-
-const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWithoutAppearsOn: any) => {
-    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
-    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(
-        newestTopTrackAlbumItem,
-        topTracksAlbumsList
-    );
-
-    const popularReleases = [
-        ...(updatedTopTracksAlbumsList || []),
-        ...(allReleasesWithoutAppearsOn || []),
-    ];
-    return removeDuplicates(popularReleases, "name");
-};
 
 export const MainContent = ({
     artistName,
