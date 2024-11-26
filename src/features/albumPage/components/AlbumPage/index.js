@@ -16,10 +16,21 @@ import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 
+const useMainArtistData = ({ mainArtistId, fetchCondition, dependencies }) => {
+    const {
+        depentendApiDatas: rawMainArtistData,
+        depentendApiDatasStatus: mainArtistDataStatus
+    } = useDependentFetchAPI({
+        endpointsList: [{ endpoint: `artists/${mainArtistId}` }],
+        fetchCondition,
+        dependencies,
+    });
 
-const useAlbumDependentApiData = () => {
+    const mainArtistImage = rawMainArtistData?.[0].images;
+    const mainArtistName = rawMainArtistData?.[0].name;
 
-}
+    return { mainArtistImage, mainArtistName, mainArtistDataStatus };
+};
 
 export const AlbumPage = () => {
     const { id: albumId } = useParams();
@@ -39,6 +50,7 @@ export const AlbumPage = () => {
         artists: artistsList,
     } = filteredAlbumData;
 
+    const tracksList = tracks?.items;
     const isAlbumArtistsListLengthEqualsOne = artistsList?.length === 1;
 
     const mainArtistId = artistsList?.[0].id;
@@ -46,17 +58,14 @@ export const AlbumPage = () => {
 
     const apiDependencies = [albumId, mainArtistId];
 
-    const {
-        depentendApiDatas: rawMainArtistData,
-        depentendApiDatasStatus: rawMainArtistDataStatus
-    } = useDependentFetchAPI({
-        endpointsList: [{ endpoint: `artists/${mainArtistId}` }],
+    const { mainArtistImage, mainArtistName, mainArtistDataStatus } = useMainArtistData({
+        mainArtistId,
         fetchCondition: isAlbumArtistsListLengthEqualsOne && isMainArtistIdExists,
         dependencies: apiDependencies,
-    });
+    })
 
     const {
-        depentendApiDatas: rawAllReleasesList,
+        depentendApiDatas: mainArtistAllReleases,
         depentendApiDatasStatus: allReleasesListStatus
     } = useDependentFetchAPI({
         endpointsList: [{ endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}` }],
@@ -64,19 +73,17 @@ export const AlbumPage = () => {
         dependencies: apiDependencies,
     });
 
-    const mainArtistImage = rawMainArtistData?.[0].images
-    const mainArtistName = rawMainArtistData?.[0].name
-    const mainArtistAllReleasesList = rawAllReleasesList?.[0].items;
+    const mainArtistAllReleasesList = mainArtistAllReleases?.[0].items;
 
     const fetchStatus = useFetchStatus([
         albumDetailsStatus,
         allReleasesListStatus,
-        ...(isAlbumArtistsListLengthEqualsOne ? [rawMainArtistDataStatus] : []),
+        ...(isAlbumArtistsListLengthEqualsOne ? [mainArtistDataStatus] : []),
     ]);
 
     const metaDatasContent = renderMetaDatasContent({
         releaseDate: release_date,
-        duration: calculateTotalDuration(tracks?.items),
+        duration: calculateTotalDuration(tracksList),
         uniqueData: `${total_tracks} songs`
     });
     const subTitleContent = renderSubTitleContent({
@@ -99,7 +106,7 @@ export const AlbumPage = () => {
             }
             content={
                 <>
-                    <Table list={tracks?.items} useAlbumView discsNumbers={getUniqueDiscNumbers(tracks?.items)} />
+                    <Table list={tracksList} useAlbumView discsNumbers={getUniqueDiscNumbers(tracksList)} />
                     <Copyrights date={release_date} copyrights={copyrights} />
                     {
                         renderTilesList([
