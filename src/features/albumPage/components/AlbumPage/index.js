@@ -6,31 +6,15 @@ import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { Table } from "../../../../common/components/Table";
 import { allReleaseDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
-import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
 import { getImage } from "../../../../common/functions/getImage";
-import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-
-const useMainArtistData = ({ mainArtistId, fetchCondition, dependencies }) => {
-    const {
-        depentendApiDatas: rawMainArtistData,
-        depentendApiDatasStatus: mainArtistDataStatus
-    } = useDependentFetchAPI({
-        endpointsList: [{ endpoint: `artists/${mainArtistId}` }],
-        fetchCondition,
-        dependencies,
-    });
-
-    const mainArtistImage = rawMainArtistData?.[0].images;
-    const mainArtistName = rawMainArtistData?.[0].name;
-
-    return { mainArtistImage, mainArtistName, mainArtistDataStatus };
-};
+import { useMainArtistData } from "../../hooks/useMainArtistData";
+import { useMainArtistReleases } from "../../hooks/useMainArtistReleases";
 
 export const AlbumPage = () => {
     const { id: albumId } = useParams();
@@ -62,18 +46,13 @@ export const AlbumPage = () => {
         mainArtistId,
         fetchCondition: isAlbumArtistsListLengthEqualsOne && isMainArtistIdExists,
         dependencies: apiDependencies,
-    })
-
-    const {
-        depentendApiDatas: mainArtistAllReleases,
-        depentendApiDatasStatus: allReleasesListStatus
-    } = useDependentFetchAPI({
-        endpointsList: [{ endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}` }],
-        fetchCondition: isMainArtistIdExists,
-        dependencies: apiDependencies,
     });
 
-    const mainArtistAllReleasesList = mainArtistAllReleases?.[0].items;
+    const { mainArtistAllReleasesList, allReleasesListStatus } = useMainArtistReleases({
+        mainArtistId,
+        fetchCondition: isMainArtistIdExists,
+        dependencies: apiDependencies,
+    })
 
     const fetchStatus = useFetchStatus([
         albumDetailsStatus,
