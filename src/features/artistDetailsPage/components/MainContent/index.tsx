@@ -30,11 +30,39 @@ interface TopTrackData {
     topTracksList: any;
     topTracksAlbumsList: any;
 };
+
 interface MainContentProps {
     artistName: string;
     artistAllReleas: any;
     artistRelatedArtists: any;
     artistTopTrackData: TopTrackData;
+};
+
+const prepareReleases = (artistAllReleas: any) => {
+    const [albumsList, compilationsList, singlesList, appearsOnList] = filterReleasesByGroups(
+        artistAllReleas,
+        ["album", "compilation", "single", "appears_on"]
+    );
+
+    const allReleasesWithoutAppearsOn = artistAllReleas?.filter(
+        ({ album_group }: any) => album_group !== "appears_on"
+    );
+
+    return { albumsList, compilationsList, singlesList, appearsOnList, allReleasesWithoutAppearsOn };
+};
+
+const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWithoutAppearsOn: any) => {
+    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
+    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(
+        newestTopTrackAlbumItem,
+        topTracksAlbumsList
+    );
+
+    const popularReleases = [
+        ...(updatedTopTracksAlbumsList || []),
+        ...(allReleasesWithoutAppearsOn || []),
+    ];
+    return removeDuplicates(popularReleases, "name");
 };
 
 export const MainContent = ({
@@ -43,113 +71,115 @@ export const MainContent = ({
     artistAllReleas,
     artistRelatedArtists,
 }: MainContentProps) => {
-
     const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
     const renderTilesList = useRenderTilesList();
 
-    const [albumsList, compilationsList, singlesList, appearsOnList] = filterReleasesByGroups(
-        artistAllReleas,
-        ["album", "compilation", "single", "appears_on"]
-    );
+    const {
+        albumsList,
+        compilationsList,
+        singlesList,
+        appearsOnList,
+        allReleasesWithoutAppearsOn,
+    } = prepareReleases(artistAllReleas);
 
-    const allReleasesWithoutAppearsOn = artistAllReleas?.filter(({ album_group }: any) => album_group !== "appears_on");
-
-    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
-    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(newestTopTrackAlbumItem, topTracksAlbumsList);
-
-    const popularReleases = [...updatedTopTracksAlbumsList || [], ...allReleasesWithoutAppearsOn || []];
-    const uniquePopularReleases = removeDuplicates(popularReleases, "name");
+    const uniquePopularReleases = preparePopularReleases(topTracksAlbumsList, allReleasesWithoutAppearsOn);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
         key: popularReleasesCategory,
         value: uniquePopularReleases,
     });
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
-        { key: allReleaseDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
-        { key: albumsParamDiscography, value: albumsList },
-        { key: compilationParamDiscography, value: compilationsList },
-        { key: singleParamDiscography, value: singlesList },
-        { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
-        { key: artistAppearsOnParam, value: appearsOnList, title: "Appears On", isArtistsList: false },
-    ], type);
+    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType(
+        [
+            { key: allReleaseDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
+            { key: albumsParamDiscography, value: albumsList },
+            { key: compilationParamDiscography, value: compilationsList },
+            { key: singleParamDiscography, value: singlesList },
+            { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
+            { key: artistAppearsOnParam, value: appearsOnList, title: "Appears On", isArtistsList: false },
+        ],
+        type
+    );
+
+    const renderFullList = () =>
+        renderTilesList([
+            {
+                title: fullListTitle || artistName,
+                list: removeDuplicates(fullListContent, "name"),
+                toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
+                isArtistsList: isFullListArtistsList || false,
+                isHideRestListPart: false,
+                isRenderSubInfo: true,
+            },
+        ]);
+
+    const prepareTilesListSections = () =>
+        renderTilesList([
+            {
+                title: "Discography",
+                subExtraContent: (
+                    <ListToggleButtonsSection
+                        listToggleButtonDatasList={[
+                            { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
+                            { list: albumsList, category: albumsCategory, text: "Albums" },
+                            { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
+                            { list: compilationsList, category: compilationsCategory, text: "Compilations" },
+                        ]}
+                        setCurrentCategoryData={setCurrentCategoryData}
+                        targetCategory={currentCategoryData.category}
+                    />
+                ),
+                list: removeDuplicates(currentCategoryData.list, "name"),
+                toPageFunction: toAlbum,
+                isRenderSubInfo: true,
+                fullListData: {
+                    pathname: toArtist({
+                        id: artistId!,
+                        additionalPath: findMatchingValueByKey<string>(
+                            [
+                                { key: popularReleasesCategory, value: allReleaseDiscography },
+                                { key: albumsCategory, value: albumsParamDiscography },
+                                { key: compilationsCategory, value: compilationParamDiscography },
+                                { key: singlesCategory, value: singleParamDiscography },
+                            ],
+                            currentCategoryData.category
+                        )?.value,
+                    }),
+                    text: fullListLinkText,
+                },
+            },
+            {
+                title: "Fans also like",
+                list: artistRelatedArtists,
+                toPageFunction: toArtist,
+                fullListData: {
+                    pathname: toArtist({ id: artistId!, additionalPath: relatedArtistsParam }),
+                    text: fullListLinkText,
+                },
+                isArtistsList: true,
+            },
+            {
+                title: "Appears on",
+                list: appearsOnList,
+                toPageFunction: toAlbum,
+                fullListData: {
+                    pathname: toArtist({
+                        id: artistId!,
+                        additionalPath: artistAppearsOnParam,
+                    }),
+                    text: fullListLinkText,
+                },
+            },
+        ]);
 
     return (
         <>
-            {type ?
-                renderTilesList([{
-                    title: fullListTitle || artistName,
-                    list: removeDuplicates(fullListContent, "name"),
-                    toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
-                    isArtistsList: isFullListArtistsList || false,
-                    isHideRestListPart: false,
-                    isRenderSubInfo: true,
-                }])
-                :
+            {type ? renderFullList() : (
                 <>
                     <Table list={topTracksList} caption="Popular" />
-                    {
-                        renderTilesList([
-                            {
-                                title: "Discography",
-                                subExtraContent: (
-                                    <ListToggleButtonsSection
-                                        listToggleButtonDatasList={[
-                                            { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
-                                            { list: albumsList, category: albumsCategory, text: "Albums" },
-                                            { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
-                                            { list: compilationsList, category: compilationsCategory, text: "Compilations" },
-                                        ]}
-                                        setCurrentCategoryData={setCurrentCategoryData}
-                                        targetCategory={currentCategoryData.category}
-                                    />
-                                ),
-                                list: removeDuplicates(currentCategoryData.list, "name"),
-                                toPageFunction: toAlbum,
-                                isRenderSubInfo: true,
-                                fullListData: {
-                                    pathname: toArtist({
-                                        id: artistId!,
-                                        additionalPath: (
-                                            findMatchingValueByKey<string>(
-                                                [
-                                                    { key: popularReleasesCategory, value: allReleaseDiscography },
-                                                    { key: albumsCategory, value: albumsParamDiscography },
-                                                    { key: compilationsCategory, value: compilationParamDiscography },
-                                                    { key: singlesCategory, value: singleParamDiscography },
-                                                ], currentCategoryData.category
-                                            )?.value
-                                        )
-                                    }),
-                                    text: fullListLinkText
-                                },
-                            },
-                            {
-                                title: "Fans also like",
-                                list: artistRelatedArtists,
-                                toPageFunction: toArtist,
-                                fullListData: {
-                                    pathname: toArtist({ id: artistId!, additionalPath: relatedArtistsParam }),
-                                    text: fullListLinkText
-                                },
-                                isArtistsList: true,
-                            },
-                            {
-                                title: "Appears on",
-                                list: appearsOnList,
-                                toPageFunction: toAlbum,
-                                fullListData: {
-                                    pathname: toArtist({
-                                        id: artistId!,
-                                        additionalPath: artistAppearsOnParam,
-                                    }),
-                                    text: fullListLinkText,
-                                }
-                            },
-                        ])
-                    }
+                    {prepareTilesListSections()}
                 </>
-            }
+            )}
         </>
     );
 };
