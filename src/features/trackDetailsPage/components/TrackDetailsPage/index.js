@@ -84,12 +84,32 @@ export const TrackDetailsPage = () => {
         dependencies: [trackId]
     });
 
-    const mainArtistAllReleasesList = depentendApiDatas?.[0].items;
+    const prepareMainArtistGroupedRealises = ({ depentendApiDatas, topTracksList }) => {
+
+        const mainArtistAllReleasesList = depentendApiDatas?.[0].items;
+
+        const topTracksAsAlbumsList = topTracksList?.map(({ album }) => album);
+
+        const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
+        const uniquePopularRelease = removeDuplicates(popularReleases, "name");
+        
+        const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
+
+        const mainArtistGroupedReleasesList = [
+            { type: "Releases", list: uniquePopularRelease, listId: 1, additionalPath: allReleaseDiscography },
+            { type: "Albums", list: mainArtistAlbums, listId: 2, additionalPath: albumsParamDiscography },
+            { type: "Singles and EP's", list: mainArtistSingles, listId: 3, additionalPath: singleParamDiscography },
+        ];
+
+        return mainArtistGroupedReleasesList
+    };
+
     const relatedArtistsList = depentendApiDatas?.[1].artists;
     const artistsDetailsList = depentendApiDatas?.[2].artists;
 
     const topTracksList = depentendApiDatas?.[3].tracks;
-    const topTracksAsAlbumsList = topTracksList?.map(({ album }) => album);
+    const mainArtistGroupedReleasesList = prepareMainArtistGroupedRealises({ depentendApiDatas, topTracksList });
+    const { lyrics } = useLyrics(mainArtistName, trackName, trackId);
 
     const {
         artistsAllReleasesDatasList: secondaryArtistsAllReleasesList,
@@ -99,18 +119,6 @@ export const TrackDetailsPage = () => {
         artistsDatasList: trackArtistsList,
         trackId: trackId
     });
-
-    const { lyrics } = useLyrics(mainArtistName, trackName, trackId);
-
-    const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
-
-    const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
-
-    const mainArtistGroupedReleasesList = [
-        { type: "Releases", list: removeDuplicates(popularReleases, "name"), listId: 1, additionalPath: allReleaseDiscography },
-        { type: "Albums", list: mainArtistAlbums, listId: 2, additionalPath: albumsParamDiscography },
-        { type: "Singles and EP's", list: mainArtistSingles, listId: 3, additionalPath: singleParamDiscography },
-    ];
 
     const fetchStatus = useFetchStatus([
         ...statuses,
