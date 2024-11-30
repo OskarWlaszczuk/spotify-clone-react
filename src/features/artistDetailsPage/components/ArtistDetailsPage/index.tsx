@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
-import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
+// import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { useApiResources } from "../../../../common/hooks/useApiData";
+import { useApiResources } from "../../../../common/hooks/useApiResources";
 import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
-import { allReleasesEndpointResource } from "../../../../common/constants/allReleasesEndpointResource";
+import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { getImage } from "../../../../common/functions/getImage";
@@ -16,12 +16,12 @@ import { getImage } from "../../../../common/functions/getImage";
 export const ArtistDetailsPage = () => {
     const { type, id: artistId } = useParams<{ type: string; id: string; }>();
 
-    const { configs, statuses, datas } = useApiResources([
-        {
-            action: relatedArtistsActions,
-            selectors: relatedArtistsSelectors,
-            endpoint: `artists/${artistId}/related-artists`,
-        },
+    const { configs, statuses, apiData: apiDataList } = useApiResources([
+        // {
+        //     action: relatedArtistsActions,
+        //     selectors: relatedArtistsSelectors,
+        //     endpoint: `artists/${artistId}/related-artists`,
+        // },
         {
             action: artistDetailsActions,
             selectors: artistDetailsSelectors,
@@ -30,25 +30,23 @@ export const ArtistDetailsPage = () => {
         {
             action: artistAlbumsActions,
             selectors: artistAlbumsSelectors,
-            endpoint: `artists/${artistId}/${allReleasesEndpointResource}`,
+            endpoint: `artists/${artistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude: true })}`,
         },
     ]);
 
     const {
-        artistTopTracksDatasListStatus,
+        artistTopTracksDataListStatus,
         artistTopTracksAsAlbumsList,
         artistTopTracksList,
     } = useArtistTopTracks({ artistId });
 
     useFetchAPI([...configs], [artistId]);
 
-    const fetchStatus = useFetchStatus([artistTopTracksDatasListStatus, ...statuses]);
+    const fetchStatus = useFetchStatus([artistTopTracksDataListStatus, ...statuses]);
 
-    const relatedArtistsList = datas?.[0]?.artists;
-    const artistData: any = datas?.[1];
-    const artistAllReleasesList = datas?.[2]?.items;
-
-    const { name, followers, images }: any = getSpecificKeys(artistData, ["name", "followers", "images"]);
+    // const relatedArtistsList = data?.[0]?.artists;
+    const [artistData, artistAllReleasesData] = apiDataList;
+    const [{ name, followers, images }]: any = getSpecificKeys(artistData, ["name", "followers", "images"]);
 
     return (
         <Main
@@ -64,11 +62,13 @@ export const ArtistDetailsPage = () => {
             }
             content={
                 <MainContent
-                    name={name}
-                    allReleases={artistAllReleasesList}
-                    topTracksAsAlbumsList={artistTopTracksAsAlbumsList}
-                    topTracksDatasList={artistTopTracksList}
-                    relatedArtists={relatedArtistsList}
+                    artistName={name}
+                    artistAllReleas={artistAllReleasesData?.items}
+                    artistTopTrackData={{
+                        topTracksList: artistTopTracksList,
+                        topTracksAlbumsList: artistTopTracksAsAlbumsList,
+                    }}
+                    artistRelatedArtists={[]}
                 />
             }
         />
