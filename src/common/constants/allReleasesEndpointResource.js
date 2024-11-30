@@ -1,1 +1,0 @@
-export const allReleasesEndpointResource = "albums?include_groups=album%2Csingle%2Ccompilation&limit=50";
