@@ -2,17 +2,23 @@ import { Tile } from "../components/Tile"
 import { TilesList } from "../components/TilesList"
 import { useActiveTile } from "../hooks/useActiveTile";
 import { getImage } from "./getImage";
-import { renderTileSubInfo } from "./renderTileSubInfo";
+import { getYear } from "./getYear";
+
+const renderTileSubInfo = ({
+    isArtistsListCondition,
+    artistType,
+    albumType,
+    albumReleaseDate
+}) => isArtistsListCondition ? `${artistType}` : `${albumType} • ${getYear(albumReleaseDate)}`;
 
 export const useRenderTilesList = () => {
-
     const { setActiveTile, isTileActive } = useActiveTile();
 
-    const renderTilesList = (tilesListDatasList) => {
+    const renderTilesList = (tilesListDataList) => {
         return (
             <>
                 {
-                    tilesListDatasList.map(({
+                    tilesListDataList.map(({
                         title,
                         subExtraContent,
                         list,
@@ -37,13 +43,14 @@ export const useRenderTilesList = () => {
                                     album_type = "",
                                     type = "",
                                     release_date,
+                                    listId,
                                 }, index) => (
                                     <Tile
-                                        isActive={isTileActive(index, 1)}
+                                        isActive={isTileActive(index, listId)}
                                         mouseEventHandlers={{
                                             enter: () => setActiveTile({
                                                 activeTileIndex: index,
-                                                activeTilesListID: 1,
+                                                activeTilesListID: listId,
                                             }),
                                             leave: () => setActiveTile({
                                                 activeTileIndex: undefined,
