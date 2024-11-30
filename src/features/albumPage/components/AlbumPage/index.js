@@ -4,17 +4,17 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { Table } from "../../../../common/components/Table";
-import { allReleaseDiscography } from "../../../../common/constants/params";
+import { allReleaseParamDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { getImage } from "../../../../common/functions/getImage";
-import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
-import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
-import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { useMainArtistData } from "../../hooks/useMainArtistData";
 import { useMainArtistReleases } from "../../hooks/useMainArtistReleases";
+import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
+import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
+import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 
 export const AlbumPage = () => {
     const { id: albumId } = useParams();
@@ -23,7 +23,7 @@ export const AlbumPage = () => {
 
     const { filteredAlbumData, albumDetailsStatus } = useAlbumDetails(albumId);
 
-    const {
+    const [{
         name,
         images,
         type,
@@ -32,12 +32,13 @@ export const AlbumPage = () => {
         total_tracks,
         tracks,
         artists: artistsList,
-    } = filteredAlbumData;
+    }] = filteredAlbumData;
 
     const tracksList = tracks?.items;
     const isAlbumArtistsListLengthEqualsOne = artistsList?.length === 1;
 
     const mainArtistId = artistsList?.[0].id;
+    
     const isMainArtistIdExists = !!mainArtistId
 
     const apiDependencies = [albumId, mainArtistId];
@@ -47,7 +48,6 @@ export const AlbumPage = () => {
         fetchCondition: isAlbumArtistsListLengthEqualsOne && isMainArtistIdExists,
         dependencies: apiDependencies,
     });
-
     const { mainArtistAllReleasesList, allReleasesListStatus } = useMainArtistReleases({
         mainArtistId,
         fetchCondition: isMainArtistIdExists,
@@ -59,58 +59,17 @@ export const AlbumPage = () => {
         allReleasesListStatus,
         ...(isAlbumArtistsListLengthEqualsOne ? [mainArtistDataStatus] : []),
     ]);
-
-    const renderBannerContent = ({
-        metaData: {
-            releaseDate,
-            tracksList,
-            uniqueData,
-        },
-        subTitleData: {
-            artistImage,
-            mainArtistDetails = null,
-            albumDetails = null,
-            artistsList = [],
-        },
-    }) => {
-        const metaDataContent = renderMetaDatasContent({
-            uniqueData,
-            releaseDate,
-            duration: calculateTotalDuration(tracksList),
-        });
-
-        const subTitleContent = renderSubTitleContent({
-            artistsList,
-            artistImage: getImage(artistImage),
-            mainArtistDetails,
-            albumDetails,
-        });
-
-        return { metaDataContent, subTitleContent };
-    };
-
-    const { metaDataContent, subTitleContent } = renderBannerContent({
-        metaData: {
-            tracksList,
-            releaseDate: release_date,
-            uniqueData: `${total_tracks} songs`,
-        },
-        subTitleData: {
-            artistsList,
-            artistImage: mainArtistImage,
-        },
+    
+    const metaDataContent = renderMetaDataContent({
+        releaseDate: release_date,
+        duration: calculateTotalDuration(tracksList),
+        uniqueData: `${total_tracks} songs`
     });
-
-    // const metaDatasContent = renderMetaDatasContent({
-    //     releaseDate: release_date,
-    //     duration: calculateTotalDuration(tracksList),
-    //     uniqueData: `${total_tracks} songs`
-    // });
-    // const subTitleContent = renderSubTitleContent({
-    //     artistsList: artistsList,
-    //     isAlbumArtistsListLengthEqualsOne,
-    //     artistImage: getImage(mainArtistImage),
-    // });
+    const subTitleContent = renderSubTitleContent({
+        artistsList: artistsList,
+        isAlbumArtistsListLengthEqualsOne,
+        artistImage: getImage(mainArtistImage),
+    });
 
     return (
         <Main
@@ -119,7 +78,7 @@ export const AlbumPage = () => {
                 <Banner
                     picture={getImage(images)}
                     subTitleContent={subTitleContent}
-                    metaDatas={metaDataContent}
+                    metaData={metaDataContent}
                     title={name}
                     caption={type}
                 />
@@ -137,7 +96,7 @@ export const AlbumPage = () => {
                                 fullListData: {
                                     pathname: toArtist({
                                         id: mainArtistId,
-                                        additionalPath: allReleaseDiscography
+                                        additionalPath: allReleaseParamDiscography
                                     }),
                                     text: "Show discography"
                                 },
