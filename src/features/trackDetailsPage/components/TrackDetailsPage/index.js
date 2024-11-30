@@ -7,76 +7,78 @@ import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useLyrics } from "../../hooks/useLyrics";
-import { trackRecommendationsActions, trackRecommendationsSelectors } from "../../slices/trackRecommendationsSlice";
 import { Table } from "../../../../common/components/Table";
-import { albumsParamDiscography, allReleaseDiscography, relatedArtistsParam, singleParamDiscography } from "../../../../common/constants/params";
+import { allReleaseParamDiscography, relatedArtistsParam } from "../../../../common/constants/params";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
-import { filterReleasesByGroups } from "../../../../common/functions/filterReleasesByGroups";
 import { getImage } from "../../../../common/functions/getImage";
-import { renderMetaDatasContent } from "../../../../common/functions/renderMetaDatasContent";
+import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { useDependentFetchAPI } from "../../../../common/hooks/useDependentFetchAPI";
 import { getYear } from "../../../../common/functions/getYear";
 import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
-import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
-import { useArtistsAlbumsDatasList } from "../../hooks/useArtistsAlbumsDatasList";
+import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { TrackLyricsSection } from "./TrackLyricsSection";
 import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
 import { LyricsAndArtistsSection } from "./styled";
 import { useApiResources } from "../../../../common/hooks/useApiResources";
+import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
+import { useGenerateUniqueListId  } from "../../../../common/hooks/useGenerateUniqueListId";
+import { useEffect } from "react";
+
+//Dodać ponownie rekomnedację i powiązanych artystów, gdy API znów będzie wspierane
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
     const renderTilesList = useRenderTilesList();
 
-    const { configs, datas, statuses } = useApiResources([
+    const { configs, apiData, statuses } = useApiResources([
         {
             action: trackDetailsActions,
             selectors: trackDetailsSelectors,
             endpoint: `tracks/${trackId}`,
         },
-        {
-            action: trackRecommendationsActions,
-            selectors: trackRecommendationsSelectors,
-            endpoint: `recommendations?limit=10&seed_tracks=${trackId}`,
-        },
+        // {
+        //     action: trackRecommendationsActions,
+        //     selectors: trackRecommendationsSelectors,
+        //     endpoint: `recommendations?limit=10&seed_tracks=${trackId}`,
+        // },
     ]);
 
-    const trackData = datas?.[0];
-    const recommendationsList = datas?.[1]?.tracks;
+    const trackData = apiData?.[0];
+    // const recommendationsList = data?.[1]?.tracks;
 
     const artistsIdsList = trackData?.artists.map(({ id }) => id);
     const secondaryArtistsIdsList = artistsIdsList?.slice(1);
 
     useFetchAPI([...configs], [trackId]);
 
-    const {
+    const [{
         name: trackName,
         type: trackType,
         duration_ms: trackDurationInMs,
         popularity: trackPopularityScale,
         artists: trackArtistsList,
-    } = getSpecificKeys(trackData, ["name", "type", "duration_ms", "popularity", "artists"]);
+    }] = getSpecificKeys(trackData, ["name", "type", "duration_ms", "popularity", "artists"]);
 
-    const {
+    const [{
         name: albumName,
         release_date: albumReleaseDate,
         id: albumId,
         images: albumImages,
-    } = getSpecificKeys(trackData?.album, ["name", "release_date", "id", "images"]);
+    }] = getSpecificKeys(trackData?.album, ["name", "release_date", "id", "images"]);
 
-    const {
+    const [{
         name: mainArtistName,
         id: mainArtistId,
         images: mainArtistImages,
-    } = getSpecificKeys(trackArtistsList?.[0], ["name", "id", "images"]);
+    }] = getSpecificKeys(trackArtistsList?.[0], ["name", "id", "images"]);
 
-    const { depentendApiDatas, depentendApiDatasStatus } = useDependentFetchAPI({
+    const { depentendApiData, depentendApiDataStatus } = useDependentFetchAPI({
         endpointsList: [
             { endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}` },
-            { endpoint: `artists/${mainArtistId}/related-artists` },
+            // { endpoint: `artists/${mainArtistId}/related-artists` },
             { endpoint: `artists?ids=${artistsIdsList}` },
             { endpoint: `artists/${mainArtistId}/top-tracks` },
         ],
@@ -84,49 +86,41 @@ export const TrackDetailsPage = () => {
         dependencies: [trackId]
     });
 
-    const prepareMainArtistGroupedRealises = ({ depentendApiDatas, topTracksList }) => {
+    const [
+        mainArtistAllReleasesData,
+        artistsDetails,
+        topTracksData,
+    ] = getSpecificKeys(depentendApiData, ["artists", "items", "tracks"]);
 
-        const mainArtistAllReleasesList = depentendApiDatas?.[0].items;
 
-        const topTracksAsAlbumsList = topTracksList?.map(({ album }) => album);
+    useEffect(() => {
 
-        const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
-        const uniquePopularRelease = removeDuplicates(popularReleases, "name");
-        
-        const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
+    }, [trackId])
 
-        const mainArtistGroupedReleasesList = [
-            { type: "Releases", list: uniquePopularRelease, listId: 1, additionalPath: allReleaseDiscography },
-            { type: "Albums", list: mainArtistAlbums, listId: 2, additionalPath: albumsParamDiscography },
-            { type: "Singles and EP's", list: mainArtistSingles, listId: 3, additionalPath: singleParamDiscography },
-        ];
+    const mainArtistGroupedReleasesList = useGroupMainArtistReleases({
+        mainArtistAllReleasesData,
+        topTracksList: topTracksData,
+        trackId
+    });
 
-        return mainArtistGroupedReleasesList
-    };
-
-    const relatedArtistsList = depentendApiDatas?.[1].artists;
-    const artistsDetailsList = depentendApiDatas?.[2].artists;
-
-    const topTracksList = depentendApiDatas?.[3].tracks;
-    const mainArtistGroupedReleasesList = prepareMainArtistGroupedRealises({ depentendApiDatas, topTracksList });
     const { lyrics } = useLyrics(mainArtistName, trackName, trackId);
 
     const {
-        artistsAllReleasesDatasList: secondaryArtistsAllReleasesList,
-        artistsAllReleasesDatasListStatus: secondaryArtistsAllReleasesListStatus
-    } = useArtistsAlbumsDatasList({
+        artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
+        artistsAllReleasesDataListStatus: secondaryArtistsAllReleasesListStatus
+    } = useArtistsAlbumsList({
         artistsIdsList: secondaryArtistsIdsList,
-        artistsDatasList: trackArtistsList,
+        artistsDataList: trackArtistsList,
         trackId: trackId
     });
 
     const fetchStatus = useFetchStatus([
         ...statuses,
         secondaryArtistsAllReleasesListStatus,
-        depentendApiDatasStatus,
+        depentendApiDataStatus,
     ]);
 
-    const metaDatasContent = renderMetaDatasContent({
+    const metaDataContent = renderMetaDataContent({
         releaseDate: getYear(albumReleaseDate),
         duration: fromMillisecondsToMinutes(trackDurationInMs).replace(".", ":"),
         uniqueData: `${trackPopularityScale} / 100`,
@@ -154,30 +148,30 @@ export const TrackDetailsPage = () => {
                         title={trackName}
                         caption={trackType}
                         subTitleContent={subTitleContent}
-                        metaDatas={metaDatasContent}
+                        metaData={metaDataContent}
                     />
                 }
                 content={
                     <>
                         <LyricsAndArtistsSection>
                             {lyrics && <TrackLyricsSection lyrics={lyrics} />}
-                            <TrackArtistsCardsSection artistsDatasList={artistsDetailsList} />
+                            <TrackArtistsCardsSection artistsDataList={artistsDetails?.artists} />
                         </LyricsAndArtistsSection>
 
-                        <Table
-                            list={recommendationsList?.tracks}
+                        {/* <Table
+                            list={recommendationsList}
                             caption="Recommended"
                             subCaption="Based on this song"
                             hideIndex
-                        />
+                        /> */}
 
                         <Table
-                            list={topTracksList}
+                            list={topTracksData?.tracks}
                             caption={mainArtistName}
                         />
 
                         {
-                            mainArtistGroupedReleasesList?.map(({ type, list, listId, additionalPath }) => (
+                            mainArtistGroupedReleasesList?.map(({ type, list, additionalPath }) => (
                                 renderTilesList([{
                                     title: `Popular ${type} by ${mainArtistName}`,
                                     list: list,
@@ -199,13 +193,13 @@ export const TrackDetailsPage = () => {
                                     list: list,
                                     toPageFunction: toAlbum,
                                     fullListData: {
-                                        pathname: toArtist({ id, additionalPath: allReleaseDiscography }),
+                                        pathname: toArtist({ id, additionalPath: allReleaseParamDiscography }),
                                         text: fullListLinkText
                                     }
                                 }])
                             ))
                         }
-                        {
+                        {/* {
                             renderTilesList([
                                 {
                                     title: "Fans also like",
@@ -218,7 +212,7 @@ export const TrackDetailsPage = () => {
                                     isArtistsList: true,
                                 },
                             ])
-                        }
+                        } */}
                     </>
                 }
             />
