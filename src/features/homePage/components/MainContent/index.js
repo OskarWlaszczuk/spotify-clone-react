@@ -1,26 +1,28 @@
 import { useParams } from "react-router-dom"
-import { useSelector } from "react-redux";
-import { albumsSelectors } from "../../slices/albumsSlice";
 import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes";
-import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
+import { useMatchFullListDataByType } from "../../../../common/hooks/useMatchFullListDataByType";
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { popularAlbumsParam, popularArtistsParam } from "../../../../common/constants/params";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
+import { useGenerateUniqueListId  } from "../../../../common/hooks/useGenerateUniqueListId";
 
-export const MainContent = ({ artistsDetailsList: popularArtists }) => {
+export const MainContent = ({ popularArtists, popularAlbums }) => {
     const { type = "" } = useParams();
 
     const renderTilesList = useRenderTilesList();
-
-    const popularAlbums = useSelector(albumsSelectors.selectDatas)?.datas.albums;
+    const updatedPopularArtists = useGenerateUniqueListId (popularArtists);
+    const updatedPopularAlbums = useGenerateUniqueListId (popularAlbums);
 
     const popularAlbumsTitle = "Popular albums";
     const popularArtistsTitle = "Popular artists";
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType([
-        { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
-        { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
-    ], type);
+    const { fullListContent, fullListTitle, isFullListArtistsList } = useMatchFullListDataByType(
+        [
+            { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
+            { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
+        ],
+        type
+    );
 
     return (
         <>
@@ -41,22 +43,24 @@ export const MainContent = ({ artistsDetailsList: popularArtists }) => {
                                 [
                                     {
                                         title: popularAlbumsTitle,
-                                        list: popularAlbums,
+                                        list: updatedPopularAlbums,
                                         toPageFunction: toAlbum,
                                         fullListData: {
                                             pathname: toHome({ additionalPath: popularAlbumsParam }),
                                             text: fullListLinkText,
                                         },
+                                        // listId: random1,
                                     },
                                     {
                                         title: popularArtistsTitle,
-                                        list: popularArtists,
+                                        list: updatedPopularArtists,
                                         toPageFunction: toArtist,
                                         fullListData: {
                                             pathname: toHome({ additionalPath: popularArtistsParam }),
                                             text: fullListLinkText
                                         },
                                         isArtistsList: true,
+                                        // listId: random2,
                                     },
                                 ]
                         )
