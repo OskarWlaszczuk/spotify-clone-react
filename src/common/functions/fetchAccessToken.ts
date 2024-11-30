@@ -12,14 +12,14 @@ export const fetchAccessToken = async () => {
         return accessToken;
     }
 
-    const datas = qs.stringify({
+    const data = qs.stringify({
         'grant_type': 'client_credentials',
         'client_id': `${CLIENT_ID}`,
         'client_secret': `${CLIENT_SECRET}`,
     });
 
     try {
-        const response = await axios.post('https://accounts.spotify.com/api/token', datas, {
+        const response = await axios.post('https://accounts.spotify.com/api/token', data, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }

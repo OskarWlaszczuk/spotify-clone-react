@@ -4,7 +4,7 @@ import { artistSinglesActions } from "../slices/artistSinglesSlice";
 
 export function* watchFetchArtistSinglesSaga() {
     yield createSaga({
-        getDatas: getAPI,
+        getData: getAPI,
         actions: artistSinglesActions,
     });
 };

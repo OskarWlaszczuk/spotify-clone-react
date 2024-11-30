@@ -4,7 +4,7 @@ import { getAPI } from "../functions/getAPI";
 
 export function* watchFetchUserPlaylistsSaga() {
     yield createSaga({
-        getDatas: getAPI,
+        getData: getAPI,
         actions: userPlaylistsActions,
     });
 };

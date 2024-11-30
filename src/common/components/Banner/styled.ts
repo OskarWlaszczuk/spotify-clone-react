@@ -50,7 +50,7 @@ export const SubTitleContent = styled.p`
     font-size: 14px;
 `;
 
-export const MetaDatas = styled.span`
+export const MetaData = styled.span`
     color: ${({ theme }) => theme.colors.nobel};
     font-weight: 400;
     font-size: 14px;

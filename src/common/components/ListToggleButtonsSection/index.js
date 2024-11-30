@@ -1,11 +1,11 @@
 import { isMatch } from "../../functions/isMatch"
 import { ListToggleButton } from "../ListToggleButton"
 
-export const ListToggleButtonsSection = ({ listToggleButtonDatasList, setCurrentCategoryData, targetCategory }) => {
+export const ListToggleButtonsSection = ({ listToggleButtonDataList, setCurrentCategoryData, targetCategory }) => {
     return (
         <>
             {
-                listToggleButtonDatasList.map(({ list, category, text }) => (
+                listToggleButtonDataList.map(({ list, category, text }) => (
                     <ListToggleButton
                         list={list}
                         toggleList={() => setCurrentCategoryData({

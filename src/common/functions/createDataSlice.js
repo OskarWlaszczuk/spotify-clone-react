@@ -3,7 +3,7 @@ import { error, initial, loading, success } from "../constants/fetchStatuses";
 
 const initialState = {
     status: initial,
-    datas: null,
+    data: null,
 };
 
 export const createDataSlice = ({ name }) => {
@@ -14,10 +14,10 @@ export const createDataSlice = ({ name }) => {
             fetch: () => ({
                 status: loading,
             }),
-            fetchSuccess: (state, { payload: datas }) => ({
+            fetchSuccess: (state, { payload: data }) => ({
                 ...state,
                 status: success,
-                datas: datas,
+                data: data,
             }),
             fetchError: () => ({
                 status: error,
@@ -30,7 +30,7 @@ export const createDataSlice = ({ name }) => {
         reducer: slice.reducer,
         actions: slice.actions,
         selectors: {
-            selectDatas: state => state[name].datas,
+            selectData: state => state[name].data,
             selectStatus: state => state[name].status,
         }
     };

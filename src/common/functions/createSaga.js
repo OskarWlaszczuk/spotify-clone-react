@@ -2,20 +2,20 @@ import { call, put, takeLatest } from "redux-saga/effects";
 
 
 
-export function* createSaga({ getDatas, actions }) {
+export function* createSaga({ getData, actions }) {
 
-    function* fetchDatasHandler({ payload } = {}) {
+    function* fetchDataHandler({ payload } = {}) {
         const { endpoint, accessToken } = payload;
 
         try {
-            const response = yield call(getDatas, { endpoint, accessToken });
+            const response = yield call(getData, { endpoint, accessToken });
             yield put(actions.fetchSuccess({
-                datas: response
+                data: response
             }));
         } catch {
             yield put(actions.fetchError());
         }
     };
 
-    yield takeLatest(actions.fetch.type, fetchDatasHandler);
+    yield takeLatest(actions.fetch.type, fetchDataHandler);
 };

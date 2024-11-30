@@ -4,7 +4,7 @@ import { getAPI } from "../../../common/functions/getAPI";
 
 export function* watchFetchArtistsSaga() {
     yield createSaga({
-        getDatas: getAPI,
+        getData: getAPI,
         actions: artistsActions,
     });
 };
