@@ -1,1 +1,1 @@
-export const isMatch = (value: string, targetValue: string): boolean => value === targetValue;
+export const isMatch = (value: any, targetValue: any): boolean => value === targetValue;
