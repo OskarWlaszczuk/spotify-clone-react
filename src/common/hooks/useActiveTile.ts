@@ -1,12 +1,13 @@
 import { useState } from "react";
+import { isMatch } from "../functions/isMatch";
 
-interface TileDatas {
+interface TileData {
     activeTileIndex: number | undefined;
     activeTilesListID: number | undefined;
 }
 
 export const useActiveTile = () => {
-    const [activeTile, setActiveTile] = useState<TileDatas>({
+    const [activeTile, setActiveTile] = useState<TileData>({
         activeTileIndex: undefined,
         activeTilesListID: undefined,
     });
@@ -14,7 +15,7 @@ export const useActiveTile = () => {
     const { activeTileIndex, activeTilesListID } = activeTile;
 
     const isTileActive = (targetTileIndex: number, targetListId: number): boolean => {
-        return activeTileIndex === targetTileIndex && activeTilesListID === targetListId
+        return isMatch(activeTileIndex, targetTileIndex) && isMatch(activeTilesListID, targetListId)
     };
 
     return { setActiveTile, isTileActive };
