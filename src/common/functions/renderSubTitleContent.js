@@ -2,20 +2,25 @@ import { ArtistNameLink } from "../../features/albumPage/components/AlbumPage/st
 import { renderArtistAvatarImage } from "./renderArtistAvatarImage";
 import { toAlbum, toArtist } from "./routes";
 
-export const renderSubTitleContent = ({ artistsList, isAlbumArtistsListLengthEqualsOne, artistImage, mainArtistDetails, albumDetails }) => {
-    if (artistsList && artistsList.length > 0) {
+export const renderSubTitleContent = ({
+    artistsList,
+    artistImage,
+    mainArtistDetails,
+    albumDetails
+}) => {
+    if (!!artistsList && artistsList.length > 0) {
         return artistsList.map(({ name, id }, index) => (
             <>
                 {renderArtistAvatarImage({
-                    image: artistImage,
                     name,
-                    conditionToRender: isAlbumArtistsListLengthEqualsOne
+                    image: artistImage,
+                    conditionToRender: artistsList?.length === 1,
                 })}
                 {" "}{index !== 0 && "• "}
                 <ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
             </>
         ));
-    } else if (mainArtistDetails) {
+    } else if (!!mainArtistDetails && !!albumDetails) {
         return (
             <>
                 {renderArtistAvatarImage({
@@ -24,7 +29,7 @@ export const renderSubTitleContent = ({ artistsList, isAlbumArtistsListLengthEqu
                 })}
                 {" "}
                 <ArtistNameLink to={toArtist({ id: mainArtistDetails.id })}>{mainArtistDetails.name}</ArtistNameLink>{" • "}
-                <ArtistNameLink $thinner to={toAlbum({ albumID: albumDetails.id })}>{albumDetails.name}</ArtistNameLink>
+                <ArtistNameLink $thinner to={toAlbum({ id: albumDetails.id })}>{albumDetails.name}</ArtistNameLink>
             </>
         );
     };
