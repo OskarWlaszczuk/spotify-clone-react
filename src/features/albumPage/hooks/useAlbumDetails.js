@@ -3,19 +3,21 @@ import { albumDetailsActions, albumDetailsSelectors } from "../slices/albumDetai
 import { getSpecificKeys } from "../../../common/functions/getSpecificKeys";
 import { useApiResources } from "../../../common/hooks/useApiResources";
 
-export const useAlbumDetails = (id) => {
-    const { configs, datas: rawAlbumDetails, statuses: albumDetailsStatus } = useApiResources([{
+export const useAlbumDetails = (albumId) => {
+    const { configs, apiData: rawAlbumDetails, statuses } = useApiResources([{
         action: albumDetailsActions,
         selectors: albumDetailsSelectors,
-        endpoint: `albums/${id}`
+        endpoint: `albums/${albumId}`
     }]);
 
     const filteredAlbumData = getSpecificKeys(
         rawAlbumDetails,
         ["name", "images", "type", "release_date", "copyrights", "total_tracks", "tracks", "artists"]
     );
+    console.log(filteredAlbumData);
+    const [albumDetailsStatus] = statuses;
 
-    useFetchAPI([...configs], [id]);
+    useFetchAPI([...configs], [albumId]);
 
     return { filteredAlbumData, albumDetailsStatus };
 };
