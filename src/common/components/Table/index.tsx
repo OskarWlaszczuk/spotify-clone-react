@@ -75,7 +75,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                     )}
                     <TrackDetailsWrapper>
                         <TrackName>
-                            <TrackLink to={toTrack({ trackID: id })}>{name}</TrackLink>
+                            <TrackLink to={toTrack({ id })}>{name}</TrackLink>
                         </TrackName>
                         {useAlbumView && (
                             <TrackArtists>
