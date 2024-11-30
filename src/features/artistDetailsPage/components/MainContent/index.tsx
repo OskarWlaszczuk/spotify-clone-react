@@ -3,7 +3,7 @@ import { Table } from "../../../../common/components/Table";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
-import { matchFullListDataByType } from "../../../../common/functions/matchFullListDataByType";
+import { useMatchFullListDataByType } from "../../../../common/hooks/useMatchFullListDataByType";
 import {
     albumsCategory,
     compilationsCategory,
@@ -11,7 +11,7 @@ import {
     singlesCategory
 } from "../../constants/categories";
 import {
-    allReleaseDiscography,
+    allReleaseParamDiscography,
     relatedArtistsParam,
     albumsParamDiscography,
     singleParamDiscography,
@@ -63,9 +63,9 @@ export const MainContent = ({
         value: uniquePopularReleases,
     });
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = matchFullListDataByType(
+    const { fullListContent, fullListTitle, isFullListArtistsList } = useMatchFullListDataByType(
         [
-            { key: allReleaseDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
+            { key: allReleaseParamDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
             { key: albumsParamDiscography, value: albumsList },
             { key: compilationParamDiscography, value: compilationsList },
             { key: singleParamDiscography, value: singlesList },
@@ -79,13 +79,14 @@ export const MainContent = ({
         renderTilesList([
             {
                 title: fullListTitle || artistName,
-                list: removeDuplicates(fullListContent, "name"),
+                list: removeDuplicates({ list: fullListContent, key: "name" }),
                 toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
                 isArtistsList: isFullListArtistsList || false,
                 isHideRestListPart: false,
                 isRenderSubInfo: true,
             },
-        ]);
+        ]
+        );
 
     const prepareTilesListSections = () => {
         const generateFullListData = (additionalPath: any) => ({
@@ -99,7 +100,7 @@ export const MainContent = ({
                     title: "Discography",
                     subExtraContent: (
                         <ListToggleButtonsSection
-                            listToggleButtonDatasList={[
+                            listToggleButtonDataList={[
                                 { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
                                 { list: albumsList, category: albumsCategory, text: "Albums" },
                                 { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
@@ -109,7 +110,7 @@ export const MainContent = ({
                             targetCategory={currentCategoryData.category}
                         />
                     ),
-                    list: removeDuplicates(currentCategoryData.list, "name"),
+                    list: removeDuplicates({ list: currentCategoryData.list, key: "name" }),
                     toPageFunction: toAlbum,
                     isRenderSubInfo: true,
                     fullListData: {
@@ -117,7 +118,7 @@ export const MainContent = ({
                             id: artistId!,
                             additionalPath: findMatchingValueByKey<string>(
                                 [
-                                    { key: popularReleasesCategory, value: allReleaseDiscography },
+                                    { key: popularReleasesCategory, value: allReleaseParamDiscography },
                                     { key: albumsCategory, value: albumsParamDiscography },
                                     { key: compilationsCategory, value: compilationParamDiscography },
                                     { key: singlesCategory, value: singleParamDiscography },
@@ -128,13 +129,13 @@ export const MainContent = ({
                         text: fullListLinkText,
                     },
                 },
-                {
-                    title: "Fans also like",
-                    list: artistRelatedArtists,
-                    toPageFunction: toArtist,
-                    fullListData: generateFullListData(relatedArtistsParam),
-                    isArtistsList: true,
-                },
+                // {
+                //     title: "Fans also like",
+                //     list: artistRelatedArtists,
+                //     toPageFunction: toArtist,
+                //     fullListData: generateFullListData(relatedArtistsParam),
+                //     isArtistsList: true,
+                // },
                 {
                     title: "Appears on",
                     list: appearsOnList,
@@ -144,6 +145,7 @@ export const MainContent = ({
             ])
         );
     };
+
     return (
         <>
             {type ? renderFullList() : (
