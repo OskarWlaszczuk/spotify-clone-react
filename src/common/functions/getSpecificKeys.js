@@ -16,5 +16,5 @@ export const getSpecificKeys = (object, keysToGetList) => {
             }
         });
         return selectedKeys;
-    })[0];
+    });
 };
