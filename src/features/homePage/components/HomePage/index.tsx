@@ -5,42 +5,51 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { useParams } from "react-router-dom";
-import { useApiData2 } from "../../../../common/hooks/useApiData";
-
-const formatApiResources = (apiResources: any) => {
-    const configs = apiResources.map(({ configs }: any) => configs);
-    const datas = apiResources.map(({ datas }: any) => datas);
-    const statuses = apiResources.map(({ status }: any) => status);
-
-    return { configs, datas, statuses };
-};
+import { useApiResources } from "../../../../common/hooks/useApiResources";
 
 export const HomePage = () => {
     const { type } = useParams();
 
-    const albumsIDs = "382ObEPsp2rxGrnsizN5TX%2C1A2GTWGtFfWp7KSQTwWOyo%2C2noRn2Aes5aoNVsU6iWThc,4bNiBmPncdmzzWdeUSs7DF";
-    const artistsIDs = "4tZwfgrHOc3mvqYlEYSvVi,3hteYQFiMFbJY7wS0xDymP,7CJgLPEqiIRuneZSolpawQ,0tdKRrbItnLj40yUFi23jx,1fxbULcd6ryMNc1usHoP0R,0MIG6gMcQTSvFbKvUwK0id,1Xyo4u8uXC1ZmMpatF05PJ";
+    const formatPopularListForFetch = (idsList: any) => idsList.join(",");
 
-    const apiResources = useApiData2([
+    const popularAlbumsIdsList = [
+        "7LmeRZOi905AochW9J9FAA",
+        "3mlLCrcrxfVkp5lUjgTgzl",
+        "4utVyX1HOqeMkUeeHijTUT",
+        "2ItrzcwLrygr4I6wlZ3HGU",
+        "0oXsFefnFAsRabMYgCfuFf",
+        "3pbJC94hUZST7m2coeIY6I",
+        "02re9DV48w3DBMwnCR6S3Q",
+        "4m2880jivSbbyEGAKfITCa",
+    ];
+
+    const popularArtistsIdsList = [
+        "4tZwfgrHOc3mvqYlEYSvVi",
+        "5NmRijhUHZnaADekOLcOyl",
+        "0SD4eZCN4Kr0wQk56hCdh2",
+        "3sW41aChSc5bBow0Folc1S",
+        "0tdKRrbItnLj40yUFi23jx",
+        "53XhwfbYqKCa1cC15pYq2q",
+        "1fxbULcd6ryMNc1usHoP0R",
+    ];
+
+    const { configs, apiData, statuses } = useApiResources([
         {
             action: artistsActions,
             selectors: artistsSelectors,
-            endpoint: `artists?ids=${artistsIDs}`
+            endpoint: `artists?ids=${formatPopularListForFetch(popularArtistsIdsList)}`
         },
         {
             action: albumsActions,
             selectors: albumsSelectors,
-            endpoint: `albums?ids=${albumsIDs}`,
-        }
+            endpoint: `albums?ids=${formatPopularListForFetch(popularAlbumsIdsList)}`,
+        },
     ]);
 
-    const { configs, datas, statuses } = formatApiResources(apiResources);
-
-    const popularArtistsList = datas?.[0]?.artists;
-    const popularAlbumsList = datas?.[1]?.albums;
+    const popularArtistsList = apiData?.[0]?.artists;
+    const popularAlbumsList = apiData?.[1]?.albums;
 
     const fetchStatus = useFetchStatus([...statuses]);
-
     useFetchAPI([...configs]);
 
     return (
