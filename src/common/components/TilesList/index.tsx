@@ -10,14 +10,14 @@ interface FullListData {
 };
 
 interface TilesListProps {
-    title: ReactNode;
-    subExtraContent?: ReactElement;
-    hideRestListPart?: true | undefined;
+    title: any;
+    subExtraContent?:any;
+    hideRestListPart?: any;
     //generyczny typ do list
-    list: MediaItem[] | undefined;
+    list:any;
     //generyczny typ do list
     renderItem: (list: MediaItem, index: number) => ReactElement;
-    fullListData?: FullListData;
+    fullListData?: any;
 };
 
 export const TilesList = ({
@@ -43,7 +43,7 @@ export const TilesList = ({
     );
 
     const titleElement = (
-        fullListData ?
+        fullListPathname ?
             <TitleAsLink to={fullListPathname!}>{title}</TitleAsLink> :
             <Title>{title}</Title>
     );
