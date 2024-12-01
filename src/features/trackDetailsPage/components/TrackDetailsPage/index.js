@@ -24,8 +24,8 @@ import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
 import { LyricsAndArtistsSection } from "./styled";
 import { useApiResources } from "../../../../common/hooks/useApiResources";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
-import { useGenerateUniqueListId  } from "../../../../common/hooks/useGenerateUniqueListId";
 import { useEffect } from "react";
+import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
 
 //Dodać ponownie rekomnedację i powiązanych artystów, gdy API znów będzie wspierane
 
@@ -54,26 +54,26 @@ export const TrackDetailsPage = () => {
 
     useFetchAPI([...configs], [trackId]);
 
-    const [{
-        name: trackName,
-        type: trackType,
-        duration_ms: trackDurationInMs,
-        popularity: trackPopularityScale,
-        artists: trackArtistsList,
-    }] = getSpecificKeys(trackData, ["name", "type", "duration_ms", "popularity", "artists"]);
-
-    const [{
-        name: albumName,
-        release_date: albumReleaseDate,
-        id: albumId,
-        images: albumImages,
-    }] = getSpecificKeys(trackData?.album, ["name", "release_date", "id", "images"]);
-
-    const [{
-        name: mainArtistName,
-        id: mainArtistId,
-        images: mainArtistImages,
-    }] = getSpecificKeys(trackArtistsList?.[0], ["name", "id", "images"]);
+    const [
+        {
+            name: trackName,
+            type: trackType,
+            duration_ms: trackDurationInMs,
+            popularity: trackPopularityScale,
+            artists: trackArtistsList,
+        },
+        {
+            name: albumName,
+            release_date: albumReleaseDate,
+            id: albumId,
+            images: albumImages,
+        },
+        {
+            name: mainArtistName,
+            id: mainArtistId,
+            images: mainArtistImages,
+        },
+    ] = getFilteredTrackData(trackData);
 
     const { depentendApiData, depentendApiDataStatus } = useDependentFetchAPI({
         endpointsList: [
@@ -103,7 +103,7 @@ export const TrackDetailsPage = () => {
         trackId
     });
 
-    const { lyrics } = useLyrics(mainArtistName, trackName, trackId);
+    const { lyrics } = useLyrics(mainArtistName, trackName);
 
     const {
         artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
