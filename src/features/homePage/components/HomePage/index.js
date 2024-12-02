@@ -5,12 +5,12 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { useParams } from "react-router-dom";
-import { useApiResources } from "../../../../common/hooks/useApiResources";
+import { useApiResource } from "../../../../common/hooks/useApiResource";
 
 export const HomePage = () => {
     const { type } = useParams();
 
-    const formatPopularListForFetch = (idsList: any) => idsList.join(",");
+    const formatPopularListForFetch = (idsList) => idsList.join(",");
 
     const popularAlbumsIdsList = [
         "7LmeRZOi905AochW9J9FAA",
@@ -33,24 +33,29 @@ export const HomePage = () => {
         "1fxbULcd6ryMNc1usHoP0R",
     ];
 
-    const { configs, apiData, statuses } = useApiResources([
-        {
-            action: artistsActions,
-            selectors: artistsSelectors,
-            endpoint: `artists?ids=${formatPopularListForFetch(popularArtistsIdsList)}`
-        },
-        {
-            action: albumsActions,
-            selectors: albumsSelectors,
-            endpoint: `albums?ids=${formatPopularListForFetch(popularAlbumsIdsList)}`,
-        },
-    ]);
+    const {
+        configs: popularArtistsConfig,
+        apiStatus: popularArtistsStatus,
+        apiData: popularArtistsList
+    } = useApiResource({
+        actions: artistsActions,
+        selectors: artistsSelectors,
+        endpoint: `artists?ids=${formatPopularListForFetch(popularArtistsIdsList)}`,
+    });
 
-    const popularArtistsList = apiData?.[0]?.artists;
-    const popularAlbumsList = apiData?.[1]?.albums;
+    const {
+        configs: popularAlbumsConfig,
+        apiStatus: popularAlbumsStatus,
+        apiData: popularAlbumsList
+    } = useApiResource({
+        actions: albumsActions,
+        selectors: albumsSelectors,
+        endpoint: `albums?ids=${formatPopularListForFetch(popularAlbumsIdsList)}`,
+    });
 
-    const fetchStatus = useFetchStatus([...statuses]);
-    useFetchAPI([...configs]);
+    const fetchStatus = useFetchStatus([popularArtistsStatus, popularAlbumsStatus]);
+
+    useFetchAPI([popularArtistsConfig, popularAlbumsConfig]);
 
     return (
         <Main
@@ -58,8 +63,8 @@ export const HomePage = () => {
             fetchStatus={fetchStatus}
             content={
                 <MainContent
-                    popularArtists={popularArtistsList}
-                    popularAlbums={popularAlbumsList}
+                    popularArtists={popularArtistsList?.artists}
+                    popularAlbums={popularAlbumsList?.albums}
                 />
             }
         />
