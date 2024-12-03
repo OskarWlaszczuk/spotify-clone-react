@@ -1,12 +1,15 @@
 import { useDependentFetchAPI } from "./useDependentFetchAPI";
+import { useMemoizeEndpointsList } from "./useMemoizeEndpointsList";
 
 export const useArtistTopTracks = ({ artistId, dependencies = [] }) => {
+
+    const memoizedArtistTopTracksEndpoint = useMemoizeEndpointsList(`artists/${artistId}/top-tracks`, [artistId]);
 
     const {
         depentendApiData: rawArtistTopTracksDataList,
         depentendApiDataStatus: artistTopTracksDataListStatus
     } = useDependentFetchAPI({
-        endpointsList: [{ endpoint: `artists/${artistId}/top-tracks` }],
+        endpointsList: memoizedArtistTopTracksEndpoint,
         fetchCondition: !!artistId,
         dependencies: [...dependencies],
     });
