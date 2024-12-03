@@ -25,6 +25,7 @@ import { ListToggleButtonsSection } from "../../../../common/components/ListTogg
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { prepareReleases } from "../../functions/prepareReleases";
 import { preparePopularReleases } from "../../functions/preparePopularReleases";
+import { useMemo } from "react";
 
 interface TopTrackData {
     topTracksList: any;
@@ -63,7 +64,7 @@ export const MainContent = ({
         value: uniquePopularReleases,
     });
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = useMatchFullListDataByType(
+    const memoizedFullListsDataOptions = useMemo(() =>
         [
             { key: allReleaseParamDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
             { key: albumsParamDiscography, value: albumsList },
@@ -72,8 +73,21 @@ export const MainContent = ({
             { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
             { key: artistAppearsOnParam, value: appearsOnList, title: "Appears On", isArtistsList: false },
         ],
-        type
+        [
+            uniquePopularReleases,
+            albumsList,
+            compilationsList,
+            singlesList,
+            artistRelatedArtists,
+            appearsOnList,
+        ]
     );
+
+    const {
+        fullListContent,
+        fullListTitle,
+        isFullListArtistsList
+    } = useMatchFullListDataByType(memoizedFullListsDataOptions, type);
 
     const renderFullList = () =>
         renderTilesList([
