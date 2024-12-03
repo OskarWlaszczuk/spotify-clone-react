@@ -35,13 +35,16 @@ export const AlbumPage = () => {
 
   const tracksList = albumTracksData?.items;
 
-  const { mainArtistDetails, mainArtistAllReleasesList, mainArtistDataStatus } = useMainArtistData({
-    artistsList: albumArtistsList,
-    albumId
-  });
-  const [{ name: mainArtistName, images: mainArtistImage, id: mainArtistId }] = getSpecificKeys(
-    mainArtistDetails, ["images", "name", "id"]
-  );
+  const {
+    mainArtistDetails,
+    mainArtistAllReleasesList,
+    mainArtistDataStatus
+  } = useMainArtistData({ artistsList: albumArtistsList, albumId });
+  const [{
+    name: mainArtistName,
+    images: mainArtistImage,
+    id: mainArtistId
+  }] = getSpecificKeys(mainArtistDetails, ["images", "name", "id"]);
 
   const fetchStatus = useFetchStatus([
     albumDetailsStatus,
@@ -53,7 +56,6 @@ export const AlbumPage = () => {
     duration: calculateTotalDuration(tracksList),
     uniqueData: `${albumTotalTracks} songs`
   });
-
   const subTitleContent = renderSubTitleContent({
     artistsList: albumArtistsList,
     artistImage: getImage(mainArtistImage),
