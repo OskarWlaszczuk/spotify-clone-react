@@ -11,7 +11,6 @@ import { useAlbumData } from "../../hooks/useAlbumData";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { useMainArtistData } from "../../hooks/useMainArtistData";
-import { useMainArtistReleases } from "../../hooks/useMainArtistReleases";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
@@ -43,22 +42,16 @@ export const AlbumPage = () => {
   const isMainArtistIdExists = !!mainArtistId
   const apiDependencies = [albumId, mainArtistId];
 
-  const { mainArtistImage, mainArtistDataStatus } = useMainArtistData({
-    mainArtistId,
-    fetchCondition: isAlbumArtistsListLengthEqualsOne && isMainArtistIdExists,
-    dependencies: apiDependencies,
-  });
-
-  const { mainArtistAllReleasesList, allReleasesListStatus } = useMainArtistReleases({
+  const { mainArtistImage, mainArtistAllReleasesList, mainArtistDataStatus } = useMainArtistData({
     mainArtistId,
     fetchCondition: isMainArtistIdExists,
     dependencies: apiDependencies,
+    isAlbumArtistsListLengthEqualsOne
   });
 
   const fetchStatus = useFetchStatus([
     albumDataStatus,
-    allReleasesListStatus,
-    ...(isAlbumArtistsListLengthEqualsOne ? [mainArtistDataStatus] : []),
+    mainArtistDataStatus,
   ]);
 
   const metaDataContent = renderMetaDataContent({
@@ -66,14 +59,13 @@ export const AlbumPage = () => {
     duration: calculateTotalDuration(tracksList),
     uniqueData: `${total_tracks} songs`
   });
+
   const subTitleContent = renderSubTitleContent({
     artistsList: artistsList,
-    isAlbumArtistsListLengthEqualsOne,
     artistImage: getImage(mainArtistImage),
   });
 
   return (
-
     <Main
       fetchStatus={fetchStatus}
       bannerContent={
