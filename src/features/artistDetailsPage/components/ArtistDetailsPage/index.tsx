@@ -1,11 +1,10 @@
 import { useParams } from "react-router-dom";
-// import { relatedArtistsActions, relatedArtistsSelectors } from "../../slices/relatedArtistsSlice";
 import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "../MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { useApiResources } from "../../../../common/hooks/useApiResources";
+import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
 import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
@@ -16,23 +15,25 @@ import { getImage } from "../../../../common/functions/getImage";
 export const ArtistDetailsPage = () => {
     const { type, id: artistId } = useParams<{ type: string; id: string; }>();
 
-    const { configs, statuses, apiData: apiDataList } = useApiResources([
-        // {
-        //     action: relatedArtistsActions,
-        //     selectors: relatedArtistsSelectors,
-        //     endpoint: `artists/${artistId}/related-artists`,
-        // },
-        {
-            action: artistDetailsActions,
-            selectors: artistDetailsSelectors,
-            endpoint: `artists/${artistId}`,
-        },
-        {
-            action: artistAlbumsActions,
-            selectors: artistAlbumsSelectors,
-            endpoint: `artists/${artistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude: true })}`,
-        },
-    ]);
+    const {
+        configs: artistDataConfig,
+        apiStatus: artistDataStatus,
+        apiData: artistData
+    } = useApiResource({
+        actions: artistDetailsActions,
+        selectors: artistDetailsSelectors,
+        endpoint: `artists/${artistId}`,
+    });
+
+    const {
+        configs: artistAllReleasesConfig,
+        apiStatus: artistAllReleasesStatus,
+        apiData: artistAllReleasesList
+    } = useApiResource({
+        actions: artistAlbumsActions,
+        selectors: artistAlbumsSelectors,
+        endpoint: `artists/${artistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude: true })}`,
+    });
 
     const {
         artistTopTracksDataListStatus,
@@ -40,12 +41,10 @@ export const ArtistDetailsPage = () => {
         artistTopTracksList,
     } = useArtistTopTracks({ artistId });
 
-    useFetchAPI([...configs], [artistId]);
+    useFetchAPI([artistDataConfig, artistAllReleasesConfig], [artistId]);
 
-    const fetchStatus = useFetchStatus([artistTopTracksDataListStatus, ...statuses]);
+    const fetchStatus = useFetchStatus([artistTopTracksDataListStatus, artistDataStatus, artistAllReleasesStatus]);
 
-    // const relatedArtistsList = data?.[0]?.artists;
-    const [artistData, artistAllReleasesData] = apiDataList;
     const [{ name, followers, images }]: any = getSpecificKeys(artistData, ["name", "followers", "images"]);
 
     return (
@@ -63,7 +62,7 @@ export const ArtistDetailsPage = () => {
             content={
                 <MainContent
                     artistName={name}
-                    artistAllReleas={artistAllReleasesData?.items}
+                    artistAllReleas={artistAllReleasesList?.items}
                     artistTopTrackData={{
                         topTracksList: artistTopTracksList,
                         topTracksAlbumsList: artistTopTracksAsAlbumsList,
