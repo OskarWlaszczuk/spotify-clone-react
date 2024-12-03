@@ -1,9 +1,9 @@
 import { albumsParamDiscography, allReleaseParamDiscography, singleParamDiscography } from "../../../common/constants/params";
 import { filterReleasesByGroups } from "../../../common/functions/filterReleasesByGroups";
 import { removeDuplicates } from "../../../common/functions/removeDuplicates";
-import { useGenerateUniqueListId  } from "../../../common/hooks/useGenerateUniqueListId";
+import { useGenerateUniqueListId } from "../../../common/hooks/useGenerateUniqueListId";
 
-export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksList,trackId }) => {
+export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksList, trackId }) => {
 
     const mainArtistAllReleasesList = mainArtistAllReleasesData?.items;
 
@@ -12,9 +12,9 @@ export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTrack
     const uniquePopularRelease = removeDuplicates({ list: popularReleases, key: "name" });
     const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
 
-    const updatedUniquePopularRelease = useGenerateUniqueListId (uniquePopularRelease,trackId);
-    const updatedMainArtistAlbums = useGenerateUniqueListId (mainArtistAlbums,trackId);
-    const updatedMainArtistSingles = useGenerateUniqueListId (mainArtistSingles,trackId);
+    const updatedUniquePopularRelease = useGenerateUniqueListId(uniquePopularRelease);
+    const updatedMainArtistAlbums = useGenerateUniqueListId(mainArtistAlbums);
+    const updatedMainArtistSingles = useGenerateUniqueListId(mainArtistSingles);
 
     const mainArtistGroupedReleasesList = [
         { type: "Releases", list: updatedUniquePopularRelease, additionalPath: allReleaseParamDiscography },
