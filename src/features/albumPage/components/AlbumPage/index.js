@@ -7,7 +7,7 @@ import { Table } from "../../../../common/components/Table";
 import { allReleaseParamDiscography } from "../../../../common/constants/params";
 import { Copyrights } from "../../../../common/components/Copyrights";
 import { getImage } from "../../../../common/functions/getImage";
-import { useAlbumData } from "../../hooks/useAlbumData";
+import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { useMainArtistData } from "../../hooks/useMainArtistData";
@@ -20,7 +20,7 @@ export const AlbumPage = () => {
   const { id: albumId } = useParams();
   const renderTilesList = useRenderTilesList();
 
-  const { filteredAlbumData, albumDataStatus } = useAlbumData(albumId);
+  const { filteredAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumId);
 
   const [{
     name: albumName,
@@ -31,7 +31,7 @@ export const AlbumPage = () => {
     total_tracks: albumTotalTracks,
     tracks: albumTracksData,
     artists: albumArtistsList,
-  }] = filteredAlbumData;
+  }] = filteredAlbumDetails;
 
   const tracksList = albumTracksData?.items;
 
@@ -44,7 +44,7 @@ export const AlbumPage = () => {
   );
 
   const fetchStatus = useFetchStatus([
-    albumDataStatus,
+    albumDetailsStatus,
     mainArtistDataStatus,
   ]);
 
