@@ -8,7 +8,7 @@ export const TrackArtistsCardsSection = ({ artistsDataList }) => {
     return (
         <ArtistsCardSection>
             {
-                artistsDataList.map(({ id, name, type, images }) => (
+                artistsDataList?.map(({ id, name, type, images }) => (
                     <ArtistCardLink to={toArtist({ id })}>
                         <ArtistCard>
                             <Picture $picture={getImage(images)} $useArtistPictureStyle />
