@@ -22,9 +22,9 @@ import { useRenderTilesList } from "../../../../common/functions/useRenderTilesL
 import { TrackLyricsSection } from "./TrackLyricsSection";
 import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
 import { LyricsAndArtistsSection } from "./styled";
-import { useApiResources } from "../../../../common/hooks/useApiResources";
+import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
 
 //Dodać ponownie rekomnedację i powiązanych artystów, gdy API znów będzie wspierane
@@ -33,26 +33,15 @@ export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
     const renderTilesList = useRenderTilesList();
 
-    const { configs, apiData, statuses } = useApiResources([
-        {
-            action: trackDetailsActions,
-            selectors: trackDetailsSelectors,
-            endpoint: `tracks/${trackId}`,
-        },
-        // {
-        //     action: trackRecommendationsActions,
-        //     selectors: trackRecommendationsSelectors,
-        //     endpoint: `recommendations?limit=10&seed_tracks=${trackId}`,
-        // },
-    ]);
-
-    const trackData = apiData?.[0];
-    // const recommendationsList = data?.[1]?.tracks;
-
-    const artistsIdsList = trackData?.artists.map(({ id }) => id);
-    const secondaryArtistsIdsList = artistsIdsList?.slice(1);
-
-    useFetchAPI([...configs], [trackId]);
+    const {
+        configs: trackDataConfigs,
+        apiStatus: trackDataStatus,
+        apiData: trackData
+    } = useApiResource({
+        actions: trackDetailsActions,
+        selectors: trackDetailsSelectors,
+        endpoint: `tracks/${trackId}`,
+    });
 
     const [
         {
@@ -71,17 +60,28 @@ export const TrackDetailsPage = () => {
         {
             name: mainArtistName,
             id: mainArtistId,
-            images: mainArtistImages,
         },
     ] = getFilteredTrackData(trackData);
 
-    const { depentendApiData, depentendApiDataStatus } = useDependentFetchAPI({
-        endpointsList: [
+
+    // const recommendationsList = data?.[1]?.tracks;
+
+    const artistsIdsList = trackData?.artists.map(({ id }) => id);
+    const secondaryArtistsIdsList = useMemo(() => artistsIdsList?.slice(1), [artistsIdsList]);
+
+    useFetchAPI([trackDataConfigs], [trackId]);
+
+    const endpointsList = useMemo(() => {
+        return [
             { endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}` },
             // { endpoint: `artists/${mainArtistId}/related-artists` },
             { endpoint: `artists?ids=${artistsIdsList}` },
             { endpoint: `artists/${mainArtistId}/top-tracks` },
-        ],
+        ]
+    }, [mainArtistId, artistsIdsList]);
+
+    const { depentendApiData, depentendApiDataStatus } = useDependentFetchAPI({
+        endpointsList,
         fetchCondition: !!mainArtistId,
         dependencies: [trackId]
     });
@@ -115,7 +115,7 @@ export const TrackDetailsPage = () => {
     });
 
     const fetchStatus = useFetchStatus([
-        ...statuses,
+        trackDataStatus,
         secondaryArtistsAllReleasesListStatus,
         depentendApiDataStatus,
     ]);
@@ -135,7 +135,7 @@ export const TrackDetailsPage = () => {
             id: mainArtistId,
             name: mainArtistName,
         },
-        artistImage: getImage(mainArtistImages),
+        artistImage: getImage(),
     });
 
     return (
