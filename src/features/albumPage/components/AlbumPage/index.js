@@ -23,20 +23,20 @@ export const AlbumPage = () => {
   const { filteredAlbumData, albumDataStatus } = useAlbumData(albumId);
 
   const [{
-    name,
-    images,
-    type,
-    release_date,
-    copyrights,
-    total_tracks,
-    tracks,
-    artists: artistsList,
+    name: albumName,
+    images: albumImages,
+    type: albumType,
+    release_date: albumReleaseDate,
+    copyrights: albumCopyrights,
+    total_tracks: albumTotalTracks,
+    tracks: albumTracksData,
+    artists: albumArtistsList,
   }] = filteredAlbumData;
 
-  const tracksList = tracks?.items;
+  const tracksList = albumTracksData?.items;
 
   const { mainArtistDetails, mainArtistAllReleasesList, mainArtistDataStatus } = useMainArtistData({
-    artistsList,
+    artistsList: albumArtistsList,
     albumId
   });
   const [{ name: mainArtistName, images: mainArtistImage, id: mainArtistId }] = getSpecificKeys(
@@ -49,13 +49,13 @@ export const AlbumPage = () => {
   ]);
 
   const metaDataContent = renderMetaDataContent({
-    releaseDate: release_date,
+    releaseDate: albumReleaseDate,
     duration: calculateTotalDuration(tracksList),
-    uniqueData: `${total_tracks} songs`
+    uniqueData: `${albumTotalTracks} songs`
   });
 
   const subTitleContent = renderSubTitleContent({
-    artistsList: artistsList,
+    artistsList: albumArtistsList,
     artistImage: getImage(mainArtistImage),
   });
 
@@ -64,17 +64,17 @@ export const AlbumPage = () => {
       fetchStatus={fetchStatus}
       bannerContent={
         <Banner
-          picture={getImage(images)}
+          picture={getImage(albumImages)}
           subTitleContent={subTitleContent}
           metaData={metaDataContent}
-          title={name}
-          caption={type}
+          title={albumName}
+          caption={albumType}
         />
       }
       content={
         <>
           <Table list={tracksList} useAlbumView discsNumbers={getUniqueDiscNumbers(tracksList)} />
-          <Copyrights date={release_date} copyrights={copyrights} />
+          <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
           {
             renderTilesList([
               {
