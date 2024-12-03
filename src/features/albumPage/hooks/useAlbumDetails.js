@@ -1,23 +1,21 @@
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { albumDetailsActions, albumDetailsSelectors } from "../slices/albumDetailsSlice";
 import { getSpecificKeys } from "../../../common/functions/getSpecificKeys";
-import { useApiResources } from "../../../common/hooks/useApiResources";
+import { useApiResource } from "../../../common/hooks/useApiResource";
 
 export const useAlbumDetails = (albumId) => {
-    const { configs, apiData: rawAlbumDetails, statuses } = useApiResources([{
-        action: albumDetailsActions,
+    const { configs, apiData: albumDetails, apiStatus: albumDetailsStatus } = useApiResource({
+        actions: albumDetailsActions,
         selectors: albumDetailsSelectors,
         endpoint: `albums/${albumId}`
-    }]);
+    });
 
-    const filteredAlbumData = getSpecificKeys(
-        rawAlbumDetails,
+    const filteredAlbumDetails = getSpecificKeys(
+        albumDetails,
         ["name", "images", "type", "release_date", "copyrights", "total_tracks", "tracks", "artists"]
     );
-    console.log(filteredAlbumData);
-    const [albumDetailsStatus] = statuses;
 
-    useFetchAPI([...configs], [albumId]);
+    useFetchAPI([configs], [albumId]);
 
-    return { filteredAlbumData, albumDetailsStatus };
+    return { filteredAlbumDetails, albumDetailsStatus };
 };
