@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { selectAccessToken } from "../slices/authSlice";
 
 export const useDependentFetchAPI = ({ endpointsList, fetchCondition, dependencies = [] }) => {
-
     const accessToken = useSelector(selectAccessToken);
 
     const [depentendApiData, setDepentendApiData] = useState(null);
@@ -35,45 +34,8 @@ export const useDependentFetchAPI = ({ endpointsList, fetchCondition, dependenci
             setDepentendApiDataStatus(initial);
         };
 
-    }, [...dependencies, accessToken, fetchCondition]);
+    }, [...dependencies, accessToken, fetchCondition, endpointsList]);
 
 
-    return {  depentendApiData,  depentendApiDataStatus };
+    return { depentendApiData, depentendApiDataStatus };
 };
-
-// const useMemoizeEndpoint = (endpoint, dependencies) => useMemo(() => endpoint, dependencies);
-
-// export const useDependentFetchAPI = ({ endpointConfig: { routePath, params }, fetchCondition, dependencies = [] }) => {
-    
-//     const accessToken = useSelector(selectAccessToken);
-//     const memoizedEndpoint = useMemoizeEndpoint(routePath, params);
-
-//     const [data, setData] = useState(null);
-//     const [dataStatus, setDataStatus] = useState(initial);
-
-//     useEffect(() => {
-//         if (!fetchCondition || !accessToken) return;
-
-//         const fetchArtistDetails = async () => {
-//             setDataStatus(loading);
-//             try {
-//                 const response = await fetchFromAPI({ endpoint: memoizedEndpoint, accessToken });
-//                 setData(response);
-//                 setDataStatus(success);
-//             } catch {
-//                 setDataStatus(error);
-//             }
-//         };
-
-//         fetchArtistDetails();
-
-//         return () => {
-//             setData(null);
-//             setDataStatus(initial);
-//         };
-
-//     }, [...dependencies, accessToken, fetchCondition, memoizedEndpoint]);
-
-
-//     return { data, dataStatus };
-// };
