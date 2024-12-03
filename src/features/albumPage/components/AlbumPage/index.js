@@ -18,7 +18,6 @@ import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 
 export const AlbumPage = () => {
   const { id: albumId } = useParams();
-
   const renderTilesList = useRenderTilesList();
 
   const { filteredAlbumData, albumDataStatus } = useAlbumData(albumId);
@@ -36,18 +35,13 @@ export const AlbumPage = () => {
 
   const tracksList = tracks?.items;
 
-  const [{ name: mainArtistName, id: mainArtistId }] = getSpecificKeys(artistsList?.[0], ["name", "id"]);
-
-  const isAlbumArtistsListLengthEqualsOne = artistsList?.length === 1;
-  const isMainArtistIdExists = !!mainArtistId
-  const apiDependencies = [albumId, mainArtistId];
-
-  const { mainArtistImage, mainArtistAllReleasesList, mainArtistDataStatus } = useMainArtistData({
-    mainArtistId,
-    fetchCondition: isMainArtistIdExists,
-    dependencies: apiDependencies,
-    isAlbumArtistsListLengthEqualsOne
+  const { mainArtistDetails, mainArtistAllReleasesList, mainArtistDataStatus } = useMainArtistData({
+    artistsList,
+    albumId
   });
+  const [{ name: mainArtistName, images: mainArtistImage, id: mainArtistId }] = getSpecificKeys(
+    mainArtistDetails, ["images", "name", "id"]
+  );
 
   const fetchStatus = useFetchStatus([
     albumDataStatus,

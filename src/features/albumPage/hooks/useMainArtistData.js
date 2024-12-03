@@ -3,7 +3,12 @@ import { getArtistReleasesEndpointResource } from "../../../common/functions/get
 import { useDependentFetchAPI } from "../../../common/hooks/useDependentFetchAPI";
 import { useMemoizeEndpointsList } from "../../../common/hooks/useMemoizeEndpointsList";
 
-export const useMainArtistData = ({ mainArtistId, fetchCondition, dependencies, isAlbumArtistsListLengthEqualsOne }) => {
+export const useMainArtistData = ({ artistsList, albumId }) => {
+
+    const mainArtistId = artistsList?.[0].id;
+    const isMainArtistIdExists = !!mainArtistId
+
+    const apiDependencies = [albumId, mainArtistId];
 
     const mainArtistReleasesMemoizedEndpoint = useMemoizeEndpointsList(
         `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}`,
@@ -19,17 +24,13 @@ export const useMainArtistData = ({ mainArtistId, fetchCondition, dependencies, 
         depentendApiData: mainArtistData,
         depentendApiDataStatus: mainArtistDataStatus
     } = useDependentFetchAPI({
-        endpointsList: (
-            isAlbumArtistsListLengthEqualsOne ?
-                memoizedMainArtistEndpointsList :
-                mainArtistReleasesMemoizedEndpoint
-        ),
-        fetchCondition,
-        dependencies,
+        endpointsList: memoizedMainArtistEndpointsList,
+        fetchCondition:isMainArtistIdExists,
+        dependencies: apiDependencies,
     });
 
-    const mainArtistAllReleasesList = mainArtistData?.[0]?.items;
-    const mainArtistImage = mainArtistData?.[1]?.images;
+    const mainArtistAllReleasesList = mainArtistData?.[0].items;
+    const mainArtistDetails = mainArtistData?.[1];
 
-    return { mainArtistImage, mainArtistAllReleasesList, mainArtistDataStatus };
+    return { mainArtistDetails, mainArtistAllReleasesList, mainArtistDataStatus };
 };
