@@ -3,7 +3,7 @@ import { Table } from "../../../../common/components/Table";
 import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
 import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
-import { useMatchFullListDataByType } from "../../../../common/hooks/useMatchFullListDataByType";
+import { getFullListMatchedData } from "../../../../common/functions/getFullListMatchedData";
 import {
     albumsCategory,
     compilationsCategory,
@@ -23,9 +23,8 @@ import { fullListLinkText } from "../../../../common/constants/fullListLinkText 
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-import { prepareReleases } from "../../functions/prepareReleases";
+import { usePrepareReleases } from "../../functions/prepareReleases";
 import { preparePopularReleases } from "../../functions/preparePopularReleases";
-import { useMemo } from "react";
 
 interface TopTrackData {
     topTracksList: any;
@@ -55,7 +54,7 @@ export const MainContent = ({
         singlesList,
         appearsOnList,
         allReleasesWithoutAppearsOn,
-    } = prepareReleases(artistAllReleas);
+    } = usePrepareReleases(artistAllReleas);
 
     const uniquePopularReleases = preparePopularReleases(topTracksAlbumsList, allReleasesWithoutAppearsOn);
 
@@ -64,38 +63,55 @@ export const MainContent = ({
         value: uniquePopularReleases,
     });
 
-    const memoizedFullListsDataOptions = useMemo(() =>
-        [
-            { key: allReleaseParamDiscography, value: sortFromOldestToNewest(uniquePopularReleases) },
-            { key: albumsParamDiscography, value: albumsList },
-            { key: compilationParamDiscography, value: compilationsList },
-            { key: singleParamDiscography, value: singlesList },
-            { key: relatedArtistsParam, value: artistRelatedArtists, title: "Fans also like", isArtistsList: true },
-            { key: artistAppearsOnParam, value: appearsOnList, title: "Appears On", isArtistsList: false },
-        ],
-        [
-            uniquePopularReleases,
-            albumsList,
-            compilationsList,
-            singlesList,
-            artistRelatedArtists,
-            appearsOnList,
-        ]
-    );
+    const discographyData = {
+        title: artistName,
+        isArtistsList: false,
+    };
 
-    const {
-        fullListContent,
-        fullListTitle,
-        isFullListArtistsList
-    } = useMatchFullListDataByType(memoizedFullListsDataOptions, type);
+    const fullListsDataOptions = [
+        {
+            key: allReleaseParamDiscography,
+            value: sortFromOldestToNewest(uniquePopularReleases),
+            ...discographyData,
+        },
+        {
+            key: albumsParamDiscography,
+            value: albumsList,
+            ...discographyData,
+        },
+        {
+            key: compilationParamDiscography,
+            value: compilationsList,
+            ...discographyData,
+        },
+        {
+            key: singleParamDiscography,
+            value: singlesList,
+            ...discographyData,
+        },
+        {
+            key: relatedArtistsParam,
+            value: artistRelatedArtists,
+            title: "Fans also like",
+            isArtistsList: true
+        },
+        {
+            key: artistAppearsOnParam,
+            value: appearsOnList,
+            title: "Appears On",
+            isArtistsList: false
+        },
+    ];
+
+    const { fullListContent, fullListTitle, isFullListArtistsList } = getFullListMatchedData(fullListsDataOptions, type);
 
     const renderFullList = () =>
         renderTilesList([
             {
-                title: fullListTitle || artistName,
+                title: fullListTitle,
                 list: removeDuplicates({ list: fullListContent, key: "name" }),
                 toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
-                isArtistsList: isFullListArtistsList || false,
+                isArtistsList: isFullListArtistsList,
                 isHideRestListPart: false,
                 isRenderSubInfo: true,
             },
