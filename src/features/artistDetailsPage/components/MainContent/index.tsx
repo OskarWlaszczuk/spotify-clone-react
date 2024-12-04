@@ -23,7 +23,7 @@ import { fullListLinkText } from "../../../../common/constants/fullListLinkText 
 import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-import { usePrepareReleases } from "../../functions/prepareReleases";
+import { prepareReleases } from "../../functions/prepareReleases";
 import { preparePopularReleases } from "../../functions/preparePopularReleases";
 
 interface TopTrackData {
@@ -54,7 +54,7 @@ export const MainContent = ({
         singlesList,
         appearsOnList,
         allReleasesWithoutAppearsOn,
-    } = usePrepareReleases(artistAllReleas);
+    } = prepareReleases(artistAllReleas);
 
     const uniquePopularReleases = preparePopularReleases(topTracksAlbumsList, allReleasesWithoutAppearsOn);
 
