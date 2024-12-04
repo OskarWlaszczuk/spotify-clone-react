@@ -22,5 +22,6 @@ export const useFetchAPI = (fetchConfigs, dependencies = []) => {
         return () => {
             fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, accessToken, ...dependencies]);
 };
