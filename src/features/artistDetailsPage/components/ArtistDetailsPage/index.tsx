@@ -18,7 +18,7 @@ export const ArtistDetailsPage = () => {
     const {
         configs: artistDataConfig,
         apiStatus: artistDataStatus,
-        apiData: artistData
+        rawApiData: artistData
     } = useApiResource({
         actions: artistDetailsActions,
         selectors: artistDetailsSelectors,
@@ -28,7 +28,7 @@ export const ArtistDetailsPage = () => {
     const {
         configs: artistAllReleasesConfig,
         apiStatus: artistAllReleasesStatus,
-        apiData: artistAllReleasesList
+        rawApiData: artistAllReleasesList
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,

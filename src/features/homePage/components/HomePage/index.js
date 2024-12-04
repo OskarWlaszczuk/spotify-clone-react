@@ -10,6 +10,7 @@ export const HomePage = () => {
     const { type } = useParams();
 
     const { configs, apiStatuses, apiDataList } = usePopularLists();
+
     const [
         { albums: popularAlbumsList },
         { artists: popularArtistsList },

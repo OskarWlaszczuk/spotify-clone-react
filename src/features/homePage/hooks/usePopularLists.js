@@ -29,7 +29,7 @@ export const usePopularLists = () => {
     const {
         configs: popularArtistsConfig,
         apiStatus: popularArtistsStatus,
-        apiData: rawPopularArtistsList
+        rawApiData: rawPopularArtistsList
     } = useApiResource({
         actions: artistsActions,
         selectors: artistsSelectors,
@@ -39,7 +39,7 @@ export const usePopularLists = () => {
     const {
         configs: popularAlbumsConfig,
         apiStatus: popularAlbumsStatus,
-        apiData: rawPopularAlbumsList
+        rawApiData: rawPopularAlbumsList
     } = useApiResource({
         actions: albumsActions,
         selectors: albumsSelectors,

@@ -36,7 +36,7 @@ export const TrackDetailsPage = () => {
     const {
         configs: trackDataConfigs,
         apiStatus: trackDataStatus,
-        apiData: trackData
+        rawApiData: trackData
     } = useApiResource({
         actions: trackDetailsActions,
         selectors: trackDetailsSelectors,
