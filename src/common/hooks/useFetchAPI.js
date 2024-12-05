@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAccessToken, selectAccessToken } from "../slices/authSlice";
 
-export const useFetchAPI = (fetchConfigs, dependencies = []) => {
+export const useFetchAPI = ({ fetchConfigs, dependencies = [], fetchCondition = true }) => {
     const dispatch = useDispatch();
     const accessToken = useSelector(selectAccessToken);
 
@@ -13,15 +13,15 @@ export const useFetchAPI = (fetchConfigs, dependencies = []) => {
     }, [dispatch, accessToken]);
 
     useEffect(() => {
-        if (accessToken) {
-            fetchConfigs.forEach(({ fetchAction, endpoint }) => {
+        if (!!accessToken && fetchCondition) {
+            fetchConfigs?.forEach(({ fetchAction, endpoint }) => {
                 dispatch(fetchAction({ endpoint, accessToken }));
             });
         }
 
         return () => {
-            fetchConfigs.forEach(({ clearAction }) => dispatch(clearAction()));
+            fetchConfigs?.forEach(({ clearAction }) => dispatch(clearAction()));
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, accessToken, ...dependencies]);
+
+    }, [dispatch, accessToken, ...dependencies, fetchCondition]);
 };
