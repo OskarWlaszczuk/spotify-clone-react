@@ -1,36 +1,39 @@
-import { useMemo } from "react";
+import { artistDetailsActions, artistDetailsSelectors } from "../../artistDetailsPage/slices/artistDetailsSlice";
+import { useApiResource } from "../../../common/hooks/useApiResource";
+import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
-import { useDependentFetchAPI } from "../../../common/hooks/useDependentFetchAPI";
-import { useMemoizeEndpointsList } from "../../../common/hooks/useMemoizeEndpointsList";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../../artistDetailsPage/slices/artistAlbumsSlice";
 
 export const useMainArtistData = ({ artistsList, albumId }) => {
-
     const mainArtistId = artistsList?.[0].id;
-    const isMainArtistIdExists = !!mainArtistId
-
-    const apiDependencies = [albumId, mainArtistId];
-
-    const mainArtistReleasesMemoizedEndpoint = useMemoizeEndpointsList(
-        `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}`,
-        [mainArtistId, getArtistReleasesEndpointResource()]
-    );
-    const mainArtistMemoizedEndpoint = useMemoizeEndpointsList(`artists/${mainArtistId}`, [mainArtistId]);
-
-    const memoizedMainArtistEndpointsList = useMemo(() => (
-        [...mainArtistReleasesMemoizedEndpoint, ...mainArtistMemoizedEndpoint]
-    ), [mainArtistReleasesMemoizedEndpoint, mainArtistMemoizedEndpoint]);
+    const dependencies = [albumId, mainArtistId];
 
     const {
-        depentendApiData: mainArtistData,
-        depentendApiDataStatus: mainArtistDataStatus
-    } = useDependentFetchAPI({
-        endpointsList: memoizedMainArtistEndpointsList,
-        fetchCondition:isMainArtistIdExists,
-        dependencies: apiDependencies,
+        configs: mainArtistDetailsConfig,
+        rawApiData: mainArtistDetails,
+        apiStatus: mainArtistDetailsStatus
+    } = useApiResource({
+        actions: artistDetailsActions,
+        selectors: artistDetailsSelectors,
+        endpoint: `artists/${mainArtistId}`
+    });
+    const {
+        configs: mainArtistReleasesConfig,
+        rawApiData: mainArtistReleases,
+        apiStatus: mainArtistReleasesStatus
+    } = useApiResource({
+        actions: artistAlbumsActions,
+        selectors: artistAlbumsSelectors,
+        endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude: true })}`
     });
 
-    const mainArtistAllReleasesList = mainArtistData?.[0].items;
-    const mainArtistDetails = mainArtistData?.[1];
+    useFetchAPI({
+        fetchConfigs: [mainArtistDetailsConfig, mainArtistReleasesConfig],
+        dependencies,
+        fetchCondition: !!mainArtistId
+    });
 
-    return { mainArtistDetails, mainArtistAllReleasesList, mainArtistDataStatus };
+    const mainArtistDataStatuses = [mainArtistDetailsStatus, mainArtistReleasesStatus];
+
+    return { mainArtistDetails, mainArtistReleases, mainArtistDataStatuses };
 };
