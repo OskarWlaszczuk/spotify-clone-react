@@ -37,9 +37,10 @@ export const AlbumPage = () => {
 
   const {
     mainArtistDetails,
-    mainArtistAllReleasesList,
-    mainArtistDataStatus
+    mainArtistReleases,
+    mainArtistDataStatuses
   } = useMainArtistData({ artistsList: albumArtistsList, albumId });
+
   const [{
     name: mainArtistName,
     images: mainArtistImage,
@@ -48,7 +49,7 @@ export const AlbumPage = () => {
 
   const fetchStatus = useFetchStatus([
     albumDetailsStatus,
-    mainArtistDataStatus,
+    ...mainArtistDataStatuses,
   ]);
 
   const metaDataContent = renderMetaDataContent({
@@ -81,7 +82,7 @@ export const AlbumPage = () => {
             renderTilesList([
               {
                 title: `More by ${mainArtistName}`,
-                list: mainArtistAllReleasesList,
+                list: mainArtistReleases?.items,
                 toPageFunction: toAlbum,
                 fullListData: {
                   pathname: toArtist({
