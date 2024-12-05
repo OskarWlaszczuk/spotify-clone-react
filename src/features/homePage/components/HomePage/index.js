@@ -17,7 +17,8 @@ export const HomePage = () => {
     ] = getSpecificKeys(apiDataList, ["albums", "artists"]);
 
     const fetchStatus = useFetchStatus([...apiStatuses]);
-    useFetchAPI([...configs]);
+
+    useFetchAPI({ fetchConfigs: [...configs] });
 
     return (
         <Main
