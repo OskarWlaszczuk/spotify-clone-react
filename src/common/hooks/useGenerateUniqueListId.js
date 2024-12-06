@@ -1,14 +1,39 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 
-export const useGenerateUniqueListId  = (list) => {
-    const randomValue = useMemo(() => Math.random(), []);
+// export const useGenerateUniqueListId = () => {
+//     const randomValue = useMemo(() => Math.random(), []);
 
-    const updatedList = useMemo(() => {
-        return list?.map((item) => ({
-            ...item,
-            listId: randomValue,
-        }));
-    }, [list, randomValue]);
+//     const updateList = (list) => {
+//         return list?.map((item) => (
+//             { ...item, listId: randomValue }
+//         ));
+//     }
 
-    return updatedList;
-};
+//     // const updatedList = useMemo(() => {
+//     //     return list?.map((item) => ({
+//     //         ...item,
+//     //         listId: randomValue,
+//     //     }));
+//     // }, [list, randomValue]);
+
+//     return updateList;
+// };
+
+// // export const useGenerateUniqueListId2 = (list) => {
+// //     const randomValue = useMemo(() => Math.random(), []);
+
+// //     // const updateList = (list) => {
+// //     //     return list?.map((item) => (
+// //     //         { ...item, listId: randomValue }
+// //     //     ));
+// //     // }
+
+// //     const updatedList = useMemo(() => {
+// //         return list?.map((item) => ({
+// //             ...item,
+// //             listId: randomValue,
+// //         }));
+// //     }, [list, randomValue]);
+
+// //     return updatedList;
+// // };
