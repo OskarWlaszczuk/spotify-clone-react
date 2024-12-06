@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { selectAccessToken } from "../../../common/slices/authSlice";
 import { error, initial, loading, success } from "../../../common/constants/fetchStatuses";
 import { fetchFromAPI } from "../../../common/functions/fetchFromAPI";
+import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
 
-export const useArtistsAlbumsList = ({ artistsIdsList, artistsDataList, trackId }) => {
+export const useArtistsAlbumsList = ({ artistsIdsList, artistsDetailsList, trackId }) => {
     const accessToken = useSelector(selectAccessToken);
 
     const [artistsAllReleasesDataList, setArtistsAlbumsDataList] = useState(undefined);
@@ -17,7 +18,7 @@ export const useArtistsAlbumsList = ({ artistsIdsList, artistsDataList, trackId 
                     setArtistsAlbumsDataListStatus(loading);
                     const responses = await Promise.all(artistsIdsList.map(id => {
                         return fetchFromAPI({
-                            endpoint: `artists/${id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`,
+                            endpoint: `artists/${id}/${getArtistReleasesEndpointResource()}`,
                             accessToken
                         })
                     }));
@@ -26,8 +27,9 @@ export const useArtistsAlbumsList = ({ artistsIdsList, artistsDataList, trackId 
                     setArtistsAlbumsDataList(
                         artistsIdsList.map((artistId, index) => ({
                             id: artistId,
-                            name: artistsDataList.find(({ id }) => id === artistId)?.name || '',
-                            list: responses[index]?.items || []
+                            name: artistsDetailsList.find(({ id }) => id === artistId)?.name || '',
+                            list: responses[index]?.items || [],
+                            listId: Math.random()
                         }))
                     );
                 } catch {
@@ -36,7 +38,7 @@ export const useArtistsAlbumsList = ({ artistsIdsList, artistsDataList, trackId 
             }
         };
         fetchArtistsAlbumsList();
-    }, [trackId, accessToken, artistsDataList]);
+    }, [trackId, accessToken, artistsDetailsList]);
 
     return { artistsAllReleasesDataList, artistsAllReleasesDataListStatus };
 };
