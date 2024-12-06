@@ -91,6 +91,7 @@ export const AlbumPage = () => {
                   }),
                   text: "Show discography"
                 },
+                listId:0,
               }
             ])
           }
