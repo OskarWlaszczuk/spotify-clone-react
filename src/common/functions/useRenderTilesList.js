@@ -13,8 +13,8 @@ const renderTileSubInfo = ({
 
 export const useRenderTilesList = () => {
     const { setActiveTile, isTileActive } = useActiveTile();
-
     const renderTilesList = (tilesListDataList) => {
+
         return (
             <>
                 {
@@ -24,12 +24,14 @@ export const useRenderTilesList = () => {
                         list,
                         toPageFunction,
                         fullListData,
+                        listId,
                         isHideRestListPart = true,
                         isArtistsList = false,
                         isRenderSubInfo = false,
                     }) => {
                         const pathname = fullListData?.pathname;
                         const text = fullListData?.text;
+
 
                         return (
                             < TilesList
@@ -43,7 +45,6 @@ export const useRenderTilesList = () => {
                                     album_type = "",
                                     type = "",
                                     release_date,
-                                    listId,
                                 }, index) => (
                                     <Tile
                                         isActive={isTileActive(index, listId)}
