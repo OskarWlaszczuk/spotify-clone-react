@@ -4,14 +4,11 @@ import { getFullListMatchedData } from "../../../../common/functions/getFullList
 import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { popularAlbumsParam, popularArtistsParam } from "../../../../common/constants/params";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-import { useGenerateUniqueListId } from "../../../../common/hooks/useGenerateUniqueListId";
 
 export const MainContent = ({ popularArtists, popularAlbums }) => {
     const { type = "" } = useParams();
 
     const renderTilesList = useRenderTilesList();
-    const updatedPopularArtists = useGenerateUniqueListId(popularArtists);
-    const updatedPopularAlbums = useGenerateUniqueListId(popularAlbums);
 
     const popularAlbumsTitle = "Popular albums";
     const popularArtistsTitle = "Popular artists";
@@ -26,45 +23,43 @@ export const MainContent = ({ popularArtists, popularAlbums }) => {
     return (
         <>
             {
-                <>
-                    {
-                        renderTilesList(
-                            type ?
-                                [
-                                    {
-                                        title: fullListTitle || undefined,
-                                        list: fullListContent || undefined,
-                                        toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
-                                        isArtistsList: isFullListArtistsList,
-                                        isHideRestListPart: false,
-                                    },
-                                ] :
-                                [
-                                    {
-                                        title: popularAlbumsTitle,
-                                        list: updatedPopularAlbums,
-                                        toPageFunction: toAlbum,
-                                        fullListData: {
-                                            pathname: toHome({ additionalPath: popularAlbumsParam }),
-                                            text: fullListLinkText,
-                                        },
-                                        // listId: random1,
-                                    },
-                                    {
-                                        title: popularArtistsTitle,
-                                        list: updatedPopularArtists,
-                                        toPageFunction: toArtist,
-                                        fullListData: {
-                                            pathname: toHome({ additionalPath: popularArtistsParam }),
-                                            text: fullListLinkText
-                                        },
-                                        isArtistsList: true,
-                                        // listId: random2,
-                                    },
-                                ]
-                        )
-                    }
-                </>
+                renderTilesList(
+                    type ?
+                        [
+                            {
+                                title: fullListTitle || undefined,
+                                list: fullListContent || undefined,
+                                toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
+                                isArtistsList: isFullListArtistsList,
+                                isHideRestListPart: false,
+                                listId: 0,
+                            },
+                        ] :
+                        [
+                            {
+                                title: popularAlbumsTitle,
+                                list: popularAlbums,
+                                toPageFunction: toAlbum,
+                                fullListData: {
+                                    pathname: toHome({ additionalPath: popularAlbumsParam }),
+                                    text: fullListLinkText,
+                                },
+                                listId: 1,
+                            },
+                            {
+                                title: popularArtistsTitle,
+                                list: popularArtists,
+                                toPageFunction: toArtist,
+                                fullListData: {
+                                    pathname: toHome({ additionalPath: popularArtistsParam }),
+                                    text: fullListLinkText
+                                },
+                                isArtistsList: true,
+                                listId: 2,
+                            },
+                        ]
+                )
+
             }
         </>
     )
