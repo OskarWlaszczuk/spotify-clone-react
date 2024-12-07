@@ -14,7 +14,6 @@ import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { getYear } from "../../../../common/functions/getYear";
-import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
 import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
 import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { TrackLyricsSection } from "./TrackLyricsSection";
@@ -22,13 +21,9 @@ import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
 import { LyricsAndArtistsSection } from "./styled";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
-import { useMemo } from "react";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../../artistDetailsPage/slices/artistAlbumsSlice";
-import { artistsActions, artistsSelectors } from "../../../homePage/slices/artistsSlice";
-import { artistTopTracksActions, artistTopTracksSelectors } from "../../../artistDetailsPage/slices/artistTopTracksSlice";
-
-//Dodać ponownie rekomnedację i powiązanych artystów, gdy API znów będzie wspierane
+import { useFetchDependentApi } from "../../hooks/useFetchDependentApi";
+import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -42,6 +37,11 @@ export const TrackDetailsPage = () => {
         actions: trackDetailsActions,
         selectors: trackDetailsSelectors,
         endpoint: `tracks/${trackId}`,
+    });
+
+    useFetchAPI({
+        fetchConfigs: [trackDataConfigs],
+        dependencies: [trackId]
     });
 
     const [
@@ -64,55 +64,27 @@ export const TrackDetailsPage = () => {
         },
     ] = getFilteredTrackData(trackData);
 
-    const memoizedArtistsIdsList = trackArtistsList?.map(({ id }) => id);
-    const secondaryArtistsIdsList = useMemo(() => memoizedArtistsIdsList?.slice(1), [memoizedArtistsIdsList]);
+    const artistsIdsList = trackArtistsList?.map(({ id }) => id);
+    const secondaryArtistsIdsList = artistsIdsList?.slice(1);
 
-    const {
-        configs: mainArtistAllReleasesDataConfig,
-        apiStatus: mainArtistAllReleasesDataStatus,
-        rawApiData: mainArtistAllReleasesData
-    } = useApiResource({
-        actions: artistAlbumsActions,
-        selectors: artistAlbumsSelectors,
-        endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}`,
-    });
-    const {
-        configs: artistsDetailsListConfig,
-        apiStatus: artistsDetailsListStatus,
-        rawApiData: artistsDetailsList
-    } = useApiResource({
-        actions: artistsActions,
-        selectors: artistsSelectors,
-        endpoint: `artists?ids=${memoizedArtistsIdsList}`,
-    });
-
-    const {
-        configs: mainArtistTopTracksConfig,
-        apiStatus: mainArtistTopTracksStatus,
-        rawApiData: mainArtistTopTracks
-    } = useApiResource({
-        actions: artistTopTracksActions,
-        selectors: artistTopTracksSelectors,
-        endpoint: `artists/${mainArtistId}/top-tracks`,
-    });
-
-    useFetchAPI({
-        fetchConfigs: [trackDataConfigs],
-        dependencies: [trackId]
-    });
-    useFetchAPI({
-        fetchConfigs: [mainArtistAllReleasesDataConfig, artistsDetailsListConfig, mainArtistTopTracksConfig],
-        dependencies: [mainArtistId],
+    const { dependentStatuses, dependentApiData } = useFetchDependentApi({
+        mainArtistId,
+        artistsIdsList,
         fetchCondition: !!trackData
     });
 
+    const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
+
+    const {
+        artistTopTracksStatus,
+        artistTopTracksAsAlbumsList,
+        artistTopTracksList
+    } = useArtistTopTracks({ artistId: mainArtistId })
+
     const mainArtistGroupedReleasesList = useGroupMainArtistReleases({
         mainArtistAllReleasesData,
-        topTracksList: mainArtistTopTracks,
-        trackId
+        topTracksAsAlbumsList: artistTopTracksAsAlbumsList
     });
-
-    const { lyrics } = useLyrics(mainArtistName, trackName);
 
     const {
         artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
@@ -124,12 +96,13 @@ export const TrackDetailsPage = () => {
     });
 
     const fetchStatus = useFetchStatus([
+        artistTopTracksStatus,
         trackDataStatus,
         secondaryArtistsAllReleasesListStatus,
-        artistsDetailsListStatus,
-        mainArtistAllReleasesDataStatus,
-        mainArtistTopTracksStatus,
+        ...dependentStatuses,
     ]);
+
+    const { lyrics } = useLyrics(mainArtistName, trackName);
 
     const metaDataContent = renderMetaDataContent({
         releaseDate: getYear(albumReleaseDate),
@@ -169,15 +142,8 @@ export const TrackDetailsPage = () => {
                             <TrackArtistsCardsSection artistsDataList={artistsDetailsList?.artists} />
                         </LyricsAndArtistsSection>
 
-                        {/* <Table
-                            list={recommendationsList}
-                            caption="Recommended"
-                            subCaption="Based on this song"
-                            hideIndex
-                        /> */}
-
                         <Table
-                            list={mainArtistTopTracks?.tracks}
+                            list={artistTopTracksList}
                             caption={mainArtistName}
                         />
 
@@ -212,23 +178,9 @@ export const TrackDetailsPage = () => {
                                 }])
                             ))
                         }
-                        {/* {
-                            renderTilesList([
-                                {
-                                    title: "Fans also like",
-                                    list: relatedArtistsList,
-                                    toPageFunction: toArtist,
-                                    fullListData: {
-                                        pathname: toArtist({ id: mainArtistId, additionalPath: relatedArtistsParam }),
-                                        text: fullListLinkText
-                                    },
-                                    isArtistsList: true,
-                                },
-                            ])
-                        } */}
                     </>
                 }
             />
         </>
-    )
+    );
 };
