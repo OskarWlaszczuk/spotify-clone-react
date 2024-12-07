@@ -5,7 +5,7 @@ export const convertToMinutesAndSeconds = (time: number): string => {
     if (seconds >= 60) {
         const extraMinutes = Math.floor(seconds / 60);
         seconds = seconds % 60;
-        return `${minutes + extraMinutes} min ${seconds} sec`;
+        return `${minutes + extraMinutes} min ${seconds > 0 && seconds} sec`;
     }
 
     return `${minutes} min ${seconds} sec`;
