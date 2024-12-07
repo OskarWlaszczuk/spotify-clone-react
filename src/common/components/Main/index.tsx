@@ -5,14 +5,14 @@ import { FetchStatus } from "../../types/FetchStatus";
 
 interface MainProps {
     content: ReactElement;
-    fetchStatus: FetchStatus;
+    currentFetchStatus: FetchStatus;
     useGradient?: boolean;
     bannerContent?: ReactElement | false;
 };
 
-export const Main = ({ content, bannerContent, fetchStatus, useGradient }: MainProps) => {
+export const Main = ({ content, bannerContent, currentFetchStatus, useGradient }: MainProps) => {
 
-    switch (fetchStatus) {
+    switch (currentFetchStatus) {
         case success:
             return (
                 <MainSection>

@@ -117,7 +117,7 @@ export const TrackDetailsPage = () => {
     return (
         <>
             <Main
-                fetchStatus={fetchStatus}
+                currentFetchStatus={fetchStatus}
                 bannerContent={
                     <Banner
                         picture={getImage(albumImages)}

@@ -22,7 +22,7 @@ export const HomePage = () => {
     return (
         <Main
             useGradient={!type}
-            fetchStatus={fetchStatus}
+            currentFetchStatus={fetchStatus}
             content={
                 <MainContent
                     popularArtists={popularArtistsList}

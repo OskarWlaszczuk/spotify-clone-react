@@ -51,7 +51,7 @@ export const AlbumPage = () => {
     duration: calculateTotalDuration(tracksList),
     uniqueData: `${albumTotalTracks} songs`
   });
-  
+
   const subTitleContent = renderSubTitleContent({
     artistsList: albumArtistsList,
     artistImage: getImage(mainArtistImage),
@@ -59,7 +59,7 @@ export const AlbumPage = () => {
 
   return (
     <Main
-      fetchStatus={fetchStatus}
+      currentFetchStatus={fetchStatus}
       bannerContent={
         <Banner
           picture={getImage(albumImages)}
