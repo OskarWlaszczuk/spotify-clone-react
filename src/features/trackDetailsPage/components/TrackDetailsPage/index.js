@@ -5,29 +5,21 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
-import { toAlbum, toArtist } from "../../../../common/functions/routes";
 import { useLyrics } from "../../hooks/useLyrics";
-import { Table } from "../../../../common/components/Table";
-import { allReleaseParamDiscography } from "../../../../common/constants/params";
-import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
 import { getImage } from "../../../../common/functions/getImage";
 import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { getYear } from "../../../../common/functions/getYear";
 import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
-import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-import { TrackLyricsSection } from "./TrackLyricsSection";
-import { TrackArtistsCardsSection } from "./TrackArtistsCardsSection";
-import { LyricsAndArtistsSection } from "./styled";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
 import { useDependentApiFetch } from "../../hooks/useDependentApiFetch";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
+import { MainContent } from "./MainContent";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
-    const renderTilesList = useRenderTilesList();
 
     const {
         configs: trackDataConfigs,
@@ -136,49 +128,17 @@ export const TrackDetailsPage = () => {
                     />
                 }
                 content={
-                    <>
-                        <LyricsAndArtistsSection>
-                            {lyrics && <TrackLyricsSection lyrics={lyrics} />}
-                            <TrackArtistsCardsSection artistsDataList={artistsDetailsList?.artists} />
-                        </LyricsAndArtistsSection>
-
-                        <Table
-                            list={artistTopTracksList}
-                            caption={mainArtistName}
-                        />
-
-                        {
-                            mainArtistGroupedReleasesList?.map(({ type, list, additionalPath, listId }) => {
-                                return renderTilesList([{
-                                    title: `Popular ${type} by ${mainArtistName}`,
-                                    list: list,
-                                    toPageFunction: toAlbum,
-                                    fullListData: {
-                                        pathname: toArtist({
-                                            id: mainArtistId,
-                                            additionalPath,
-                                        }),
-                                        text: fullListLinkText,
-                                    },
-                                    listId
-                                }])
-                            })
-                        }
-                        {
-                            secondaryArtistsAllReleasesList?.map(({ list, name, id, listId }) => (
-                                renderTilesList([{
-                                    title: name,
-                                    list,
-                                    toPageFunction: toAlbum,
-                                    fullListData: {
-                                        pathname: toArtist({ id, additionalPath: allReleaseParamDiscography }),
-                                        text: fullListLinkText
-                                    },
-                                    listId
-                                }])
-                            ))
-                        }
-                    </>
+                    <MainContent
+                        mainArtistData={{
+                            id: mainArtistId,
+                            name: mainArtistName,
+                            topTracksList: artistTopTracksList,
+                            groupedReleasesList: mainArtistGroupedReleasesList,
+                        }}
+                        lyrics={lyrics}
+                        artistsDetailsList={artistsDetailsList?.artists}
+                        secondaryArtistsAllReleasesList={secondaryArtistsAllReleasesList}
+                    />
                 }
             />
         </>
