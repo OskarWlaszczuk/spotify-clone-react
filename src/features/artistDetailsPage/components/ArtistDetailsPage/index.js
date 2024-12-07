@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
-import { MainContent } from "../MainContent";
+import { MainContent } from "./MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
@@ -70,7 +70,6 @@ export const ArtistDetailsPage = () => {
                         topTracksList: artistTopTracksList,
                         topTracksAlbumsList: artistTopTracksAsAlbumsList,
                     }}
-                    artistRelatedArtists={[]}
                 />
             }
         />
