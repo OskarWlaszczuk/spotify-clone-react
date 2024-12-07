@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom"
-import { toHome, toArtist, toAlbum } from "../../../../common/functions/routes";
-import { getFullListMatchedData } from "../../../../common/functions/getFullListMatchedData";
-import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
-import { popularAlbumsParam, popularArtistsParam } from "../../../../common/constants/params";
-import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
+import { toHome, toArtist, toAlbum } from "../../../../../common/functions/routes";
+import { getFullListMatchedData } from "../../../../../common/functions/getFullListMatchedData";
+import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
+import { popularAlbumsParam, popularArtistsParam } from "../../../../../common/constants/params";
+import { useRenderTilesList } from "../../../../../common/functions/useRenderTilesList";
 
 export const MainContent = ({ popularArtists, popularAlbums }) => {
     const { type = "" } = useParams();
