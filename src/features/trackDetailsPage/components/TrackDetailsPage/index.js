@@ -22,7 +22,7 @@ import { LyricsAndArtistsSection } from "./styled";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
-import { useDependentApiFetch } from "../../hooks/useFetchDependentApi";
+import { useDependentApiFetch } from "../../hooks/useDependentApiFetch";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 
 export const TrackDetailsPage = () => {
