@@ -64,6 +64,14 @@ export const ArtistDetailsPage = () => {
             }
             content={
                 <MainContent
+                    artistsData={{
+                        name: name,
+                        allReleasesList: artistAllReleasesList?.items,
+                        topTracksData: {
+                            list: artistTopTracksList,
+                            listAsAlbums: artistTopTracksAsAlbumsList,
+                        }
+                    }}
                     artistName={name}
                     artistAllReleas={artistAllReleasesList?.items}
                     artistTopTrackData={{

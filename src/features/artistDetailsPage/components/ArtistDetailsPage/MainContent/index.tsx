@@ -12,7 +12,6 @@ import {
 } from "../../../constants/categories";
 import {
     allReleaseParamDiscography,
-    relatedArtistsParam,
     albumsParamDiscography,
     singleParamDiscography,
     artistAppearsOnParam,
@@ -26,21 +25,30 @@ import { useRenderTilesList } from "../../../../../common/functions/useRenderTil
 import { prepareReleases } from "../../../functions/prepareReleases";
 import { preparePopularReleases } from "../../../functions/preparePopularReleases";
 
-interface TopTrackData {
-    topTracksList: any;
-    topTracksAlbumsList: any;
+interface TopTracksData {
+    list: any;
+    listAsAlbums: any;
+};
+
+interface ArtistsData {
+    name: string;
+    allReleasesList: any,
+    topTracksData: TopTracksData
 };
 
 interface MainContentProps {
-    artistName: string;
-    artistAllReleas: any;
-    artistTopTrackData: TopTrackData;
+    artistsData: ArtistsData;
 };
 
 export const MainContent = ({
-    artistName,
-    artistTopTrackData: { topTracksList, topTracksAlbumsList },
-    artistAllReleas,
+    artistsData: {
+        name,
+        allReleasesList,
+        topTracksData: {
+            list,
+            listAsAlbums
+        }
+    }
 }: MainContentProps) => {
 
     const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
@@ -52,9 +60,9 @@ export const MainContent = ({
         singlesList,
         appearsOnList,
         allReleasesWithoutAppearsOn,
-    } = prepareReleases(artistAllReleas);
+    } = prepareReleases(allReleasesList);
 
-    const uniquePopularReleases = preparePopularReleases(topTracksAlbumsList, allReleasesWithoutAppearsOn);
+    const uniquePopularReleases = preparePopularReleases(listAsAlbums, allReleasesWithoutAppearsOn);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
         key: popularReleasesCategory,
@@ -62,7 +70,7 @@ export const MainContent = ({
     });
 
     const discographyData = {
-        title: artistName,
+        title: name,
         isArtistsList: false,
     };
 
@@ -167,7 +175,7 @@ export const MainContent = ({
                 renderFullList() :
                 (
                     <>
-                        <Table list={topTracksList} caption="Popular" />
+                        <Table list={list} caption="Popular" />
                         {renderTilesListSections()}
                     </>
                 )
