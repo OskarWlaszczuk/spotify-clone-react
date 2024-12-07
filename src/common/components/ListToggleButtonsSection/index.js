@@ -1,5 +1,5 @@
 import { isMatch } from "../../functions/isMatch"
-import { ListToggleButton } from "../ListToggleButton"
+import { ListToggleButton } from "./ListToggleButton"
 
 export const ListToggleButtonsSection = ({ listToggleButtonDataList, setCurrentCategoryData, targetCategory }) => {
     return (

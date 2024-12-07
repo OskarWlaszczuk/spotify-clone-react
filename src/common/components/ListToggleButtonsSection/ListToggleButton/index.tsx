@@ -1,4 +1,4 @@
-import { isNotEmpty } from "../../functions/isNotEmpty";
+import { isNotEmpty } from "../../../functions/isNotEmpty";
 import { Button } from "./styled";
 
 interface ListToggleButtonProps {
