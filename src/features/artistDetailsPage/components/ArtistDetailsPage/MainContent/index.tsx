@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
-import { Table } from "../../../../common/components/Table";
-import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { useCurrentCategoryData } from "../../hooks/useCurrentCategoryData";
-import { findMatchingValueByKey } from "../../../../common/functions/findMatchingValueByKey";
-import { getFullListMatchedData } from "../../../../common/functions/getFullListMatchedData";
+import { Table } from "../../../../../common/components/Table";
+import { toAlbum, toArtist } from "../../../../../common/functions/routes";
+import { useCurrentCategoryData } from "../../../hooks/useCurrentCategoryData";
+import { findMatchingValueByKey } from "../../../../../common/functions/findMatchingValueByKey";
+import { getFullListMatchedData } from "../../../../../common/functions/getFullListMatchedData";
 import {
     albumsCategory,
     compilationsCategory,
     popularReleasesCategory,
     singlesCategory
-} from "../../constants/categories";
+} from "../../../constants/categories";
 import {
     allReleaseParamDiscography,
     relatedArtistsParam,
@@ -17,14 +17,14 @@ import {
     singleParamDiscography,
     artistAppearsOnParam,
     compilationParamDiscography
-} from "../../../../common/constants/params";
-import { sortFromOldestToNewest } from "../../../../common/functions/sortFromOldestToNewest";
-import { fullListLinkText } from "../../../../common/constants/fullListLinkText ";
-import { removeDuplicates } from "../../../../common/functions/removeDuplicates";
-import { ListToggleButtonsSection } from "../../../../common/components/ListToggleButtonsSection";
-import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
-import { prepareReleases } from "../../functions/prepareReleases";
-import { preparePopularReleases } from "../../functions/preparePopularReleases";
+} from "../../../../../common/constants/params";
+import { sortFromOldestToNewest } from "../../../../../common/functions/sortFromOldestToNewest";
+import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
+import { removeDuplicates } from "../../../../../common/functions/removeDuplicates";
+import { ListToggleButtonsSection } from "../../../../../common/components/ListToggleButtonsSection";
+import { useRenderTilesList } from "../../../../../common/functions/useRenderTilesList";
+import { prepareReleases } from "../../../functions/prepareReleases";
+import { preparePopularReleases } from "../../../functions/preparePopularReleases";
 
 interface TopTrackData {
     topTracksList: any;
@@ -34,7 +34,6 @@ interface TopTrackData {
 interface MainContentProps {
     artistName: string;
     artistAllReleas: any;
-    artistRelatedArtists: any;
     artistTopTrackData: TopTrackData;
 };
 
@@ -42,7 +41,6 @@ export const MainContent = ({
     artistName,
     artistTopTrackData: { topTracksList, topTracksAlbumsList },
     artistAllReleas,
-    artistRelatedArtists,
 }: MainContentProps) => {
 
     const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
@@ -90,12 +88,6 @@ export const MainContent = ({
             ...discographyData,
         },
         {
-            key: relatedArtistsParam,
-            value: artistRelatedArtists,
-            title: "Fans also like",
-            isArtistsList: true
-        },
-        {
             key: artistAppearsOnParam,
             value: appearsOnList,
             title: "Appears On",
@@ -118,7 +110,7 @@ export const MainContent = ({
         ]
         );
 
-    const prepareTilesListSections = () => {
+    const renderTilesListSections = () => {
         const generateFullListData = (additionalPath: any) => ({
             pathname: toArtist({ id: artistId!, additionalPath }),
             text: fullListLinkText,
@@ -159,13 +151,6 @@ export const MainContent = ({
                         text: fullListLinkText,
                     },
                 },
-                // {
-                //     title: "Fans also like",
-                //     list: artistRelatedArtists,
-                //     toPageFunction: toArtist,
-                //     fullListData: generateFullListData(relatedArtistsParam),
-                //     isArtistsList: true,
-                // },
                 {
                     title: "Appears on",
                     list: appearsOnList,
@@ -178,12 +163,15 @@ export const MainContent = ({
 
     return (
         <>
-            {type ? renderFullList() : (
-                <>
-                    <Table list={topTracksList} caption="Popular" />
-                    {prepareTilesListSections()}
-                </>
-            )}
+            {type ?
+                renderFullList() :
+                (
+                    <>
+                        <Table list={topTracksList} caption="Popular" />
+                        {renderTilesListSections()}
+                    </>
+                )
+            }
         </>
     );
 };
