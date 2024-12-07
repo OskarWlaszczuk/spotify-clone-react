@@ -9,7 +9,7 @@ export const NavigationPanel = () => {
     return (
         <NavPanel>
             <IconBox
-                toPage={toHome()}
+                toPagePath={toHome()}
                 Icon={StyledHomeIcon}
             />
             <Input />
