@@ -1,6 +1,6 @@
 import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
-import { MainContent } from "../MainContent";
+import { MainContent } from "./MainContent";
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
 import { useParams } from "react-router-dom";
 import { usePopularLists } from "../../hooks/usePopularLists";
