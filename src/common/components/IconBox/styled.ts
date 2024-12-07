@@ -3,13 +3,24 @@ import styled, { css } from "styled-components";
 
 interface ContentWrapperProps {
     $withoutText: boolean;
-}
+};
 
-export const Container = styled(Link)`
+const sharedBoxStyles = css`
     display: flex;
     justify-content: space-between;
     cursor: pointer;
+    color: ${({ theme }) => theme.colors.nobel};
 `;
+
+export const Box = styled.div`
+   ${sharedBoxStyles}
+`;
+
+export const BoxAsLink = styled(Link)`
+    ${sharedBoxStyles}
+    text-decoration: none;
+`;
+
 
 export const ContentWrapper = styled.div<ContentWrapperProps>`
     display: flex;
@@ -25,10 +36,11 @@ export const ContentWrapper = styled.div<ContentWrapperProps>`
 `;
 
 export const Content = styled.p`
-    color: ${({ theme }) => theme.colors.nobel};
     font-size: 13px;
     font-weight: bold;
     margin: 0;
 `;
 
-export const ExtraContent = styled.div``
+export const ExtraContent = styled.div`
+    align-self: center;
+`;
