@@ -2,23 +2,17 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { useParams } from "react-router-dom";
 import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
-import { toAlbum, toArtist } from "../../../../common/functions/routes";
-import { Table } from "../../../../common/components/Table";
-import { allReleaseParamDiscography } from "../../../../common/constants/params";
-import { Copyrights } from "../../../../common/components/Copyrights";
 import { getImage } from "../../../../common/functions/getImage";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
-import { getUniqueDiscNumbers } from "../../functions/getUniqueDiscNumbers";
-import { useRenderTilesList } from "../../../../common/functions/useRenderTilesList";
 import { useMainArtistData } from "../../hooks/useMainArtistData";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
 import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
+import { MainContent } from "./MainContent";
 
 export const AlbumPage = () => {
   const { id: albumId } = useParams();
-  const renderTilesList = useRenderTilesList();
 
   const { filteredAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumId);
 
@@ -57,6 +51,7 @@ export const AlbumPage = () => {
     duration: calculateTotalDuration(tracksList),
     uniqueData: `${albumTotalTracks} songs`
   });
+  
   const subTitleContent = renderSubTitleContent({
     artistsList: albumArtistsList,
     artistImage: getImage(mainArtistImage),
@@ -76,25 +71,18 @@ export const AlbumPage = () => {
       }
       content={
         <>
-          <Table list={tracksList} useAlbumView discsNumbers={getUniqueDiscNumbers(tracksList)} />
-          <Copyrights date={albumReleaseDate} copyrights={albumCopyrights} />
-          {
-            renderTilesList([
-              {
-                title: `More by ${mainArtistName}`,
-                list: mainArtistReleases?.items,
-                toPageFunction: toAlbum,
-                fullListData: {
-                  pathname: toArtist({
-                    id: mainArtistId,
-                    additionalPath: allReleaseParamDiscography
-                  }),
-                  text: "Show discography"
-                },
-                listId:0,
-              }
-            ])
-          }
+          <MainContent
+            mainArtistData={{
+              id: mainArtistId,
+              name: mainArtistName,
+              releases: mainArtistReleases?.items,
+            }}
+            albumData={{
+              releaseDate: albumReleaseDate,
+              copyrights: albumCopyrights,
+            }}
+            tracksList={tracksList}
+          />
         </>
       }
     />
