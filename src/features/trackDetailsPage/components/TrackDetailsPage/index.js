@@ -7,9 +7,6 @@ import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { useLyrics } from "../../hooks/useLyrics";
 import { getImage } from "../../../../common/functions/getImage";
-import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
-import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
-import { getYear } from "../../../../common/functions/getYear";
 import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
@@ -17,6 +14,7 @@ import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
 import { useDependentApiFetch } from "../../hooks/useDependentApiFetch";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { MainContent } from "./MainContent";
+import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -96,22 +94,23 @@ export const TrackDetailsPage = () => {
 
     const { lyrics } = useLyrics(mainArtistName, trackName);
 
-    const metaDataContent = renderMetaDataContent({
-        releaseDate: getYear(albumReleaseDate),
-        duration: fromMillisecondsToMinutes(trackDurationInMs).replace(".", ":"),
-        uniqueData: `${trackPopularityScale} / 100`,
-    });
-
-    const subTitleContent = renderSubTitleContent({
-        albumDetails: {
-            id: albumId,
-            name: albumName,
+    const { metaDataContent, subTitleContent } = renderBannerContent({
+        metaData: {
+            releaseDate: albumReleaseDate,
+            duration: fromMillisecondsToMinutes(trackDurationInMs).replace(".", ":"),
+            uniqueData: `${trackPopularityScale} / 100`,
         },
-        mainArtistDetails: {
-            id: mainArtistId,
-            name: mainArtistName,
+        subTitleData: {
+            albumDetails: {
+                id: albumId,
+                name: albumName,
+            },
+            mainArtistDetails: {
+                id: mainArtistId,
+                name: mainArtistName,
+            },
+            artistImage: artistsDetailsList?.artists[0].images
         },
-        artistImage: getImage(artistsDetailsList?.artists[0].images),
     });
 
     return (

@@ -6,10 +6,9 @@ import { getImage } from "../../../../common/functions/getImage";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { useMainArtistData } from "../../hooks/useMainArtistData";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
-import { renderSubTitleContent } from "../../../../common/functions/renderSubTitleContent";
-import { renderMetaDataContent } from "../../../../common/functions/renderMetaDataContent";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { MainContent } from "./MainContent";
+import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
 
 export const AlbumPage = () => {
   const { id: albumId } = useParams();
@@ -46,15 +45,16 @@ export const AlbumPage = () => {
     ...mainArtistDataStatuses,
   ]);
 
-  const metaDataContent = renderMetaDataContent({
-    releaseDate: albumReleaseDate,
-    duration: calculateTotalDuration(tracksList),
-    uniqueData: `${albumTotalTracks} songs`
-  });
-
-  const subTitleContent = renderSubTitleContent({
-    artistsList: albumArtistsList,
-    artistImage: getImage(mainArtistImage),
+  const { metaDataContent, subTitleContent } = renderBannerContent({
+    metaData: {
+      releaseDate: albumReleaseDate,
+      duration: calculateTotalDuration(tracksList),
+      uniqueData: `${albumTotalTracks} songs`,
+    },
+    subTitleData: {
+      artistImage: mainArtistImage,
+      artistsList: albumArtistsList,
+    },
   });
 
   return (
