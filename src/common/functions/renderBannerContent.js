@@ -1,6 +1,45 @@
+import { ArtistNameLink } from "../../features/albumPage/components/AlbumPage/styled";
 import { getImage } from "./getImage";
-import { renderMetaDataContent } from "./renderMetaDataContent";
-import { renderSubTitleContent } from "./renderSubTitleContent";
+import { getYear } from "./getYear";
+import { renderArtistAvatarImage } from "./renderArtistAvatarImage";
+import { toAlbum, toArtist } from "./routes";
+
+const renderMetaDataContent = ({ releaseDate, duration, uniqueData }) => [
+    getYear(releaseDate), duration, uniqueData
+].join(" • ");
+
+const renderSubTitleContent = ({
+    artistsList,
+    artistImage,
+    mainArtistDetails,
+    albumDetails
+}) => {
+    if (!!artistsList && artistsList.length > 0) {
+        return artistsList.map(({ name, id }, index) => (
+            <>
+                {renderArtistAvatarImage({
+                    name,
+                    image: artistImage,
+                    conditionToRender: artistsList?.length === 1,
+                })}
+                {" "}{index !== 0 && "• "}
+                <ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
+            </>
+        ));
+    } else if (!!mainArtistDetails && !!albumDetails) {
+        return (
+            <>
+                {renderArtistAvatarImage({
+                    image: artistImage,
+                    name: mainArtistDetails.name
+                })}
+                {" "}
+                <ArtistNameLink to={toArtist({ id: mainArtistDetails.id })}>{mainArtistDetails.name}</ArtistNameLink>{" • "}
+                <ArtistNameLink $thinner to={toAlbum({ id: albumDetails.id })}>{albumDetails.name}</ArtistNameLink>
+            </>
+        );
+    };
+};
 
 export const renderBannerContent = ({
     metaData: {
@@ -15,7 +54,7 @@ export const renderBannerContent = ({
         artistsList = [],
     },
 }) => {
-    
+
     const metaDataContent = renderMetaDataContent({
         uniqueData,
         releaseDate,
