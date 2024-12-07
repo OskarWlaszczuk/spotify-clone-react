@@ -1,4 +1,4 @@
-import { Copyrights } from "../../../../../common/components/Copyrights"
+import { Copyrights } from "./Copyrights"
 import { Table } from "../../../../../common/components/Table"
 import { allReleaseParamDiscography } from "../../../../../common/constants/params";
 import { toAlbum, toArtist } from "../../../../../common/functions/routes";
