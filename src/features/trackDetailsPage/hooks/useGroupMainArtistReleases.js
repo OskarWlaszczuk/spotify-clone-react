@@ -2,10 +2,9 @@ import { albumsParamDiscography, allReleaseParamDiscography, singleParamDiscogra
 import { filterReleasesByGroups } from "../../../common/functions/filterReleasesByGroups";
 import { removeDuplicates } from "../../../common/functions/removeDuplicates";
 
-export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksList, trackId }) => {
+export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksAsAlbumsList }) => {
     const mainArtistAllReleasesList = mainArtistAllReleasesData?.items;
 
-    const topTracksAsAlbumsList = topTracksList?.tracks.map(({ album }) => album);
     const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
     const uniquePopularRelease = removeDuplicates({ list: popularReleases, key: "name" });
 
