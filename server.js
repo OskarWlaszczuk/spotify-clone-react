@@ -13,7 +13,7 @@ app.get('/lyrics', async (req, res) => {
         const lyrics = await lyricsFinder(artist, track);
         res.send({ lyrics });
     } catch (error) {
-        res.status(500).send({ error: 'Nie znaleziono tekstu.' });
+        res.status(500).send({ error: "Lyrics not found" });
     }
 });
 

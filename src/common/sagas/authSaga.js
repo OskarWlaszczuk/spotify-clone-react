@@ -2,6 +2,7 @@ import { call, put, select, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import qs from "qs";
 import { setAccessToken, selectAccessToken, selectTokenExpirationTime } from "../slices/authSlice";
+import { throwError } from "../functions/throwError";
 
 const CLIENT_ID = "1c062a811f654b81932ae5e0a1c88ade";
 const CLIENT_SECRET = "2bca0bbbed0448899810ba0f091334da";
@@ -29,8 +30,7 @@ function* fetchAccessTokenSaga() {
         yield put(setAccessToken({ token: newToken, expirationTime }));
 
     } catch (error) {
-        console.error("Błąd podczas pobierania tokena:", error);
-        return null;
+        throwError("Problem with access token fetching", error);
     }
 };
 

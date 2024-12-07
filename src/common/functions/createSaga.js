@@ -1,4 +1,5 @@
 import { call, put, takeLatest } from "redux-saga/effects";
+import { throwError } from "./throwError";
 
 
 
@@ -12,8 +13,9 @@ export function* createSaga({ getData, actions }) {
             yield put(actions.fetchSuccess({
                 data: response
             }));
-        } catch {
+        } catch (error) {
             yield put(actions.fetchError());
+            throwError("Problem with fetching in createSaga", error);
         }
     };
 

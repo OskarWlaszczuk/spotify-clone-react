@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { throwError } from "../../../common/functions/throwError";
 
 export const useLyrics = (artist, track) => {
     const [lyrics, setLyrics] = useState(undefined);
@@ -12,7 +13,7 @@ export const useLyrics = (artist, track) => {
 
                 setLyrics(data.lyrics);
             } catch (error) {
-                console.error(error, "Błąd przy fetchoaniu napisów");
+                throwError("Problem with lyrics fetching", error);
             }
         };
 
