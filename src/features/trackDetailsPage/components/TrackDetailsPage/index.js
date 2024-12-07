@@ -22,7 +22,7 @@ import { LyricsAndArtistsSection } from "./styled";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
-import { useFetchDependentApi } from "../../hooks/useFetchDependentApi";
+import { useDependentApiFetch } from "../../hooks/useFetchDependentApi";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 
 export const TrackDetailsPage = () => {
@@ -67,7 +67,7 @@ export const TrackDetailsPage = () => {
     const artistsIdsList = trackArtistsList?.map(({ id }) => id);
     const secondaryArtistsIdsList = artistsIdsList?.slice(1);
 
-    const { dependentStatuses, dependentApiData } = useFetchDependentApi({
+    const { dependentStatuses, dependentApiData } = useDependentApiFetch({
         mainArtistId,
         artistsIdsList,
         fetchCondition: !!trackData
