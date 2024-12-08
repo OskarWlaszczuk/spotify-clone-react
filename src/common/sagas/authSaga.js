@@ -30,7 +30,7 @@ function* fetchAccessTokenSaga() {
         yield put(setAccessToken({ token: newToken, expirationTime }));
 
     } catch (error) {
-        throwError("Problem with access token fetching", error);
+        throwError("Problem with fetching access token", error);
     }
 };
 
