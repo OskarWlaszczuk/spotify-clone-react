@@ -19,7 +19,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { setAccessToken, clearAccessToken,fetchAccessToken } = authSlice.actions;
+export const { setAccessToken, clearAccessToken, fetchAccessToken } = authSlice.actions;
 
 export const selectAccessToken = (state) => state.auth.accessToken;
 export const selectTokenExpirationTime = (state) => state.auth.tokenExpirationTime;
