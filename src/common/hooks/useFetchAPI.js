@@ -1,16 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAccessToken, selectAccessToken } from "../slices/authSlice";
+import { selectAccessToken } from "../slices/authSlice";
 
 export const useFetchAPI = ({ fetchConfigs, dependencies = [], fetchCondition = true }) => {
     const dispatch = useDispatch();
     const accessToken = useSelector(selectAccessToken);
-
-    useEffect(() => {
-        if (!accessToken) {
-            dispatch(fetchAccessToken());
-        }
-    }, [dispatch, accessToken]);
 
     useEffect(() => {
         if (!!accessToken && fetchCondition) {
