@@ -26,19 +26,22 @@ export const AlbumPage = () => {
     artists: albumArtistsList,
   }] = filteredAlbumDetails;
 
+  const mainArtistId = albumArtistsList?.[0].id;
   const tracksList = albumTracksData?.items;
 
   const {
     mainArtistDetails,
     mainArtistReleases,
     mainArtistDataStatuses
-  } = useMainArtistData({ artistsList: albumArtistsList, albumId });
+  } = useMainArtistData({
+    mainArtistId,
+    dependencies: [albumId],
+  });
 
   const [{
     name: mainArtistName,
     images: mainArtistImage,
-    id: mainArtistId
-  }] = getSpecificKeys(mainArtistDetails, ["images", "name", "id"]);
+  }] = getSpecificKeys(mainArtistDetails, ["images", "name"]);
 
   const fetchStatus = useFetchStatus([
     albumDetailsStatus,
