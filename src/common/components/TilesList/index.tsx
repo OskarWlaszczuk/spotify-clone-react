@@ -1,6 +1,6 @@
 import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink, ExtraSubContentSection } from "./styled";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
-import { ReactElement, ReactNode } from "react";
+import { ReactElement } from "react";
 import { MediaItem } from "../../interfaces/MediaItem";
 import { isNotEmpty } from "../../functions/isNotEmpty";
 
