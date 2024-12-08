@@ -29,6 +29,7 @@ export const useMainArtistData = ({ artistsList, albumId }) => {
 
     useFetchAPI({
         fetchConfigs: [mainArtistDetailsConfig, mainArtistReleasesConfig],
+        pageId: mainArtistId,
         dependencies,
         fetchCondition: !!mainArtistId
     });

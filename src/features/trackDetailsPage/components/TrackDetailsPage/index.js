@@ -31,7 +31,8 @@ export const TrackDetailsPage = () => {
 
     useFetchAPI({
         fetchConfigs: [trackDataConfigs],
-        dependencies: [trackId]
+        dependencies: [trackId],
+        pageId:trackId,
     });
 
     const [
@@ -60,7 +61,7 @@ export const TrackDetailsPage = () => {
     const { dependentStatuses, dependentApiData } = useDependentApiFetch({
         mainArtistId,
         artistsIdsList,
-        fetchCondition: !!trackData
+        fetchCondition: !!trackData,
     });
 
     const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;

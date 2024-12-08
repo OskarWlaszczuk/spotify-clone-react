@@ -15,7 +15,7 @@ export const useAlbumDetails = (albumId) => {
         ["name", "images", "type", "release_date", "copyrights", "total_tracks", "tracks", "artists"]
     );
 
-    useFetchAPI({ fetchConfigs: [configs], dependencies: [albumId] });
+    useFetchAPI({ fetchConfigs: [configs], pageId: albumId, dependencies: [albumId] });
 
     return { filteredAlbumDetails, albumDetailsStatus };
 };

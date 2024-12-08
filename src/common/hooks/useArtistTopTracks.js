@@ -17,7 +17,8 @@ export const useArtistTopTracks = ({ artistId }) => {
     useFetchAPI({
         fetchConfigs: [artistTopTracksConfig],
         dependencies: [artistId],
-        fetchCondition: !!artistId
+        fetchCondition: !!artistId,
+        pageId: artistId,
     });
 
     const artistTopTracksList = artistTopTracks?.tracks;

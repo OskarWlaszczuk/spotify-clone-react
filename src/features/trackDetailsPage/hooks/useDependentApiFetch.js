@@ -34,6 +34,7 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
         fetchConfigs: dependentConfigs,
         dependencies: [mainArtistId],
         fetchCondition,
+        pageId: mainArtistId,
     });
 
     return { dependentStatuses, dependentApiData };

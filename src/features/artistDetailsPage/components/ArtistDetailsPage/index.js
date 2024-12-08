@@ -43,7 +43,8 @@ export const ArtistDetailsPage = () => {
 
     useFetchAPI({
         fetchConfigs: [artistDataConfig, artistAllReleasesConfig],
-        dependencies: [artistId]
+        dependencies: [artistId],
+        pageId: artistId,
     });
 
     const fetchStatus = useFetchStatus([artistTopTracksStatus, artistDataStatus, artistAllReleasesStatus]);

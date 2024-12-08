@@ -8,6 +8,7 @@ import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 
 export const HomePage = () => {
     const { type } = useParams();
+    const homeId = "home"
 
     const { configs, apiStatuses, apiDataList } = usePopularLists();
 
@@ -17,7 +18,8 @@ export const HomePage = () => {
     ] = getSpecificKeys(apiDataList, ["albums", "artists"]);
 
     const fetchStatus = useFetchStatus([...apiStatuses]);
-    useFetchAPI({ fetchConfigs: [...configs] });
+
+    useFetchAPI({ fetchConfigs: [...configs], pageId: homeId });
 
     return (
         <Main
