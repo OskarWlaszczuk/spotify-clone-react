@@ -3,36 +3,16 @@ import { Main } from "../../../../common/components/Main";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "./MainContent";
 import { Banner } from "../../../../common/components/Banner";
-import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { useApiResource } from "../../../../common/hooks/useApiResource";
-import { artistDetailsActions, artistDetailsSelectors } from "../../slices/artistDetailsSlice";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../slices/artistAlbumsSlice";
-import { getArtistReleasesEndpointResource } from "../../../../common/functions/getArtistReleasesEndpointResource";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { getImage } from "../../../../common/functions/getImage";
+import { useMainArtistData } from "../../../albumPage/hooks/useMainArtistData";
 
 export const ArtistDetailsPage = () => {
     const { type, id: artistId } = useParams();
 
-    const {
-        configs: artistDataConfig,
-        apiStatus: artistDataStatus,
-        rawApiData: artistData
-    } = useApiResource({
-        actions: artistDetailsActions,
-        selectors: artistDetailsSelectors,
-        endpoint: `artists/${artistId}`,
-    });
-
-    const {
-        configs: artistAllReleasesConfig,
-        apiStatus: artistAllReleasesStatus,
-        rawApiData: artistAllReleasesList
-    } = useApiResource({
-        actions: artistAlbumsActions,
-        selectors: artistAlbumsSelectors,
-        endpoint: `artists/${artistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude: true })}`,
+    const { mainArtistDetails, mainArtistReleases, mainArtistDataStatuses } = useMainArtistData({
+        mainArtistId: artistId,
     });
 
     const {
@@ -41,15 +21,10 @@ export const ArtistDetailsPage = () => {
         artistTopTracksList
     } = useArtistTopTracks({ artistId });
 
-    useFetchAPI({
-        fetchConfigs: [artistDataConfig, artistAllReleasesConfig],
-        dependencies: [artistId],
-        pageId: artistId,
-    });
+    const fetchStatus = useFetchStatus([artistTopTracksStatus, ...mainArtistDataStatuses]);
 
-    const fetchStatus = useFetchStatus([artistTopTracksStatus, artistDataStatus, artistAllReleasesStatus]);
-
-    const [{ name, followers, images }] = getSpecificKeys(artistData, ["name", "followers", "images"]);
+    const mainArtistReleasesList = mainArtistReleases?.items;
+    const [{ name, followers, images }] = getSpecificKeys(mainArtistDetails, ["name", "followers", "images"]);
 
     return (
         <Main
@@ -67,14 +42,14 @@ export const ArtistDetailsPage = () => {
                 <MainContent
                     artistsData={{
                         name: name,
-                        allReleasesList: artistAllReleasesList?.items,
+                        allReleasesList: mainArtistReleasesList,
                         topTracksData: {
                             list: artistTopTracksList,
                             listAsAlbums: artistTopTracksAsAlbumsList,
                         }
                     }}
                     artistName={name}
-                    artistAllReleas={artistAllReleasesList?.items}
+                    artistAllReleas={mainArtistReleasesList}
                     artistTopTrackData={{
                         topTracksList: artistTopTracksList,
                         topTracksAlbumsList: artistTopTracksAsAlbumsList,
