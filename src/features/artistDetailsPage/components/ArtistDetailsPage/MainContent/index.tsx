@@ -105,8 +105,8 @@ export const MainContent = ({
 
     const { fullListContent, fullListTitle, isFullListArtistsList } = getFullListMatchedData(fullListsDataOptions, type);
 
-    const renderFullList = () =>
-        renderTilesList([
+    const renderFullList = () => {
+        return renderTilesList([
             {
                 title: fullListTitle,
                 list: removeDuplicates({ list: fullListContent, key: "name" }),
@@ -115,8 +115,8 @@ export const MainContent = ({
                 isHideRestListPart: false,
                 isRenderSubInfo: true,
             },
-        ]
-        );
+        ]);
+    };
 
     const renderTilesListSections = () => {
         const generateFullListData = (additionalPath: any) => ({
@@ -124,18 +124,27 @@ export const MainContent = ({
             text: fullListLinkText,
         });
 
+        const listToggleButtonDataList = [
+            { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
+            { list: albumsList, category: albumsCategory, text: "Albums" },
+            { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
+            { list: compilationsList, category: compilationsCategory, text: "Compilations" },
+        ];
+
+        const additionalPathsOptionsGrouped = [
+            { key: popularReleasesCategory, value: allReleaseParamDiscography },
+            { key: albumsCategory, value: albumsParamDiscography },
+            { key: compilationsCategory, value: compilationParamDiscography },
+            { key: singlesCategory, value: singleParamDiscography },
+        ];
+
         return (
             renderTilesList([
                 {
                     title: "Discography",
                     subExtraContent: (
                         <ListToggleButtonsSection
-                            listToggleButtonDataList={[
-                                { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
-                                { list: albumsList, category: albumsCategory, text: "Albums" },
-                                { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
-                                { list: compilationsList, category: compilationsCategory, text: "Compilations" },
-                            ]}
+                            listToggleButtonDataList={listToggleButtonDataList}
                             setCurrentCategoryData={setCurrentCategoryData}
                             targetCategory={currentCategoryData.category}
                         />
@@ -147,12 +156,7 @@ export const MainContent = ({
                         pathname: toArtist({
                             id: artistId!,
                             additionalPath: findMatchingValueByKey<string>(
-                                [
-                                    { key: popularReleasesCategory, value: allReleaseParamDiscography },
-                                    { key: albumsCategory, value: albumsParamDiscography },
-                                    { key: compilationsCategory, value: compilationParamDiscography },
-                                    { key: singlesCategory, value: singleParamDiscography },
-                                ],
+                                additionalPathsOptionsGrouped,
                                 currentCategoryData.category
                             )?.value,
                         }),
