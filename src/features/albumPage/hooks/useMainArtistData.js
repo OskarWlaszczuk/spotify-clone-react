@@ -3,6 +3,7 @@ import { useApiResource } from "../../../common/hooks/useApiResource";
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../artistDetailsPage/slices/artistAlbumsSlice";
+import { getArtistDetailsEndpoint, getArtistReleasesEndpoint } from "../../../common/functions/endpoints";
 
 export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnReleasesInclude = true }) => {
 
@@ -15,7 +16,7 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
     } = useApiResource({
         actions: artistDetailsActions,
         selectors: artistDetailsSelectors,
-        endpoint: `artists/${mainArtistId}`
+        endpoint: getArtistDetailsEndpoint(mainArtistId)
     });
     const {
         configs: mainArtistReleasesConfig,
@@ -24,13 +25,13 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource({ isAppearOnReleasesInclude })}`
+        endpoint: getArtistReleasesEndpoint({ artistId: mainArtistId, isAppearOnReleasesInclude })
     });
 
     useFetchAPI({
         fetchConfigs: [mainArtistDetailsConfig, mainArtistReleasesConfig],
         pageId: mainArtistId,
-        dependencies:apiDependencies,
+        dependencies: apiDependencies,
         fetchCondition: !!mainArtistId
     });
 

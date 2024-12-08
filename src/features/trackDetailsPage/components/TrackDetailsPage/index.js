@@ -15,6 +15,7 @@ import { useDependentApiFetch } from "../../hooks/useDependentApiFetch";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { MainContent } from "./MainContent";
 import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
+import { getTrackDetailsEndpoint } from "../../../../common/functions/endpoints";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -26,13 +27,13 @@ export const TrackDetailsPage = () => {
     } = useApiResource({
         actions: trackDetailsActions,
         selectors: trackDetailsSelectors,
-        endpoint: `tracks/${trackId}`,
+        endpoint: getTrackDetailsEndpoint(trackId),
     });
 
     useFetchAPI({
         fetchConfigs: [trackDataConfigs],
         dependencies: [trackId],
-        pageId:trackId,
+        pageId: trackId,
     });
 
     const [

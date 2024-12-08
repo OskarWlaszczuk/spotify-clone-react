@@ -1,4 +1,5 @@
 import { artistTopTracksActions, artistTopTracksSelectors } from "../../features/artistDetailsPage/slices/artistTopTracksSlice";
+import { getArtistTopTracksEndpoint } from "../functions/endpoints";
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
 
@@ -11,7 +12,7 @@ export const useArtistTopTracks = ({ artistId }) => {
     } = useApiResource({
         actions: artistTopTracksActions,
         selectors: artistTopTracksSelectors,
-        endpoint: `artists/${artistId}/top-tracks`,
+        endpoint: getArtistTopTracksEndpoint(artistId),
     });
 
     useFetchAPI({

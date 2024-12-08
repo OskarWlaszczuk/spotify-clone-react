@@ -1,4 +1,4 @@
-import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
+import { getArtistReleasesEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../artistDetailsPage/slices/artistAlbumsSlice";
@@ -13,7 +13,7 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: `artists/${mainArtistId}/${getArtistReleasesEndpointResource()}`,
+        endpoint: getArtistReleasesEndpoint({ artistId: mainArtistId }),
     });
 
     const {
@@ -23,7 +23,7 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
     } = useApiResource({
         actions: artistsActions,
         selectors: artistsSelectors,
-        endpoint: `artists?ids=${artistsIdsList}`,
+        endpoint: getSeveralArtistsListEndpoint(artistsIdsList),
     });
 
     const dependentConfigs = [mainArtistAllReleasesDataConfig, artistsDetailsListConfig];

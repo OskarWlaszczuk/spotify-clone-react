@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { selectAccessToken } from "../../../common/slices/authSlice";
 import { error, initial, loading, success } from "../../../common/constants/fetchStatuses";
 import { fetchFromAPI } from "../../../common/functions/fetchFromAPI";
-import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
+import { getArtistReleasesEndpoint } from "../../../common/functions/endpoints";
 
 export const useArtistsAlbumsList = ({ artistsIdsList, artistsDetailsList, trackId }) => {
     const accessToken = useSelector(selectAccessToken);
@@ -18,7 +18,7 @@ export const useArtistsAlbumsList = ({ artistsIdsList, artistsDetailsList, track
                     setArtistsAlbumsDataListStatus(loading);
                     const responses = await Promise.all(artistsIdsList.map(id => {
                         return fetchFromAPI({
-                            endpoint: `artists/${id}/${getArtistReleasesEndpointResource()}`,
+                            endpoint: getArtistReleasesEndpoint({ artistId: id }),
                             accessToken
                         })
                     }));

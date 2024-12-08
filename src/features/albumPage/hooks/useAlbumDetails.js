@@ -2,12 +2,13 @@ import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { albumDetailsActions, albumDetailsSelectors } from "../slices/albumDetailsSlice";
 import { getSpecificKeys } from "../../../common/functions/getSpecificKeys";
 import { useApiResource } from "../../../common/hooks/useApiResource";
+import { getAlbumDetailsEndpoint } from "../../../common/functions/endpoints";
 
 export const useAlbumDetails = (albumId) => {
     const { configs, rawApiData: albumDetails, apiStatus: albumDetailsStatus } = useApiResource({
         actions: albumDetailsActions,
         selectors: albumDetailsSelectors,
-        endpoint: `albums/${albumId}`
+        endpoint: getAlbumDetailsEndpoint(albumId),
     });
 
     const filteredAlbumDetails = getSpecificKeys(
