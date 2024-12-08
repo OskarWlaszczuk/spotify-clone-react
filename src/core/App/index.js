@@ -7,9 +7,12 @@ import { AlbumPage } from "../../features/albumPage/components/AlbumPage";
 import { Library } from "./Library/components";
 import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/ArtistDetailsPage";
 import { TrackDetailsPage } from "../../features/trackDetailsPage/components/TrackDetailsPage";
+import { useAuth } from "./Library/useAuth";
+
 
 export const App = () => {
-
+  useAuth();
+  
   return (
     <HashRouter>
       <NavigationPanel />
