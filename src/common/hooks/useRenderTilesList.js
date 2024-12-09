@@ -3,13 +3,18 @@ import { TilesList } from "../components/TilesList"
 import { useActiveTile } from "./useActiveTile";
 import { getImage } from "../functions/getImage";
 import { getYear } from "../functions/getYear";
+import { newestItemReleaseDate } from "../../features/artistDetailsPage/constants/newestItemReleaseDate";
 
 const renderTileSubInfo = ({
     isArtistsListCondition,
     artistType,
     albumType,
     albumReleaseDate
-}) => isArtistsListCondition ? `${artistType}` : `${albumType} • ${getYear(albumReleaseDate)}`;
+}) => (
+    isArtistsListCondition ?
+        `${artistType}` :
+        `${albumType} • ${albumReleaseDate === newestItemReleaseDate ? albumReleaseDate : getYear(albumReleaseDate)}`
+);
 
 export const useRenderTilesList = () => {
     const { setActiveTile, isTileActive } = useActiveTile();
