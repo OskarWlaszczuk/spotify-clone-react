@@ -11,7 +11,7 @@ interface TilesListProps {
     //generyczny typ do list
     list:any;
     //generyczny typ do list
-    renderItem: (list: MediaItem, index: number) => ReactElement;
+    renderItemFunction: (list: MediaItem, index: number) => ReactElement;
     fullListData?: any;
 };
 
@@ -20,7 +20,7 @@ export const TilesList = ({
     subExtraContent,
     useHideRestListPart,
     list,
-    renderItem,
+    renderItemFunction,
     fullListData,
 }: TilesListProps
 ) => {
@@ -34,7 +34,7 @@ export const TilesList = ({
     const fullList = list;
 
     const iterateOnList = <T extends MediaItem>(list: T[]) => (
-        list.map((item: T, index: number) => renderItem(item, index))
+        list.map((item: T, index: number) => renderItemFunction(item, index))
     );
 
     const titleElement = (

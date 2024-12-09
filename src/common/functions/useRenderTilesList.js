@@ -38,7 +38,7 @@ export const useRenderTilesList = () => {
                                 title={title}
                                 subExtraContent={subExtraContent}
                                 list={list}
-                                renderItem={({
+                                renderItemFunction={({
                                     images,
                                     name,
                                     id,
