@@ -1,6 +1,16 @@
+import { isLatestReleased } from "../../../common/functions/isLatestReleased";
 import { removeDuplicates } from "../../../common/functions/removeDuplicates";
-import { setNewestPopularReleaseItemFirstIfIsLatestRelease } from "../../../common/functions/setNewestPopularReleaseItemFirstIfIsLatestRelease";
 import { sortFromOldestToNewest } from "../../../common/functions/sortFromOldestToNewest";
+import { WithReleaseDate } from "../../../common/interfaces/WithReleaseDate";
+
+const setNewestPopularReleaseItemFirstIfIsLatestRelease = <T extends WithReleaseDate>(
+    newestPopularReleaseItem: T | undefined,
+    popularReleases: any
+) => (
+    newestPopularReleaseItem && isLatestReleased(newestPopularReleaseItem)
+        ? [{ ...newestPopularReleaseItem }, ...(popularReleases?.slice() ?? [])]
+        : popularReleases || []
+);
 
 export const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWithoutAppearsOn: any) => {
     const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
