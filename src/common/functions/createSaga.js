@@ -1,8 +1,6 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { throwError } from "./throwError";
 
-
-
 export function* createSaga({ getData, actions }) {
 
     function* fetchDataHandler({ payload } = {}) {
