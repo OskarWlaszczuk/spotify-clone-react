@@ -112,7 +112,7 @@ export const MainContent = ({
                 list: removeDuplicates({ list: fullListContent, key: "name" }),
                 toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
                 isArtistsList: isFullListArtistsList,
-                isHideRestListPart: false,
+                isuseHideRestListPart: false,
                 isRenderSubInfo: true,
             },
         ]);

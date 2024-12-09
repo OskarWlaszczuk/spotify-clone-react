@@ -35,7 +35,7 @@ export const ArtistDetailsPage = () => {
                     title={name}
                     caption="Verified artist"
                     subTitleContent={`${followers?.total} followers`}
-                    isArtistPictureStyle
+                    useArtistPictureStyle
                 />)
             }
             content={

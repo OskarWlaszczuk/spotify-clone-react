@@ -31,7 +31,7 @@ export const MainContent = ({ popularArtists, popularAlbums }) => {
                                 list: fullListContent || undefined,
                                 toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
                                 isArtistsList: isFullListArtistsList,
-                                isHideRestListPart: false,
+                                isuseHideRestListPart: false,
                                 listId: 0,
                             },
                         ] :

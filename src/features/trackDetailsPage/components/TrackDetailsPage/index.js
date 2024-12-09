@@ -65,6 +65,18 @@ export const TrackDetailsPage = () => {
         fetchCondition: !!trackData,
     });
 
+
+    // const prevRef = useRef();
+
+    // useEffect(() => {
+    //     if (prevRef.current !== secondaryArtistsIdsList) {
+    //         console.log("Referencja się zmieniła!");
+    //     } else {
+    //         console.log("Referencja pozostała taka sama.");
+    //     }
+    //     prevRef.current = secondaryArtistsIdsList; // Zapisz bieżącą referencję
+    // }, [secondaryArtistsIdsList]);
+
     const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
 
     const {
