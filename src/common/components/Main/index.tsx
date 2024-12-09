@@ -10,14 +10,14 @@ interface MainProps {
     bannerContent?: ReactElement | false;
 };
 
-export const Main = ({ content, bannerContent, currentFetchStatus, useGradient }: MainProps) => {
+export const Main = ({ content, bannerContent, currentFetchStatus, useGradient = false }: MainProps) => {
 
     switch (currentFetchStatus) {
         case success:
             return (
                 <MainSection>
                     {bannerContent}
-                    <MainContent $gradientAvailable={useGradient || false} $bannerAvailable={!!bannerContent}>
+                    <MainContent $gradientAvailable={useGradient} $bannerAvailable={!!bannerContent}>
                         {content}
                     </MainContent>
                 </MainSection>
@@ -31,5 +31,5 @@ export const Main = ({ content, bannerContent, currentFetchStatus, useGradient }
 
         default:
             return <>Initial</>;
-    }
+    };
 };
