@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
 import { toArtist, toTrack } from "../../functions/routes";
-import { StyledDiscIcon } from "../StyledDiscIcon";
+import { StyledDiscIcon } from "./StyledDiscIcon";
 import { AvatarImage } from "../AvatarImage";
 import { getImage } from "../../functions/getImage";
 
