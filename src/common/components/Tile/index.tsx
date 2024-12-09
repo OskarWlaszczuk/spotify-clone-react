@@ -12,7 +12,7 @@ interface TileProps {
     picture: string;
     title: string;
     subInfo: string;
-    toPage: string;
+    toPagePath: string;
     mouseEventHandlers: MouseEventHandlersMethods;
     isActive?: boolean;
     isArtistPictureStyle?: boolean;
@@ -23,19 +23,19 @@ export const Tile = (
         picture,
         title,
         subInfo,
-        toPage,
+        toPagePath,
         isArtistPictureStyle,
         mouseEventHandlers,
         isActive
     }: TileProps
 ) => (
     <Container
-        to={toPage}
+        to={toPagePath}
         onMouseEnter={mouseEventHandlers.enter}
         onMouseLeave={mouseEventHandlers.leave}
     >
         <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} >
-            {isActive && <PlayPauseButton isLargerAndDarkerIcon />}
+            {isActive && <PlayPauseButton isHighlighted />}
         </Picture>
         <Title>{title}</Title>
         <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
