@@ -2,13 +2,11 @@ import { Button } from "./styled"
 import { StyledPlayIcon } from "../StyledPlayIcon"
 
 interface PlayPauseButtonProps {
-    isLargerAndDarkerIcon: boolean;
-}
+    isHighlighted: boolean;
+};
 
-export const PlayPauseButton = ({ isLargerAndDarkerIcon }: PlayPauseButtonProps) => {
-    return (
-        <Button>
-            <StyledPlayIcon $largerAndDarkerIcon={isLargerAndDarkerIcon} />
-        </Button>
-    )
-}
+export const PlayPauseButton = ({ isHighlighted }: PlayPauseButtonProps) => (
+    <Button>
+        <StyledPlayIcon $largerAndDarkerIcon={isHighlighted} />
+    </Button>
+);
