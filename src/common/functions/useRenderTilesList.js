@@ -25,7 +25,7 @@ export const useRenderTilesList = () => {
                         toPageFunction,
                         fullListData,
                         listId,
-                        isHideRestListPart = true,
+                        isuseHideRestListPart = true,
                         isArtistsList = false,
                         isRenderSubInfo = false,
                     }) => {
@@ -59,7 +59,7 @@ export const useRenderTilesList = () => {
                                             }),
                                         }}
                                         key={index}
-                                        toPage={toPageFunction({ id })}
+                                        toPagePath={toPageFunction({ id })}
                                         picture={getImage(images)}
                                         title={name}
                                         subInfo={
@@ -77,7 +77,7 @@ export const useRenderTilesList = () => {
                                         isArtistPictureStyle={isArtistsList}
                                     />
                                 )}
-                                hideRestListPart={isHideRestListPart}
+                                useHideRestListPart={isuseHideRestListPart}
                                 fullListData={{ pathname, text, }}
                             />
                         )
