@@ -7,17 +7,19 @@ interface BannerProps {
     metaData?: string;
     title: string;
     caption: string;
-    isArtistPictureStyle: boolean;
+    useArtistPictureStyle: boolean;
     subTitleContent: any;
 };
 
-export const Banner = ({ picture, metaData, title, caption, isArtistPictureStyle, subTitleContent }: BannerProps) => {
+export const Banner = ({ picture, metaData, title, caption, useArtistPictureStyle, subTitleContent }: BannerProps) => {
+    const isTitleLong = title?.length <= 22;
+
     return (
-        <Container $useAlbumLayout={!isArtistPictureStyle}>
-            <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} />
+        <Container $useAlbumLayout={!useArtistPictureStyle}>
+            <Picture $picture={picture} $useArtistPictureStyle={useArtistPictureStyle} />
             <Details>
                 <Caption>{capitalizeFirstLetter(caption)}</Caption>
-                <Title $larger={title?.length <= 22}>{title}</Title>
+                <Title $larger={isTitleLong}>{title}</Title>
                 <SubTitleContent>{subTitleContent}<MetaData>{metaData && " • "}{metaData}</MetaData></SubTitleContent>
             </Details>
         </Container>
