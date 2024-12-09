@@ -4,15 +4,10 @@ import { ReactElement } from "react";
 import { MediaItem } from "../../interfaces/MediaItem";
 import { isNotEmpty } from "../../functions/isNotEmpty";
 
-interface FullListData {
-    pathname: string;
-    text: string;
-};
-
 interface TilesListProps {
     title: any;
     subExtraContent?:any;
-    hideRestListPart?: any;
+    useHideRestListPart?: any;
     //generyczny typ do list
     list:any;
     //generyczny typ do list
@@ -23,7 +18,7 @@ interface TilesListProps {
 export const TilesList = ({
     title,
     subExtraContent,
-    hideRestListPart,
+    useHideRestListPart,
     list,
     renderItem,
     fullListData,
@@ -59,7 +54,7 @@ export const TilesList = ({
                         </TitleContent >
                         {subExtraContent && <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>}
                         <List ref={containerRef} >
-                            {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
+                            {list && iterateOnList(useHideRestListPart ? previewList! : fullList!)}
                         </List >
                     </StyledSection>
                 )
