@@ -4,7 +4,7 @@ import { isMatch } from "../functions/isMatch";
 interface TileData {
     activeTileIndex: number | undefined;
     activeTilesListID: number | undefined;
-}
+};
 
 export const useActiveTile = () => {
     const [activeTile, setActiveTile] = useState<TileData>({

@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { ReactComponent as Timer } from "../../icons/Timer.svg";
 import { Link } from "react-router-dom";
-
+import { ReactComponent as DiscIcon } from "./icons/disc.svg";
 interface ArtistNameProps {
     $rowActive?: boolean;
 };
@@ -156,4 +156,8 @@ export const TrackDuration = styled.td`
     font-weight: 400;
     font-size: 15px;
     justify-self: end;
+`;
+
+export const StyledDiscIcon = styled(DiscIcon)`
+    width: 30px;
 `;

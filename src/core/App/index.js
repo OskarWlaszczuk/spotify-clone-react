@@ -1,14 +1,13 @@
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
-import { NavigationPanel } from "./NavigationPanel/components";
+import { NavigationPanel } from "./components/NavigationPanel";
 import { toHome, toSearch } from "../../common/functions/routes";
 import { HomePage } from "../../features/homePage/components/HomePage";
 import { Search } from "../../features/Search";
 import { AlbumPage } from "../../features/albumPage/components/AlbumPage";
-import { Library } from "./Library/components";
+import { Library } from "./components/Library";
 import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/ArtistDetailsPage";
 import { TrackDetailsPage } from "../../features/trackDetailsPage/components/TrackDetailsPage";
-import { useAuth } from "./Library/useAuth";
-
+import { useAuth } from "./hooks/useAuth";
 
 export const App = () => {
   useAuth();

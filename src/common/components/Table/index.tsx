@@ -1,4 +1,24 @@
-import { ContentRow, StyledTable, Caption, TrackOverview, Index, TrackName, TrackDuration, Wrapper, TrackArtists, TrackDetailsWrapper, HeaderRow, StyledTimer, Header, ArtistName, DiscNumberContainer, ArtistNameContainer, TrackLink, SubCaption } from "./styled";
+import {
+    ContentRow,
+    StyledTable,
+    Caption,
+    TrackOverview,
+    Index,
+    TrackName,
+    TrackDuration,
+    Wrapper,
+    TrackArtists,
+    TrackDetailsWrapper,
+    HeaderRow,
+    StyledTimer,
+    Header,
+    ArtistName,
+    DiscNumberContainer,
+    ArtistNameContainer,
+    TrackLink,
+    SubCaption,
+    StyledDiscIcon,
+} from "./styled";
 import React, { useState } from "react";
 import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
@@ -7,7 +27,6 @@ import { nanoid } from "nanoid";
 import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
 import { toArtist, toTrack } from "../../functions/routes";
-import { StyledDiscIcon } from "./StyledDiscIcon";
 import { AvatarImage } from "../AvatarImage";
 import { getImage } from "../../functions/getImage";
 

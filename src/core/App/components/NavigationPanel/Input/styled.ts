@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ReactComponent as SearchIcon } from "../../icons/Search.svg";
+import { ReactComponent as SearchIcon } from "./Search.svg";
 
 export const Container = styled.div`
     display: flex;
