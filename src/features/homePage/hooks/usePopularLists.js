@@ -1,7 +1,7 @@
 import { getSeveralAlbumsListEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
-import { albumsActions, albumsSelectors } from "../slices/albumsSlice";
-import { artistsActions, artistsSelectors } from "../slices/artistsSlice";
+import { albumsActions, albumsSelectors } from "../../../common/slices/albumsSlice";
+import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 
 export const usePopularLists = () => {
     const formatPopularListForFetch = (idsList) => idsList.join(",");

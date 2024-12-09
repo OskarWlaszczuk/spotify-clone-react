@@ -1,5 +1,5 @@
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
-import { albumDetailsActions, albumDetailsSelectors } from "../slices/albumDetailsSlice";
+import { albumDetailsActions, albumDetailsSelectors } from "../../../common/slices/albumDetailsSlice";
 import { getSpecificKeys } from "../../../common/functions/getSpecificKeys";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { getAlbumDetailsEndpoint } from "../../../common/functions/endpoints";

@@ -1,7 +1,7 @@
-import { artistDetailsActions, artistDetailsSelectors } from "../../features/artistDetailsPage/slices/artistDetailsSlice";
+import { artistDetailsActions, artistDetailsSelectors } from "../slices/artistDetailsSlice";
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../features/artistDetailsPage/slices/artistAlbumsSlice";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../slices/artistAlbumsSlice";
 import { getArtistDetailsEndpoint, getArtistReleasesEndpoint } from "../functions/endpoints";
 
 export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnReleasesInclude = true }) => {

@@ -1,6 +1,6 @@
 import { artistAlbumsActions } from "../slices/artistAlbumsSlice";
-import { createSaga } from "../../../common/functions/createSaga";
-import { getAPI } from "../../../common/functions/getAPI";
+import { createSaga } from "../functions/createSaga";
+import { getAPI } from "../functions/getAPI";
 
 export function* watchFetchArtistAlbums() {
     yield createSaga({

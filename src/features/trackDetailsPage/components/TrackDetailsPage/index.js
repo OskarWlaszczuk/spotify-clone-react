@@ -1,5 +1,5 @@
 import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { trackDetailsActions, trackDetailsSelectors } from "../../slices/trackDetailsSlice";
+import { trackDetailsActions, trackDetailsSelectors } from "../../../../common/slices/trackDetailsSlice";
 import { useParams } from "react-router-dom";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { Main } from "../../../../common/components/Main";

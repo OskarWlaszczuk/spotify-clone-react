@@ -1,6 +1,6 @@
 import { artistTopTracksActions } from "../slices/artistTopTracksSlice";
-import { createSaga } from "../../../common/functions/createSaga";
-import { getAPI } from "../../../common/functions/getAPI";
+import { createSaga } from "../functions/createSaga";
+import { getAPI } from "../functions/getAPI";
 
 export function* watchFetchArtistTopTracks() {
     yield createSaga({

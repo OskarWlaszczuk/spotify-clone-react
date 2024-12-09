@@ -1,4 +1,4 @@
-import { artistTopTracksActions, artistTopTracksSelectors } from "../../features/artistDetailsPage/slices/artistTopTracksSlice";
+import { artistTopTracksActions, artistTopTracksSelectors } from "../slices/artistTopTracksSlice";
 import { getArtistTopTracksEndpoint } from "../functions/endpoints";
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";

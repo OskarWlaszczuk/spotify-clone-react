@@ -1,8 +1,8 @@
 import { getArtistReleasesEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../artistDetailsPage/slices/artistAlbumsSlice";
-import { artistsActions, artistsSelectors } from "../../homePage/slices/artistsSlice";
+import { artistAlbumsActions, artistAlbumsSelectors } from "../../../common/slices/artistAlbumsSlice";
+import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 
 export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondition }) => {
 
