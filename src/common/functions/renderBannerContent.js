@@ -1,8 +1,26 @@
 import { ArtistNameLink } from "../../features/albumPage/components/AlbumPage/styled";
+import { AvatarImage } from "../components/AvatarImage";
 import { getImage } from "./getImage";
 import { getYear } from "./getYear";
-import { renderArtistAvatarImage } from "./renderArtistAvatarImage";
 import { toAlbum, toArtist } from "./routes";
+
+const renderArtistAvatarImage = ({ image, name, conditionToRender = true }) => {
+    return (
+        <>
+            {
+                conditionToRender && (
+                    <AvatarImage
+                        $picture={image}
+                        alt={name}
+                        title={name}
+                        $smaller
+                        $useArtistPictureStyle
+                    />
+                )
+            }
+        </>
+    );
+};
 
 const renderMetaDataContent = ({ releaseDate, duration, uniqueData }) => [
     getYear(releaseDate), duration, uniqueData
