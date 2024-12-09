@@ -4,7 +4,7 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { getImage } from "../../../../common/functions/getImage";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
-import { useMainArtistData } from "../../hooks/useMainArtistData";
+import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { MainContent } from "./MainContent";

@@ -6,7 +6,7 @@ import { Banner } from "../../../../common/components/Banner";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { getImage } from "../../../../common/functions/getImage";
-import { useMainArtistData } from "../../../albumPage/hooks/useMainArtistData";
+import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 
 export const ArtistDetailsPage = () => {
     const { type, id: artistId } = useParams();
