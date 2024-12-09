@@ -21,7 +21,7 @@ import { sortFromOldestToNewest } from "../../../../../common/functions/sortFrom
 import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
 import { removeDuplicates } from "../../../../../common/functions/removeDuplicates";
 import { ListToggleButtonsSection } from "../../../../../common/components/ListToggleButtonsSection";
-import { useRenderTilesList } from "../../../../../common/functions/useRenderTilesList";
+import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
 import { prepareReleases } from "../../../functions/prepareReleases";
 import { preparePopularReleases } from "../../../functions/preparePopularReleases";
 

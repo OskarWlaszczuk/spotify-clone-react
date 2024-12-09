@@ -3,7 +3,7 @@ import { toHome, toArtist, toAlbum } from "../../../../../common/functions/route
 import { getFullListMatchedData } from "../../../../../common/functions/getFullListMatchedData";
 import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
 import { popularAlbumsParam, popularArtistsParam } from "../../../../../common/constants/params";
-import { useRenderTilesList } from "../../../../../common/functions/useRenderTilesList";
+import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
 
 export const MainContent = ({ popularArtists, popularAlbums }) => {
     const { type = "" } = useParams();

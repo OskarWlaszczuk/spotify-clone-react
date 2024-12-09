@@ -2,7 +2,7 @@ import { Copyrights } from "./Copyrights"
 import { Table } from "../../../../../common/components/Table"
 import { allReleaseParamDiscography } from "../../../../../common/constants/params";
 import { toAlbum, toArtist } from "../../../../../common/functions/routes";
-import { useRenderTilesList } from "../../../../../common/functions/useRenderTilesList";
+import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
 import { getUniqueDiscNumbers } from "../../../functions/getUniqueDiscNumbers";
 
 export const MainContent = ({

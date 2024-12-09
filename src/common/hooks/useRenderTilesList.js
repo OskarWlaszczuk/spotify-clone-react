@@ -1,8 +1,8 @@
 import { Tile } from "../components/Tile"
 import { TilesList } from "../components/TilesList"
-import { useActiveTile } from "../hooks/useActiveTile";
-import { getImage } from "./getImage";
-import { getYear } from "./getYear";
+import { useActiveTile } from "./useActiveTile";
+import { getImage } from "../functions/getImage";
+import { getYear } from "../functions/getYear";
 
 const renderTileSubInfo = ({
     isArtistsListCondition,
