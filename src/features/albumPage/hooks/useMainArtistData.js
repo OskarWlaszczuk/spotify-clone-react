@@ -1,7 +1,6 @@
 import { artistDetailsActions, artistDetailsSelectors } from "../../artistDetailsPage/slices/artistDetailsSlice";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
-import { getArtistReleasesEndpointResource } from "../../../common/functions/getArtistReleasesEndpointResource";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../../artistDetailsPage/slices/artistAlbumsSlice";
 import { getArtistDetailsEndpoint, getArtistReleasesEndpoint } from "../../../common/functions/endpoints";
 
