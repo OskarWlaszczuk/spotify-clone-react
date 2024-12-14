@@ -1,1 +1,1 @@
-export const fromMillisecondsToMinutes = (milliseconds: number = 1): string => (milliseconds / 60000).toFixed(2);
+export const fromMillisecondsToMinutes = (milliseconds: number) => (milliseconds / 60000)?.toFixed(2);
