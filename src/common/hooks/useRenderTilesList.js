@@ -18,8 +18,8 @@ const renderTileSubInfo = ({
 
 export const useRenderTilesList = () => {
     const { setActiveTile, isTileActive } = useActiveTile();
-    const renderTilesList = (tilesListDataList) => {
 
+    const renderTilesList = (tilesListDataList) => {
         return (
             <>
                 {
@@ -30,7 +30,7 @@ export const useRenderTilesList = () => {
                         toPageFunction,
                         fullListData,
                         listId,
-                        isuseHideRestListPart = true,
+                                               hideRestListPart = true,
                         isArtistsList = false,
                         isRenderSubInfo = false,
                     }) => {
@@ -40,6 +40,7 @@ export const useRenderTilesList = () => {
 
                         return (
                             < TilesList
+                                key={listId}
                                 title={title}
                                 subExtraContent={subExtraContent}
                                 list={list}
@@ -82,7 +83,7 @@ export const useRenderTilesList = () => {
                                         isArtistPictureStyle={isArtistsList}
                                     />
                                 )}
-                                useHideRestListPart={isuseHideRestListPart}
+                                hideRestListPart={hideRestListPart}
                                 fullListData={{ pathname, text, }}
                             />
                         )
