@@ -1,1 +1,3 @@
-export interface WithReleaseDate { release_date: string };
+export interface WithReleaseDate {
+    release_date: string
+};
