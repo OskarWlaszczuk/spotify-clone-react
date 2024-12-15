@@ -34,7 +34,7 @@ export const usePopularLists = () => {
     } = useApiResource({
         actions: artistsActions,
         selectors: artistsSelectors,
-        endpoint: getSeveralArtistsListEndpoint(popularArtistsIdsList),
+        endpoint: getSeveralArtistsListEndpoint({id:popularArtistsIdsList}),
     });
 
     const {
@@ -44,7 +44,7 @@ export const usePopularLists = () => {
     } = useApiResource({
         actions: albumsActions,
         selectors: albumsSelectors,
-        endpoint: getSeveralAlbumsListEndpoint(popularAlbumsIdsList),
+        endpoint: getSeveralAlbumsListEndpoint({id:popularAlbumsIdsList}),
     });
 
     const configs = [popularAlbumsConfig, popularArtistsConfig];
