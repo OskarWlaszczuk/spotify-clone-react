@@ -1,7 +1,7 @@
 import { ReactElement } from "react";
 import { MainContent, MainSection } from "./styled";
 import { error, loading, success } from "../../constants/fetchStatuses";
-import { FetchStatus } from "../../types/FetchStatus";
+import { FetchStatus } from "../../Types/FetchStatus";
 
 interface MainProps {
     content: ReactElement;
