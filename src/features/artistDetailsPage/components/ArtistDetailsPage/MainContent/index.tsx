@@ -1,9 +1,9 @@
-import { useParams } from "react-router-dom";
-import { Table } from "../../../../../common/components/Table";
-import { toAlbum, toArtist } from "../../../../../common/functions/routes";
-import { useCurrentCategoryData } from "../../../hooks/useCurrentCategoryData";
-import { findMatchingValueByKey } from "../../../../../common/functions/findMatchingValueByKey";
-import { getFullListMatchedData } from "../../../../../common/functions/getFullListMatchedData";
+import {useParams} from "react-router-dom";
+import {Table} from "../../../../../common/components/Table";
+import {toAlbum, toArtist} from "../../../../../common/functions/routes";
+import {useCurrentCategoryData} from "../../../hooks/useCurrentCategoryData";
+import {findMatchingValueByKey} from "../../../../../common/functions/findMatchingValueByKey";
+import {getFullListMatchedData} from "../../../../../common/functions/getFullListMatchedData";
 import {
     albumsCategory,
     compilationsCategory,
@@ -17,13 +17,13 @@ import {
     artistAppearsOnParam,
     compilationParamDiscography
 } from "../../../../../common/constants/params";
-import { sortFromOldestToNewest } from "../../../../../common/functions/sortFromOldestToNewest";
-import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
-import { removeDuplicates } from "../../../../../common/functions/removeDuplicates";
-import { ListToggleButtonsSection } from "../../../../../common/components/ListToggleButtonsSection";
-import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
-import { prepareReleases } from "../../../functions/prepareReleases";
-import { preparePopularReleases } from "../../../functions/preparePopularReleases";
+import {sortFromOldestToNewest} from "../../../../../common/functions/sortFromOldestToNewest";
+import {fullListLinkText} from "../../../../../common/constants/fullListLinkText ";
+import {removeDuplicates} from "../../../../../common/functions/removeDuplicates";
+import {ListToggleButtonsSection} from "../../../../../common/components/ListToggleButtonsSection";
+import {useRenderTilesList} from "../../../../../common/hooks/useRenderTilesList";
+import {prepareReleases} from "../../../functions/prepareReleases";
+import {preparePopularReleases} from "../../../functions/preparePopularReleases";
 
 interface TopTracksData {
     list: any;
@@ -41,17 +41,49 @@ interface MainContentProps {
 };
 
 export const MainContent = ({
-    artistsData: {
-        name,
-        allReleasesList,
-        topTracksData: {
-            list,
-            listAsAlbums
-        }
-    }
-}: MainContentProps) => {
+                                artistsData: {
+                                    name,
+                                    allReleasesList,
+                                    topTracksData: {
+                                        list,
+                                        listAsAlbums
+                                    }
+                                }
+                            }: MainContentProps) => {
 
-    const { id: artistId, type = "" } = useParams<{ id: string; type?: string }>();
+
+    //  interface GroupData2 {
+    //      key: string;
+    //      value: any;
+    //      title?: string;
+    //      isArtistsList?: boolean;
+    //  };
+    //  const exampleArray = [
+    //      {
+    //          key: "klucz1",
+    //          value: [1, 2, 3, 4],
+    //      },
+    //      {
+    //          key: "klucz2",
+    //          value: ["str1", "str2", "str3",],
+    //      },
+    //      {
+    //          key: "klucz3",
+    //          value: [null, undefined, true, false],
+    //      },
+    //  ]
+    //
+    //  const findMatchingValueByKey2 = (
+    //      groups: GroupData2[],
+    //      targetKey: string,
+    //  ) => (
+    //      groups.find(({ key }) => isMatch(key, targetKey))
+    //  );
+    //
+    // console.log( findMatchingValueByKey2(exampleArray, "klucz2"));
+
+
+    const {id: artistId, type = ""} = useParams<{ id: string; type?: string }>();
     const renderTilesList = useRenderTilesList();
 
     const {
@@ -64,7 +96,7 @@ export const MainContent = ({
 
     const uniquePopularReleases = preparePopularReleases(listAsAlbums, allReleasesWithoutAppearsOn);
 
-    const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
+    const {currentCategoryData, setCurrentCategoryData} = useCurrentCategoryData({
         key: popularReleasesCategory,
         value: uniquePopularReleases,
     });
@@ -103,16 +135,16 @@ export const MainContent = ({
         },
     ];
 
-    const { fullListContent, fullListTitle, isFullListArtistsList } = getFullListMatchedData(fullListsDataOptions, type);
+    const {fullListContent, fullListTitle, isFullListArtistsList} = getFullListMatchedData(fullListsDataOptions, type);
 
     const renderFullList = () => {
         return renderTilesList([
             {
                 title: fullListTitle,
-                list: removeDuplicates({ list: fullListContent, key: "name" }),
+                list: removeDuplicates({list: fullListContent, key: "name"}),
                 toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
                 isArtistsList: isFullListArtistsList,
-                isuseHideRestListPart: false,
+                hideRestListPart: false,
                 isRenderSubInfo: true,
             },
         ]);
@@ -120,22 +152,22 @@ export const MainContent = ({
 
     const renderTilesListSections = () => {
         const generateFullListData = (additionalPath: any) => ({
-            pathname: toArtist({ id: artistId!, additionalPath }),
+            pathname: toArtist({id: artistId!, additionalPath}),
             text: fullListLinkText,
         });
 
         const listToggleButtonDataList = [
-            { list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases" },
-            { list: albumsList, category: albumsCategory, text: "Albums" },
-            { list: singlesList, category: singlesCategory, text: "Singles and EPs" },
-            { list: compilationsList, category: compilationsCategory, text: "Compilations" },
+            {list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases"},
+            {list: albumsList, category: albumsCategory, text: "Albums"},
+            {list: singlesList, category: singlesCategory, text: "Singles and EPs"},
+            {list: compilationsList, category: compilationsCategory, text: "Compilations"},
         ];
 
         const additionalPathsOptionsGrouped = [
-            { key: popularReleasesCategory, value: allReleaseParamDiscography },
-            { key: albumsCategory, value: albumsParamDiscography },
-            { key: compilationsCategory, value: compilationParamDiscography },
-            { key: singlesCategory, value: singleParamDiscography },
+            {key: popularReleasesCategory, value: allReleaseParamDiscography},
+            {key: albumsCategory, value: albumsParamDiscography},
+            {key: compilationsCategory, value: compilationParamDiscography},
+            {key: singlesCategory, value: singleParamDiscography},
         ];
 
         return (
@@ -149,13 +181,13 @@ export const MainContent = ({
                             targetCategory={currentCategoryData.category}
                         />
                     ),
-                    list: removeDuplicates({ list: currentCategoryData.list, key: "name" }),
+                    list: removeDuplicates({list: currentCategoryData.list, key: "name"}),
                     toPageFunction: toAlbum,
                     isRenderSubInfo: true,
                     fullListData: {
                         pathname: toArtist({
                             id: artistId!,
-                            additionalPath: findMatchingValueByKey<string>(
+                            additionalPath: findMatchingValueByKey(
                                 additionalPathsOptionsGrouped,
                                 currentCategoryData.category
                             )?.value,
@@ -179,7 +211,7 @@ export const MainContent = ({
                 renderFullList() :
                 (
                     <>
-                        <Table list={list} caption="Popular" />
+                        <Table list={list} caption="Popular"/>
                         {renderTilesListSections()}
                     </>
                 )
