@@ -1,1 +1,5 @@
-export const capitalizeFirstLetter = (word: string = ""): string => word.slice(0, 1).toUpperCase() + word.slice(1);
+type CapitalizeFirstLetterFunction = (word: string) => string;
+
+export const capitalizeFirstLetter: CapitalizeFirstLetterFunction = (word) => (
+    word?.slice(0, 1).toUpperCase() + word?.slice(1)
+);
