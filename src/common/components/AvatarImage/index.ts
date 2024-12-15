@@ -7,6 +7,7 @@ interface AvatarImageProps {
      $useArtistPictureStyle?: boolean;
      $darkened?: boolean;
 };
+
 export const AvatarImage = styled.div<AvatarImageProps>`
     position: relative;
     width: 42px;
