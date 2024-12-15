@@ -1,8 +1,0 @@
-export const removeDuplicates = ({ list, key = "" }) => {
-    const caughtDuplicates = new Set();
-
-    return list?.filter(item => {
-        const keyValue = !!key ? item[key] : item;
-        return !caughtDuplicates.has(keyValue) && caughtDuplicates.add(keyValue);
-    });
-};
