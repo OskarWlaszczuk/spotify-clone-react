@@ -12,7 +12,7 @@ export const useArtistTopTracks = ({ artistId }) => {
     } = useApiResource({
         actions: artistTopTracksActions,
         selectors: artistTopTracksSelectors,
-        endpoint: getArtistTopTracksEndpoint(artistId),
+        endpoint: getArtistTopTracksEndpoint({id:artistId}),
     });
 
     useFetchAPI({

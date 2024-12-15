@@ -8,7 +8,7 @@ export const useAlbumDetails = (albumId) => {
     const { configs, rawApiData: albumDetails, apiStatus: albumDetailsStatus } = useApiResource({
         actions: albumDetailsActions,
         selectors: albumDetailsSelectors,
-        endpoint: getAlbumDetailsEndpoint(albumId),
+        endpoint: getAlbumDetailsEndpoint({ id: albumId }),
     });
 
     const filteredAlbumDetails = getSpecificKeys(

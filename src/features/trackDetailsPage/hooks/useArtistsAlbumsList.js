@@ -18,7 +18,7 @@ export const useArtistsAlbumsList = ({ artistsIdsList, artistsDetailsList, track
                     setArtistsAlbumsDataListStatus(loading);
                     const responses = await Promise.all(artistsIdsList.map(id => {
                         return fetchFromAPI({
-                            endpoint: getArtistReleasesEndpoint({ artistId: id }),
+                            endpoint: getArtistReleasesEndpoint({ id }),
                             accessToken
                         })
                     }));
