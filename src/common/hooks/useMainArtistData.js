@@ -15,7 +15,7 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
     } = useApiResource({
         actions: artistDetailsActions,
         selectors: artistDetailsSelectors,
-        endpoint: getArtistDetailsEndpoint(mainArtistId)
+        endpoint: getArtistDetailsEndpoint({id:mainArtistId})
     });
     const {
         configs: mainArtistReleasesConfig,
@@ -24,7 +24,7 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: getArtistReleasesEndpoint({ artistId: mainArtistId, isAppearOnReleasesInclude })
+        endpoint: getArtistReleasesEndpoint({ id: mainArtistId, isAppearOnReleasesInclude })
     });
 
     useFetchAPI({
