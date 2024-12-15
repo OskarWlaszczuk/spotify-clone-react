@@ -1,5 +1,10 @@
-import { ArtistData } from "../interfaces/ArtistName";
+interface WithName {
+    name: string
+}
 
-export const getAlbumArtists = (artists: ArtistData[] = [], seperator: string = "•"): string => (
-    artists.map(({ name }) => name).join(seperator)
+export const getAlbumArtists = <T extends WithName>(
+    artistsDetailsList: T[],
+    separator: string = "•",
+) => (
+    artistsDetailsList?.map(({ name }) => name).join(separator)
 );
