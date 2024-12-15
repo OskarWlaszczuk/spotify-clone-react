@@ -1,13 +1,13 @@
 import { List, TitleContent, StyledSection, Title, TitleAsLink, FullListLink, ExtraSubContentSection } from "./styled";
 import { useTilesPerRow } from "../../../features/artistDetailsPage/hooks/useTilesPerRow";
 import { ReactElement } from "react";
-import { MediaItem } from "../../interfaces/MediaItem";
+import { MediaItem } from "../../Interfaces/MediaItem";
 import { isNotEmpty } from "../../functions/isNotEmpty";
 
 interface TilesListProps {
     title: any;
     subExtraContent?:any;
-    useHideRestListPart?: any;
+    hideRestListPart?: any;
     //generyczny typ do list
     list:any;
     //generyczny typ do list
@@ -18,7 +18,7 @@ interface TilesListProps {
 export const TilesList = ({
     title,
     subExtraContent,
-    useHideRestListPart,
+    hideRestListPart,
     list,
     renderItemFunction,
     fullListData,
@@ -54,7 +54,7 @@ export const TilesList = ({
                         </TitleContent >
                         {subExtraContent && <ExtraSubContentSection>{subExtraContent}</ExtraSubContentSection>}
                         <List ref={containerRef} >
-                            {list && iterateOnList(useHideRestListPart ? previewList! : fullList!)}
+                            {list && iterateOnList(hideRestListPart ? previewList! : fullList!)}
                         </List >
                     </StyledSection>
                 )
