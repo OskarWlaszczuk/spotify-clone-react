@@ -1,4 +1,5 @@
 import axios from "axios";
+import { throwError } from "./throwError";
 interface APIFetchParams {
     endpoint: string;
     accessToken: string;
@@ -6,7 +7,7 @@ interface APIFetchParams {
 
 export const fetchFromAPI = async ({ endpoint, accessToken }: APIFetchParams) => {
     const BASE_URL: string = "https://api.spotify.com/v1/";
-    
+
     try {
         const response = await axios.get(
             `${BASE_URL}${endpoint}`,
@@ -19,7 +20,6 @@ export const fetchFromAPI = async ({ endpoint, accessToken }: APIFetchParams) =>
 
         return response.data;
     } catch (error: any) {
-        console.log(error);
-        throw new Error(error);
+        throwError("Problem with API fetching", error)
     }
 };
