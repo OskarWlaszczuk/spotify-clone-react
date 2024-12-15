@@ -5,7 +5,7 @@ import { MainContent } from "./MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
-import { getImage } from "../../../../common/functions/getImage";
+import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 
 export const ArtistDetailsPage = () => {
@@ -31,7 +31,7 @@ export const ArtistDetailsPage = () => {
             currentFetchStatus={fetchStatus}
             bannerContent={!type && (
                 <Banner
-                    picture={getImage(images)}
+                    picture={getFirstImage(images)}
                     title={name}
                     caption="Verified artist"
                     subTitleContent={`${followers?.total} followers`}

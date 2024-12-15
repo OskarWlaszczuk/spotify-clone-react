@@ -1,17 +1,18 @@
 import { ArtistCard, ArtistsCardSection, ArtistCardMetaData, ArtistCardLink, ArtistCardMetaDataContainer } from "./styled"
 import { Picture } from "../../../../../common/components/Picture"
 import { capitalizeFirstLetter } from "../../../../../common/functions/capitalizeFirstLetter"
-import { getImage } from "../../../../../common/functions/getImage"
+import { getFirstImage } from "../../../../../common/functions/getFirstImage"
 import { toArtist } from "../../../../../common/functions/routes"
 
 export const TrackArtistsCardsSection = ({ artistsDataList }) => {
+    console.log(artistsDataList?.[0].images)
     return (
         <ArtistsCardSection>
             {
                 artistsDataList?.map(({ id, name, type, images }) => (
                     <ArtistCardLink to={toArtist({ id })}>
                         <ArtistCard>
-                            <Picture $picture={getImage(images)} $useArtistPictureStyle />
+                            <Picture $picture={getFirstImage(images)} $useArtistPictureStyle />
                             <ArtistCardMetaDataContainer>
                                 <ArtistCardMetaData>{capitalizeFirstLetter(type)}</ArtistCardMetaData>
                                 <ArtistCardMetaData $specialOnHover>{name}</ArtistCardMetaData>

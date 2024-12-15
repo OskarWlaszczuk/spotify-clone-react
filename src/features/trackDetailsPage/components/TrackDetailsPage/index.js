@@ -6,7 +6,7 @@ import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { useLyrics } from "../../hooks/useLyrics";
-import { getImage } from "../../../../common/functions/getImage";
+import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
 import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
@@ -27,7 +27,7 @@ export const TrackDetailsPage = () => {
     } = useApiResource({
         actions: trackDetailsActions,
         selectors: trackDetailsSelectors,
-        endpoint: getTrackDetailsEndpoint(trackId),
+        endpoint: getTrackDetailsEndpoint({ id: trackId }),
     });
 
     useFetchAPI({
@@ -64,18 +64,6 @@ export const TrackDetailsPage = () => {
         artistsIdsList,
         fetchCondition: !!trackData,
     });
-
-
-    // const prevRef = useRef();
-
-    // useEffect(() => {
-    //     if (prevRef.current !== secondaryArtistsIdsList) {
-    //         console.log("Referencja się zmieniła!");
-    //     } else {
-    //         console.log("Referencja pozostała taka sama.");
-    //     }
-    //     prevRef.current = secondaryArtistsIdsList; // Zapisz bieżącą referencję
-    // }, [secondaryArtistsIdsList]);
 
     const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
 
@@ -115,15 +103,17 @@ export const TrackDetailsPage = () => {
             uniqueData: `${trackPopularityScale} / 100`,
         },
         subTitleData: {
-            albumDetails: {
-                id: albumId,
-                name: albumName,
+            trackDetailsPageData: {
+                mainArtistData: {
+                    id: mainArtistId,
+                    name: mainArtistName,
+                },
+                albumData: {
+                    id: albumId,
+                    name: albumName,
+                }
             },
-            mainArtistDetails: {
-                id: mainArtistId,
-                name: mainArtistName,
-            },
-            artistImage: artistsDetailsList?.artists[0].images
+            artistImagesList: artistsDetailsList?.artists[0].images
         },
     });
 
@@ -133,7 +123,7 @@ export const TrackDetailsPage = () => {
                 currentFetchStatus={fetchStatus}
                 bannerContent={
                     <Banner
-                        picture={getImage(albumImages)}
+                        picture={getFirstImage(albumImages)}
                         title={trackName}
                         caption={trackType}
                         subTitleContent={subTitleContent}
