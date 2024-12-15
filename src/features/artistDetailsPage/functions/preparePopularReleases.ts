@@ -1,8 +1,11 @@
-import { isLatestReleased } from "../../../common/functions/isLatestReleased";
 import { removeDuplicates } from "../../../common/functions/removeDuplicates";
 import { sortFromOldestToNewest } from "../../../common/functions/sortFromOldestToNewest";
-import { WithReleaseDate } from "../../../common/interfaces/WithReleaseDate";
+import { WithReleaseDate } from "../../../common/Interfaces/WithReleaseDate";
 import { newestItemReleaseDate } from "../constants/newestItemReleaseDate";
+
+ const isLatestReleased = <T extends WithReleaseDate>(album: T): boolean => (
+    new Date(album?.release_date).getFullYear() === new Date().getFullYear()
+);
 
  const replaceReleaseDateIfCurrentYear = <T extends WithReleaseDate>(listItem: T): T => {
     return isLatestReleased(listItem) ?
@@ -21,14 +24,12 @@ const setNewestPopularReleaseItemFirstIfIsLatestRelease = <T extends WithRelease
 
 export const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWithoutAppearsOn: any) => {
     const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
-    console.log(replaceReleaseDateIfCurrentYear(newestTopTrackAlbumItem))
-
     const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(
         newestTopTrackAlbumItem,
         topTracksAlbumsList
     );
 
-    const popularReleases: any = [
+    const popularReleases = [
         ...(updatedTopTracksAlbumsList || []),
         ...(allReleasesWithoutAppearsOn || []),
     ];
