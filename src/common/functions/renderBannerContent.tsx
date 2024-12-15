@@ -1,6 +1,8 @@
 import { ArtistNameLink } from "../../features/albumPage/components/AlbumPage/styled";
 import { AvatarImage } from "../components/AvatarImage";
-import { getFirstImage } from "./getImage";
+import { ImageURL } from "../Interfaces/ImageCollection";
+import { BasicMediaData } from "../Interfaces/MediaData";
+import { getFirstImage } from "./getFirstImage";
 import { getYear } from "./getYear";
 import { toAlbum, toArtist } from "./routes";
 
@@ -27,41 +29,80 @@ const renderArtistAvatarImage = ({ image, name, conditionToRender = true }: Arti
     );
 };
 
-const renderMetaDataContent = ({ releaseDate, duration, uniqueData }) => [
+interface MetaDataContent {
+    releaseDate: string;
+    duration: string;
+    uniqueData: string;
+};
+
+const renderMetaDataContent = ({ releaseDate, duration, uniqueData }: MetaDataContent) => [
     getYear(releaseDate), duration, uniqueData
 ].join(" • ");
 
+interface TrackDetailsPageData {
+    mainArtistData: BasicMediaData;
+    albumData: BasicMediaData;
+};
+
+interface AlbumDetailsPageData {
+    artistsList: BasicMediaData[];
+};
+
+interface SubTitleContentData {
+    albumDetailsPageData?: AlbumDetailsPageData | null;
+    trackDetailsPageData?: TrackDetailsPageData | null;
+    artistImagesList: ImageURL[];
+};
+
 const renderSubTitleContent = ({
-    artistsList,
-    artistImage,
-    mainArtistDetails,
-    albumDetails
-}) => {
-    if (!!artistsList && artistsList.length > 0) {
-        return artistsList.map(({ name, id }, index) => (
+    albumDetailsPageData,
+    trackDetailsPageData,
+    artistImagesList,
+}: SubTitleContentData) => {
+
+    const image = getFirstImage(artistImagesList);
+
+    const renderAlbumDetailsPageContent = (albumDetailsPageData: AlbumDetailsPageData) => {
+        const { artistsList } = albumDetailsPageData;
+
+        return artistsList?.map(({ name, id }, index) => (
             <>
                 {renderArtistAvatarImage({
                     name,
-                    image: artistImage,
-                    conditionToRender: artistsList?.length === 1,
+                    image,
+                    conditionToRender: artistsList.length === 1,
                 })}
                 {" "}{index !== 0 && "• "}
                 <ArtistNameLink to={toArtist({ id })}>{name}</ArtistNameLink>
             </>
         ));
-    } else if (!!mainArtistDetails && !!albumDetails) {
+    };
+
+    const renderTrackDetailsPageContent = (trackDetailsPageData: TrackDetailsPageData) => {
+        const { name: mainArtistName, id: mainArtistId } = trackDetailsPageData.mainArtistData;
+        const { name: albumName, id: albumId } = trackDetailsPageData.albumData;
+
         return (
             <>
                 {renderArtistAvatarImage({
-                    image: artistImage,
-                    name: mainArtistDetails.name
+                    image,
+                    name: mainArtistName,
                 })}
                 {" "}
-                <ArtistNameLink to={toArtist({ id: mainArtistDetails.id })}>{mainArtistDetails.name}</ArtistNameLink>{" • "}
-                <ArtistNameLink $thinner to={toAlbum({ id: albumDetails.id })}>{albumDetails.name}</ArtistNameLink>
+                <ArtistNameLink to={toArtist({ id: mainArtistId })}>{mainArtistName}</ArtistNameLink>{" • "}
+                <ArtistNameLink $thinner to={toAlbum({ id: albumId })}>{albumName}</ArtistNameLink>
             </>
         );
     };
+
+
+    if (albumDetailsPageData != null) return renderAlbumDetailsPageContent(albumDetailsPageData);
+    if (trackDetailsPageData != null) return renderTrackDetailsPageContent(trackDetailsPageData);
+};
+
+interface BannerContentData {
+    metaData: MetaDataContent;
+    subTitleData: SubTitleContentData;
 };
 
 export const renderBannerContent = ({
@@ -71,12 +112,11 @@ export const renderBannerContent = ({
         uniqueData,
     },
     subTitleData: {
-        artistImage,
-        mainArtistDetails = null,
-        albumDetails = null,
-        artistsList = [],
-    },
-}) => {
+        albumDetailsPageData = null,
+        trackDetailsPageData = null,
+        artistImagesList,
+    }
+}: BannerContentData) => {
 
     const metaDataContent = renderMetaDataContent({
         uniqueData,
@@ -85,10 +125,9 @@ export const renderBannerContent = ({
     });
 
     const subTitleContent = renderSubTitleContent({
-        artistsList,
-        artistImage: getFirstImage(artistImage),
-        mainArtistDetails,
-        albumDetails,
+        albumDetailsPageData,
+        trackDetailsPageData,
+        artistImagesList,
     });
 
     return { metaDataContent, subTitleContent };
