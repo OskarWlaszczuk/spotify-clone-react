@@ -13,7 +13,7 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: getArtistReleasesEndpoint({ artistId: mainArtistId }),
+        endpoint: getArtistReleasesEndpoint({ id: mainArtistId }),
     });
 
     const {
@@ -23,7 +23,7 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
     } = useApiResource({
         actions: artistsActions,
         selectors: artistsSelectors,
-        endpoint: getSeveralArtistsListEndpoint(artistsIdsList),
+        endpoint: getSeveralArtistsListEndpoint({id:artistsIdsList}),
     });
 
     const dependentConfigs = [mainArtistAllReleasesDataConfig, artistsDetailsListConfig];
