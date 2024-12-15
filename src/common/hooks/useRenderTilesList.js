@@ -1,7 +1,7 @@
 import { Tile } from "../components/Tile"
 import { TilesList } from "../components/TilesList"
 import { useActiveTile } from "./useActiveTile";
-import { getImage } from "../functions/getImage";
+import { getFirstImage } from "../functions/getFirstImage";
 import { getYear } from "../functions/getYear";
 import { newestItemReleaseDate } from "../../features/artistDetailsPage/constants/newestItemReleaseDate";
 
@@ -65,7 +65,7 @@ export const useRenderTilesList = () => {
                                         }}
                                         key={index}
                                         toPagePath={toPageFunction({ id })}
-                                        picture={getImage(images)}
+                                        picture={getFirstImage(images)}
                                         title={name}
                                         subInfo={
                                             isRenderSubInfo
