@@ -1,1 +1,5 @@
-export const getYear = (date: string) => new Date(date).toLocaleDateString(undefined, { year: "numeric" });
+type GetYearFunction = (date: string) => string;
+
+export const getYear: GetYearFunction = (date) => (
+    new Date(date).toLocaleDateString(undefined, {year: "numeric"})
+);
