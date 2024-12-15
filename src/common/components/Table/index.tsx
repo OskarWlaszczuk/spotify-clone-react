@@ -24,14 +24,13 @@ import { ToggleViewButton } from "../ToggleViewButton";
 import { StyledPlayIcon } from "../StyledPlayIcon";
 import { getAlbumArtists } from "../../functions/getAlbumArtists";
 import { nanoid } from "nanoid";
-import { TrackListItem } from "../../interfaces/TrackCollection";
 import { fromMillisecondsToMinutes } from "../../functions/fromMillisecondsToMinutes";
 import { toArtist, toTrack } from "../../functions/routes";
 import { AvatarImage } from "../AvatarImage";
-import { getImage } from "../../functions/getImage";
+import { getFirstImage } from "../../functions/getFirstImage";
 
 interface TableProps {
-    list: TrackListItem[] | undefined;
+    list: any[] | undefined;
     hideIndex?: boolean,
     discsNumbers?: number[];
     useAlbumView?: boolean;
@@ -85,7 +84,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                     {!useAlbumView && (
                         <td>
                             <AvatarImage
-                                $picture={getImage(album.images)}
+                                $picture={getFirstImage(album.images)}
                                 $darkened={activeIndex === index && hideIndex}
                             >
                                 {activeIndex === index && hideIndex ? <StyledPlayIcon /> : ""}
