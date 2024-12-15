@@ -5,7 +5,7 @@ export const prepareReleases = (artistAllReleas: any) => {
         artistAllReleas,
         ["album", "compilation", "single", "appears_on"]
     );
-
+   
     const allReleasesWithoutAppearsOn = artistAllReleas?.filter(
         ({ album_group }: any) => album_group !== "appears_on"
     );
