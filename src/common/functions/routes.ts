@@ -1,5 +1,5 @@
 interface ToPageParams {
-    additionalPath?: string | undefined;
+    additionalPath?: string | undefined | any;
 };
 
 interface ToDetailsPageParams extends ToPageParams {
