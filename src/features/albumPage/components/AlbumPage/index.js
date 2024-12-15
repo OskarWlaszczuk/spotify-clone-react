@@ -2,7 +2,7 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { useParams } from "react-router-dom";
 import { Main } from "../../../../common/components/Main";
 import { Banner } from "../../../../common/components/Banner";
-import { getImage } from "../../../../common/functions/getImage";
+import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
@@ -55,8 +55,10 @@ export const AlbumPage = () => {
       uniqueData: `${albumTotalTracks} songs`,
     },
     subTitleData: {
-      artistImage: mainArtistImage,
-      artistsList: albumArtistsList,
+      albumDetailsPageData: {
+        artistsList: albumArtistsList,
+      },
+      artistImagesList: mainArtistImage,
     },
   });
 
@@ -65,7 +67,7 @@ export const AlbumPage = () => {
       currentFetchStatus={fetchStatus}
       bannerContent={
         <Banner
-          picture={getImage(albumImages)}
+          picture={getFirstImage(albumImages)}
           subTitleContent={subTitleContent}
           metaData={metaDataContent}
           title={albumName}
