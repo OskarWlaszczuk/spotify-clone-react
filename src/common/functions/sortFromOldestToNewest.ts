@@ -1,4 +1,4 @@
-import { WithReleaseDate } from "../interfaces/WithReleaseDate";
+import { WithReleaseDate } from "../Interfaces/WithReleaseDate";
 
 export const sortFromOldestToNewest = <T extends WithReleaseDate>(array: T[] = []): T[] => (
     [...array].sort(
