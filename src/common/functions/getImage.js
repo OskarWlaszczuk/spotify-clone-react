@@ -1,1 +1,0 @@
-export const getImage = (images) => images?.length > 0 ? images[0].url : "";
