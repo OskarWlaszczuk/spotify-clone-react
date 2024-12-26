@@ -20,7 +20,7 @@ import {
 import {sortFromOldestToNewest} from "../../../../../common/functions/sortFromOldestToNewest";
 import {fullListLinkText} from "../../../../../common/constants/fullListLinkText ";
 import {removeDuplicates} from "../../../../../common/functions/removeDuplicates";
-import {ListToggleButtonsSection} from "../../../../../common/components/ListToggleButtonsSection";
+import {CategoriesSwitchersSection} from "../../../../../common/components/CategoriesSwitchersSection";
 import {useRenderTilesList} from "../../../../../common/hooks/useRenderTilesList";
 import {prepareReleases} from "../../../functions/prepareReleases";
 import {preparePopularReleases} from "../../../functions/preparePopularReleases";
@@ -157,10 +157,10 @@ export const MainContent = ({
         });
 
         const listToggleButtonDataList = [
-            {list: uniquePopularReleases, category: popularReleasesCategory, text: "Popular releases"},
-            {list: albumsList, category: albumsCategory, text: "Albums"},
-            {list: singlesList, category: singlesCategory, text: "Singles and EPs"},
-            {list: compilationsList, category: compilationsCategory, text: "Compilations"},
+            {listToDisplay: uniquePopularReleases, category: popularReleasesCategory, categorySwitcherContent: "Popular releases"},
+            {listToDisplay: albumsList, category: albumsCategory, categorySwitcherContent: "Albums"},
+            {listToDisplay: singlesList, category: singlesCategory, categorySwitcherContent: "Singles and EPs"},
+            {listToDisplay: compilationsList, category: compilationsCategory, categorySwitcherContent: "Compilations"},
         ];
 
         const additionalPathsOptionsGrouped = [
@@ -175,13 +175,13 @@ export const MainContent = ({
                 {
                     title: "Discography",
                     subExtraContent: (
-                        <ListToggleButtonsSection
-                            listToggleButtonDataList={listToggleButtonDataList}
+                        <CategoriesSwitchersSection
+                            categoriesDataList={listToggleButtonDataList}
                             setCurrentCategoryData={setCurrentCategoryData}
                             targetCategory={currentCategoryData.category}
                         />
                     ),
-                    list: removeDuplicates({list: currentCategoryData.list, key: "name"}),
+                    list: removeDuplicates({list: currentCategoryData.listToDisplay, key: "name"}),
                     toPageFunction: toAlbum,
                     isRenderSubInfo: true,
                     fullListData: {
