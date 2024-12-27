@@ -1,13 +1,19 @@
-import { GroupData } from "../Interfaces/GroupData";
-import { findMatchingValueByKey } from "./findMatchingValueByKey";
+import {findMatchingOptionByKey} from "./findMatchingOptionByKey";
+import {AlbumOrArtist} from "../Interfaces/ListItem";
+import {FullListPageOption} from "../Interfaces/FullListPageOption";
 
-export const getFullListMatchedData = (fullListsDataOptions: GroupData[], type: string) => {
+interface FullListMatchedData {
+    fullListContent: AlbumOrArtist[];
+    fullListTitle: string;
+    isFullListArtistsList: boolean;
+}
 
-    const matchedFullListDataByType = findMatchingValueByKey(fullListsDataOptions, type);
+export const getFullListMatchedData = (fullListPageOptions: FullListPageOption[], type: string): FullListMatchedData => {
+    const matchedFullListDataByType = findMatchingOptionByKey(fullListPageOptions, type)!;
 
     const fullListContent = matchedFullListDataByType?.value;
     const fullListTitle = matchedFullListDataByType?.title;
     const isFullListArtistsList = matchedFullListDataByType?.isArtistsList;
 
-    return { fullListContent, fullListTitle, isFullListArtistsList };
+    return {fullListContent, fullListTitle, isFullListArtistsList};
 };
