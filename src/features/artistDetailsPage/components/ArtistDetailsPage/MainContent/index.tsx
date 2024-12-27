@@ -2,28 +2,29 @@ import {useParams} from "react-router-dom";
 import {Table} from "../../../../../common/components/Table";
 import {toAlbum, toArtist} from "../../../../../common/functions/routes";
 import {useCurrentCategoryData} from "../../../hooks/useCurrentCategoryData";
-import {findMatchingValueByKey} from "../../../../../common/functions/findMatchingValueByKey";
+import {findMatchingOptionByKey} from "../../../../../common/functions/findMatchingOptionByKey";
 import {getFullListMatchedData} from "../../../../../common/functions/getFullListMatchedData";
 import {
     albumsCategory,
     compilationsCategory,
     popularReleasesCategory,
     singlesCategory
-} from "../../../constants/categories";
+} from "../../../constants/releasesCategories";
 import {
     allReleaseParamDiscography,
     albumsParamDiscography,
     singleParamDiscography,
-    artistAppearsOnParam,
     compilationParamDiscography
-} from "../../../../../common/constants/params";
+} from "../../../../../common/constants/artistDiscographyParams";
 import {sortFromOldestToNewest} from "../../../../../common/functions/sortFromOldestToNewest";
 import {fullListLinkText} from "../../../../../common/constants/fullListLinkText ";
-import {removeDuplicates} from "../../../../../common/functions/removeDuplicates";
+import {removeDuplicatesByName} from "../../../../../common/functions/removeDuplicatesByName";
 import {CategoriesSwitchersSection} from "../../../../../common/components/CategoriesSwitchersSection";
 import {useRenderTilesList} from "../../../../../common/hooks/useRenderTilesList";
 import {prepareReleases} from "../../../functions/prepareReleases";
 import {preparePopularReleases} from "../../../functions/preparePopularReleases";
+import {useRenderFullList} from "../../../../../common/functions/useRenderFullList";
+import {artistAppearsOnParam} from "../../../constants/FullListPageParams";
 
 interface TopTracksData {
     list: any;
@@ -51,39 +52,7 @@ export const MainContent = ({
                                 }
                             }: MainContentProps) => {
 
-
-    //  interface GroupData2 {
-    //      key: string;
-    //      value: any;
-    //      title?: string;
-    //      isArtistsList?: boolean;
-    //  };
-    //  const exampleArray = [
-    //      {
-    //          key: "klucz1",
-    //          value: [1, 2, 3, 4],
-    //      },
-    //      {
-    //          key: "klucz2",
-    //          value: ["str1", "str2", "str3",],
-    //      },
-    //      {
-    //          key: "klucz3",
-    //          value: [null, undefined, true, false],
-    //      },
-    //  ]
-    //
-    //  const findMatchingValueByKey2 = (
-    //      groups: GroupData2[],
-    //      targetKey: string,
-    //  ) => (
-    //      groups.find(({ key }) => isMatch(key, targetKey))
-    //  );
-    //
-    // console.log( findMatchingValueByKey2(exampleArray, "klucz2"));
-
-
-    const {id: artistId, type = ""} = useParams<{ id: string; type?: string }>();
+    const {id: artistId, type = ""} = useParams();
     const renderTilesList = useRenderTilesList();
 
     const {
@@ -101,31 +70,31 @@ export const MainContent = ({
         value: uniquePopularReleases,
     });
 
-    const discographyData = {
+    const baseDiscographyData = {
         title: name,
         isArtistsList: false,
     };
-
-    const fullListsDataOptions = [
+    console.log(uniquePopularReleases)
+    const fullListPageOptions = [
         {
             key: allReleaseParamDiscography,
             value: sortFromOldestToNewest(uniquePopularReleases),
-            ...discographyData,
+            ...baseDiscographyData,
         },
         {
             key: albumsParamDiscography,
             value: albumsList,
-            ...discographyData,
+            ...baseDiscographyData,
         },
         {
             key: compilationParamDiscography,
             value: compilationsList,
-            ...discographyData,
+            ...baseDiscographyData,
         },
         {
             key: singleParamDiscography,
             value: singlesList,
-            ...discographyData,
+            ...baseDiscographyData,
         },
         {
             key: artistAppearsOnParam,
@@ -135,20 +104,7 @@ export const MainContent = ({
         },
     ];
 
-    const {fullListContent, fullListTitle, isFullListArtistsList} = getFullListMatchedData(fullListsDataOptions, type);
-
-    const renderFullList = () => {
-        return renderTilesList([
-            {
-                title: fullListTitle,
-                list: removeDuplicates({list: fullListContent, key: "name"}),
-                toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
-                isArtistsList: isFullListArtistsList,
-                hideRestListPart: false,
-                isRenderSubInfo: true,
-            },
-        ]);
-    };
+    const renderFullList = useRenderFullList();
 
     const renderTilesListSections = () => {
         const generateFullListData = (additionalPath: any) => ({
@@ -157,10 +113,26 @@ export const MainContent = ({
         });
 
         const listToggleButtonDataList = [
-            {listToDisplay: uniquePopularReleases, category: popularReleasesCategory, categorySwitcherContent: "Popular releases"},
-            {listToDisplay: albumsList, category: albumsCategory, categorySwitcherContent: "Albums"},
-            {listToDisplay: singlesList, category: singlesCategory, categorySwitcherContent: "Singles and EPs"},
-            {listToDisplay: compilationsList, category: compilationsCategory, categorySwitcherContent: "Compilations"},
+            {
+                listToDisplay: uniquePopularReleases,
+                category: popularReleasesCategory,
+                categorySwitcherContent: "Popular releases"
+            },
+            {
+                listToDisplay: albumsList,
+                category: albumsCategory,
+                categorySwitcherContent: "Albums"
+            },
+            {
+                listToDisplay: singlesList,
+                category: singlesCategory,
+                categorySwitcherContent: "Singles and EPs"
+            },
+            {
+                listToDisplay: compilationsList,
+                category: compilationsCategory,
+                categorySwitcherContent: "Compilations"
+            },
         ];
 
         const additionalPathsOptionsGrouped = [
@@ -181,13 +153,13 @@ export const MainContent = ({
                             targetCategory={currentCategoryData.category}
                         />
                     ),
-                    list: removeDuplicates({list: currentCategoryData.listToDisplay, key: "name"}),
+                    list: removeDuplicatesByName(currentCategoryData.listToDisplay),
                     toPageFunction: toAlbum,
                     isRenderSubInfo: true,
                     fullListData: {
                         pathname: toArtist({
                             id: artistId!,
-                            additionalPath: findMatchingValueByKey(
+                            additionalPath: findMatchingOptionByKey(
                                 additionalPathsOptionsGrouped,
                                 currentCategoryData.category
                             )?.value,
@@ -208,7 +180,7 @@ export const MainContent = ({
     return (
         <>
             {type ?
-                renderFullList() :
+                renderFullList(fullListPageOptions, type) :
                 (
                     <>
                         <Table list={list} caption="Popular"/>
