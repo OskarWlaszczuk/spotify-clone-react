@@ -1,9 +1,8 @@
-import {useParams} from "react-router-dom";
-import {Table} from "../../../../../common/components/Table";
-import {toAlbum, toArtist} from "../../../../../common/functions/routes";
-import {useCurrentCategoryData} from "../../../hooks/useCurrentCategoryData";
-import {findMatchingOptionByKey} from "../../../../../common/functions/findMatchingOptionByKey";
-import {getFullListMatchedData} from "../../../../../common/functions/getFullListMatchedData";
+import { useParams } from "react-router-dom";
+import { Table } from "../../../../../common/components/Table";
+import { toAlbum, toArtist } from "../../../../../common/functions/routes";
+import { useCurrentCategoryData } from "../../../hooks/useCurrentCategoryData";
+import { findMatchingOptionByKey } from "../../../../../common/functions/findMatchingOptionByKey";
 import {
     albumsCategory,
     compilationsCategory,
@@ -16,15 +15,18 @@ import {
     singleParamDiscography,
     compilationParamDiscography
 } from "../../../../../common/constants/artistDiscographyParams";
-import {sortFromOldestToNewest} from "../../../../../common/functions/sortFromOldestToNewest";
-import {fullListLinkText} from "../../../../../common/constants/fullListLinkText ";
-import {removeDuplicatesByName} from "../../../../../common/functions/removeDuplicatesByName";
-import {CategoriesSwitchersSection} from "../../../../../common/components/CategoriesSwitchersSection";
-import {useRenderTilesList} from "../../../../../common/hooks/useRenderTilesList";
-import {prepareReleases} from "../../../functions/prepareReleases";
-import {preparePopularReleases} from "../../../functions/preparePopularReleases";
-import {useRenderFullList} from "../../../../../common/functions/useRenderFullList";
-import {artistAppearsOnParam} from "../../../constants/FullListPageParams";
+import { sortFromOldestToNewest } from "../../../../../common/functions/sortFromOldestToNewest";
+import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
+import { removeDuplicatesByName } from "../../../../../common/functions/removeDuplicatesByName";
+import { CategoriesSwitchersSection } from "../../../../../common/components/CategoriesSwitchersSection";
+import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
+import { divideReleases } from "../../../functions/divideReleases";
+import { preparePopularReleases } from "../../../functions/preparePopularReleases";
+import { useRenderFullList } from "../../../../../common/functions/useRenderFullList";
+import { artistAppearsOnParam } from "../../../constants/FullListPageParams";
+import { CategoryData } from "../../../../../common/Interfaces/CategoryData";
+import { FullListPageOption } from "../../../../../common/Interfaces/FullListPageOption";
+import { useRenderDiscography } from "../../../functions/renderDiscography";
 
 interface TopTracksData {
     list: any;
@@ -42,17 +44,17 @@ interface MainContentProps {
 };
 
 export const MainContent = ({
-                                artistsData: {
-                                    name,
-                                    allReleasesList,
-                                    topTracksData: {
-                                        list,
-                                        listAsAlbums
-                                    }
-                                }
-                            }: MainContentProps) => {
+    artistsData: {
+        name,
+        allReleasesList,
+        topTracksData: {
+            list,
+            listAsAlbums
+        }
+    }
+}: MainContentProps) => {
 
-    const {id: artistId, type = ""} = useParams();
+    const { id: artistId, type = "" } = useParams();
     const renderTilesList = useRenderTilesList();
 
     const {
@@ -61,21 +63,16 @@ export const MainContent = ({
         singlesList,
         appearsOnList,
         allReleasesWithoutAppearsOn,
-    } = prepareReleases(allReleasesList);
+    } = divideReleases(allReleasesList);
 
     const uniquePopularReleases = preparePopularReleases(listAsAlbums, allReleasesWithoutAppearsOn);
-
-    const {currentCategoryData, setCurrentCategoryData} = useCurrentCategoryData({
-        key: popularReleasesCategory,
-        value: uniquePopularReleases,
-    });
 
     const baseDiscographyData = {
         title: name,
         isArtistsList: false,
     };
-    console.log(uniquePopularReleases)
-    const fullListPageOptions = [
+
+    const fullListPageOptions:FullListPageOption[] = [
         {
             key: allReleaseParamDiscography,
             value: sortFromOldestToNewest(uniquePopularReleases),
@@ -105,88 +102,34 @@ export const MainContent = ({
     ];
 
     const renderFullList = useRenderFullList();
-
-    const renderTilesListSections = () => {
-        const generateFullListData = (additionalPath: any) => ({
-            pathname: toArtist({id: artistId!, additionalPath}),
-            text: fullListLinkText,
-        });
-
-        const listToggleButtonDataList = [
+    const renderDiscography = useRenderDiscography(allReleasesList, listAsAlbums);
+ 
+    const renderTilesListSections = () => (
+        renderTilesList([
             {
-                listToDisplay: uniquePopularReleases,
-                category: popularReleasesCategory,
-                categorySwitcherContent: "Popular releases"
+                title: "Appears on",
+                list: appearsOnList,
+                toPageFunction: toAlbum,
+                fullListData: {
+                    pathname: toArtist({ id: artistId!, additionalPath: artistAppearsOnParam }),
+                    text: fullListLinkText,
+                }
             },
-            {
-                listToDisplay: albumsList,
-                category: albumsCategory,
-                categorySwitcherContent: "Albums"
-            },
-            {
-                listToDisplay: singlesList,
-                category: singlesCategory,
-                categorySwitcherContent: "Singles and EPs"
-            },
-            {
-                listToDisplay: compilationsList,
-                category: compilationsCategory,
-                categorySwitcherContent: "Compilations"
-            },
-        ];
-
-        const additionalPathsOptionsGrouped = [
-            {key: popularReleasesCategory, value: allReleaseParamDiscography},
-            {key: albumsCategory, value: albumsParamDiscography},
-            {key: compilationsCategory, value: compilationParamDiscography},
-            {key: singlesCategory, value: singleParamDiscography},
-        ];
-
-        return (
-            renderTilesList([
-                {
-                    title: "Discography",
-                    subExtraContent: (
-                        <CategoriesSwitchersSection
-                            categoriesDataList={listToggleButtonDataList}
-                            setCurrentCategoryData={setCurrentCategoryData}
-                            targetCategory={currentCategoryData.category}
-                        />
-                    ),
-                    list: removeDuplicatesByName(currentCategoryData.listToDisplay),
-                    toPageFunction: toAlbum,
-                    isRenderSubInfo: true,
-                    fullListData: {
-                        pathname: toArtist({
-                            id: artistId!,
-                            additionalPath: findMatchingOptionByKey(
-                                additionalPathsOptionsGrouped,
-                                currentCategoryData.category
-                            )?.value,
-                        }),
-                        text: fullListLinkText,
-                    },
-                },
-                {
-                    title: "Appears on",
-                    list: appearsOnList,
-                    toPageFunction: toAlbum,
-                    fullListData: generateFullListData(artistAppearsOnParam),
-                },
-            ])
-        );
-    };
+        ])
+    );
 
     return (
         <>
-            {type ?
-                renderFullList(fullListPageOptions, type) :
-                (
-                    <>
-                        <Table list={list} caption="Popular"/>
-                        {renderTilesListSections()}
-                    </>
-                )
+            {
+                type ?
+                    renderFullList(fullListPageOptions, type) :
+                    (
+                        <>
+                            <Table list={list} caption="Popular" />
+                            {renderDiscography()}
+                            {renderTilesListSections()}
+                        </>
+                    )
             }
         </>
     );
