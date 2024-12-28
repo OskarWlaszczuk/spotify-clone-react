@@ -9,7 +9,7 @@ import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 
 export const ArtistDetailsPage = () => {
-    const { type, id: artistId } = useParams();
+    const { fullListType, id: artistId } = useParams();
 
     const { mainArtistDetails, mainArtistReleases, mainArtistDataStatuses } = useMainArtistData({
         mainArtistId: artistId,
@@ -29,7 +29,7 @@ export const ArtistDetailsPage = () => {
     return (
         <Main
             currentFetchStatus={fetchStatus}
-            bannerContent={!type && (
+            bannerContent={!fullListType && (
                 <Banner
                     picture={getFirstImage(images)}
                     title={name}
@@ -40,20 +40,10 @@ export const ArtistDetailsPage = () => {
             }
             content={
                 <MainContent
-                    artistsData={{
-                        name: name,
-                        allReleasesList: mainArtistReleasesList,
-                        topTracksData: {
-                            list: artistTopTracksList,
-                            listAsAlbums: artistTopTracksAsAlbumsList,
-                        }
-                    }}
                     artistName={name}
-                    artistAllReleas={mainArtistReleasesList}
-                    artistTopTrackData={{
-                        topTracksList: artistTopTracksList,
-                        topTracksAlbumsList: artistTopTracksAsAlbumsList,
-                    }}
+                    artistAllReleases={mainArtistReleasesList}
+                    artistTopTracks={artistTopTracksList}
+                    artistTopTracksAsAlbums={artistTopTracksAsAlbumsList}
                 />
             }
         />
