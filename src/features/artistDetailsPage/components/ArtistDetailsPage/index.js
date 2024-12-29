@@ -23,24 +23,30 @@ export const ArtistDetailsPage = () => {
 
     const fetchStatus = useFetchStatus([artistTopTracksStatus, ...mainArtistDataStatuses]);
 
+    const [{
+        name: artistName,
+        followers: artistFollowers,
+        images: artistImages
+    }] = getSpecificKeys(mainArtistDetails, ["name", "followers", "images"]);
+
     const mainArtistReleasesList = mainArtistReleases?.items;
-    const [{ name, followers, images }] = getSpecificKeys(mainArtistDetails, ["name", "followers", "images"]);
 
     return (
         <Main
             currentFetchStatus={fetchStatus}
             bannerContent={!fullListType && (
                 <Banner
-                    picture={getFirstImage(images)}
-                    title={name}
+                    picture={getFirstImage(artistImages)}
+                    title={artistName}
                     caption="Verified artist"
-                    subTitleContent={`${followers?.total} followers`}
+                    subTitleContent={`${artistFollowers?.total} followers`}
                     useArtistPictureStyle
                 />)
             }
             content={
                 <MainContent
-                    artistName={name}
+                    fullListType={fullListType}
+                    artistName={artistName}
                     artistAllReleases={mainArtistReleasesList}
                     artistTopTracks={artistTopTracksList}
                     artistTopTracksAsAlbums={artistTopTracksAsAlbumsList}
