@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { Table } from "../../../../../common/components/Table";
 import { toAlbum, toArtist } from "../../../../../common/functions/routes";
 import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
@@ -8,44 +7,36 @@ import { artistAppearsOnParam } from "../../../constants/FullListPageParams";
 import { useRenderDiscography } from "../../../hooks/useRenderDiscography";
 import { prepareFullListPageOptions } from "../../../functions/prepareFullListPageOptions";
 import { filterReleasesByGroups } from "../../../../../common/functions/filterReleasesByGroups";
-
-interface TopTracksData {
-    list: any;
-    listAsAlbums: any;
-};
-
-interface ArtistsData {
-    name: string;
-    allReleasesList: any,
-    topTracksData: TopTracksData
-};
+import { AlbumItem } from "../../../../../common/Interfaces/ListItem";
 
 interface MainContentProps {
-    artistsData: ArtistsData;
+    artistName: string;
+    artistId: string;
+    artistAllReleases: AlbumItem[];
+    artistTopTracks: AlbumItem[];
+    artistTopTracksAsAlbums: AlbumItem[];
+    fullListType: string;
 };
 
 export const MainContent = ({
-    artistsData: {
-        name,
-        allReleasesList,
-        topTracksData: {
-            list,
-            listAsAlbums
-        }
-    }
+    artistName,
+    artistId,
+    artistAllReleases,
+    artistTopTracks,
+    artistTopTracksAsAlbums,
+    fullListType,
 }: MainContentProps) => {
-    const { id: artistId, type = "" } = useParams();
-
+    
     const renderTilesList = useRenderTilesList();
     const renderFullList = useRenderFullList();
-    const renderDiscography = useRenderDiscography(allReleasesList, listAsAlbums);
+    const renderDiscography = useRenderDiscography(artistAllReleases, artistTopTracksAsAlbums);
 
-    const [appearsOnList] = filterReleasesByGroups(allReleasesList, ["appears_on"]);
+    const [appearsOnList] = filterReleasesByGroups(artistAllReleases, ["appears_on"]);
 
     const fullListPageOptions = prepareFullListPageOptions({
-        artistName: name,
-        allReleasesList,
-        listAsAlbums,
+        artistName,
+        artistAllReleases,
+        artistTopTracksAsAlbums,
     });
 
     const sectionsToRender = [
@@ -63,11 +54,11 @@ export const MainContent = ({
     return (
         <>
             {
-                type ?
-                    renderFullList(fullListPageOptions, type) :
+                fullListType ?
+                    renderFullList(fullListPageOptions, fullListType) :
                     (
                         <>
-                            <Table list={list} caption="Popular" />
+                            <Table list={artistTopTracks} caption="Popular" />
                             {renderDiscography()}
                             {renderTilesList(sectionsToRender)}
                         </>
