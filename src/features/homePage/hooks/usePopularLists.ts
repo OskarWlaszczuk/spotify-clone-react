@@ -2,6 +2,7 @@ import { getSeveralAlbumsListEndpoint, getSeveralArtistsListEndpoint } from "../
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { albumsActions, albumsSelectors } from "../../../common/slices/albumsSlice";
 import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
+import { episodesActions, episodesSelectors } from "../../../common/slices/episodesSlice";
 
 export const usePopularLists = () => {
     type IdsList = readonly string[];
@@ -61,9 +62,19 @@ export const usePopularLists = () => {
         endpoint: getSeveralAlbumsListEndpoint({ id: popularAlbumsIdsList }),
     });
 
-    const configs = [popularAlbumsConfig, popularArtistsConfig];
-    const apiStatuses = [popularAlbumsStatus, popularArtistsStatus];
-    const apiDataList = [rawPopularAlbumsList, rawPopularArtistsList]
+    const {
+        configs: popularEpisodesConfig,
+        apiStatus: popularEpisodesStatus,
+        rawApiData: rawPopularEpisodesList,
+    } = useApiResource({
+        actions: episodesActions,
+        selectors: episodesSelectors,
+        endpoint: getSeveralArtistsListEndpoint({ id: popularEpisodesIdsList }),
+    });
+
+    const configs = [popularAlbumsConfig, popularArtistsConfig, popularEpisodesConfig];
+    const apiStatuses = [popularAlbumsStatus, popularArtistsStatus, popularEpisodesStatus];
+    const apiDataList = [rawPopularAlbumsList, rawPopularArtistsList, rawPopularEpisodesList]
 
     return { configs, apiStatuses, apiDataList };
 };
