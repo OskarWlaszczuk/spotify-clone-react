@@ -11,11 +11,13 @@ interface MouseEventHandlersMethods {
 interface TileProps {
     picture: string;
     title: string;
-    subInfo: string;
+    subInfo?: string;
     toPagePath: string;
     mouseEventHandlers: MouseEventHandlersMethods;
-    isActive?: boolean;
+    isActive: boolean;
     isArtistPictureStyle?: boolean;
+    useHorizontalLayout: boolean;
+    useSubInfoAsLink?: boolean;
 };
 
 export const Tile = (
@@ -26,18 +28,35 @@ export const Tile = (
         toPagePath,
         isArtistPictureStyle,
         mouseEventHandlers,
-        isActive
+        isActive,
+        useHorizontalLayout,
+        useSubInfoAsLink,
     }: TileProps
-) => (
-    <Container
-        to={toPagePath}
-        onMouseEnter={mouseEventHandlers.enter}
-        onMouseLeave={mouseEventHandlers.leave}
-    >
-        <Picture $picture={picture} $useArtistPictureStyle={isArtistPictureStyle} >
-            {isActive && <PlayPauseButton isHighlighted />}
-        </Picture>
-        <Title>{title}</Title>
-        <SubInfo>{capitalizeFirstLetter(subInfo)}</SubInfo>
-    </Container>
-);
+) => {
+
+    const subInfoContent = !useSubInfoAsLink && !!subInfo ? capitalizeFirstLetter(subInfo) : subInfo;
+
+    const displayPlayButtonOnHover = (conditionToDisplay: boolean, useSmallerButton: boolean = false) => (
+        conditionToDisplay && <PlayPauseButton isSmaller={useSmallerButton} />
+    )
+
+    return (
+        <Container
+            to={toPagePath}
+            onMouseEnter={mouseEventHandlers.enter}
+            onMouseLeave={mouseEventHandlers.leave}
+            $useHorizontalLayout={useHorizontalLayout}
+        >
+            <Picture
+                $picture={picture}
+                $useArtistPictureStyle={isArtistPictureStyle}
+                $noBorderRadius={useHorizontalLayout}
+            >
+                {displayPlayButtonOnHover((isActive && !useHorizontalLayout))}
+            </Picture>
+            <Title>{title}</Title>
+            {subInfo && <SubInfo >{subInfoContent}</SubInfo>}
+            {displayPlayButtonOnHover((isActive && useHorizontalLayout), true)}
+        </Container>
+    );
+}
