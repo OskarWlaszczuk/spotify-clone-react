@@ -5,13 +5,9 @@ import { popularAlbumsTitle, popularArtistsTitle } from "../../../constants/popu
 import { useRenderPopularLists } from "../../../hooks/useRenderPopularLists";
 import { FullListPageOption } from "../../../../../common/Interfaces/FullListPageOption";
 import { PopularListConfig } from "../../../interfaces/PopularListConfig";
-import { AlbumItem, ArtistItem } from "../../../../../common/Interfaces/ListItem";
-import { List, Picture, StyledHorizontalTile, Title } from "../../../../../styledPracticing";
-import { getFirstImage } from "../../../../../common/functions/getFirstImage";
-import { allFacetCategory, musicFacetCategory } from "../../../constants/facetCategories";
-import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
-import { useCurrentCategoryData } from "../../../../artistDetailsPage/hooks/useCurrentCategoryData";
 import { useRenderFacet } from "../../../hooks/useRenderFacet";
+import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
+import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 
 interface MainContentProps {
     popularArtists: ArtistItem[];
@@ -23,8 +19,7 @@ export const MainContent = ({ popularArtists, popularAlbums }: MainContentProps)
 
     const renderFullList = useRenderFullList()
     const renderPopularLists = useRenderPopularLists();
-    const renderFacet = useRenderFacet(popularArtists, popularAlbums);
-
+    const renderFacet = useRenderFacet(popularAlbums);
 
     const fullListPageOptions: FullListPageOption[] = [
         { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
