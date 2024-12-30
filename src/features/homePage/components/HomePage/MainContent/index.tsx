@@ -1,39 +1,47 @@
-import {useParams} from "react-router-dom"
-import {popularAlbumsParam, popularArtistsParam} from "../../../constants/fullListPageParams";
-import {useRenderFullList} from "../../../../../common/functions/useRenderFullList";
-import {popularAlbumsTitle, popularArtistsTitle} from "../../../constants/popularListsTitles";
-import {useRenderPopularLists} from "../../../hooks/useRenderPopularLists";
-import {FullListPageOption} from "../../../../../common/Interfaces/FullListPageOption";
-import {PopularListConfig} from "../../../interfaces/PopularListConfig";
-import {AlbumItem, ArtistItem} from "../../../../../common/Interfaces/ListItem";
+import { useParams } from "react-router-dom"
+import { popularAlbumsParam, popularArtistsParam } from "../../../constants/fullListPageParams";
+import { useRenderFullList } from "../../../../../common/functions/useRenderFullList";
+import { popularAlbumsTitle, popularArtistsTitle } from "../../../constants/popularListsTitles";
+import { useRenderPopularLists } from "../../../hooks/useRenderPopularLists";
+import { FullListPageOption } from "../../../../../common/Interfaces/FullListPageOption";
+import { PopularListConfig } from "../../../interfaces/PopularListConfig";
+import { AlbumItem, ArtistItem } from "../../../../../common/Interfaces/ListItem";
+import { List, Picture, StyledHorizontalTile, Title } from "../../../../../styledPracticing";
+import { getFirstImage } from "../../../../../common/functions/getFirstImage";
+import { allFacetCategory, musicFacetCategory } from "../../../constants/facetCategories";
+import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
+import { useCurrentCategoryData } from "../../../../artistDetailsPage/hooks/useCurrentCategoryData";
+import { useRenderFacet } from "../../../hooks/useRenderFacet";
 
 interface MainContentProps {
     popularArtists: ArtistItem[];
     popularAlbums: AlbumItem[];
 }
 
-export const MainContent = ({popularArtists, popularAlbums}: MainContentProps) => {
-    const {type = ""} = useParams();
+export const MainContent = ({ popularArtists, popularAlbums }: MainContentProps) => {
+    const { fullListType } = useParams();
 
     const renderFullList = useRenderFullList()
     const renderPopularLists = useRenderPopularLists();
+    const renderFacet = useRenderFacet(popularArtists, popularAlbums);
+
 
     const fullListPageOptions: FullListPageOption[] = [
-        {key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false},
-        {key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true},
+        { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
+        { key: popularArtistsParam, value: popularArtists, title: popularArtistsTitle, isArtistsList: true },
     ];
 
     const popularListsConfig: PopularListConfig[] = [
         {
             title: popularAlbumsTitle,
             list: popularAlbums,
-            param: popularAlbumsParam,
+            fullListType: popularAlbumsParam,
             isArtistsList: false,
         },
         {
             title: popularArtistsTitle,
             list: popularArtists,
-            param: popularArtistsParam,
+            fullListType: popularArtistsParam,
             isArtistsList: true,
         },
     ];
@@ -41,10 +49,21 @@ export const MainContent = ({popularArtists, popularAlbums}: MainContentProps) =
     return (
         <>
             {
-                type ?
-                    renderFullList(fullListPageOptions, type) :
-                    renderPopularLists(popularListsConfig)
+                fullListType ?
+                    renderFullList(fullListPageOptions, fullListType) :
+                    renderFacet()
             }
+
+            {/* <List>
+                {
+                    popularAlbums?.map(({ name, images }) => (
+                        <StyledHorizontalTile>
+                            <Picture $picture={getFirstImage(images)} />
+                            <Title>{name} </Title>
+                        </StyledHorizontalTile>
+                    ))
+                }
+            </List> */}
         </>
     )
 };
