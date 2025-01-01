@@ -9,7 +9,6 @@ import { useRenderFacet } from "../../../hooks/useRenderFacet";
 import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
-import { facetAllCategory, facetMusicCategory } from "../../../constants/facetCategories";
 import { useRenderArtistReleaseSections } from "../../../../../common/hooks/useRenderArtistReleaseSections";
 
 interface ArtistAllReleasesData {
@@ -19,19 +18,19 @@ interface ArtistAllReleasesData {
     listId: number;
 }
 
+type PopularLists = [AlbumItem[], ArtistItem[], EpisodeItem[]]
+
 interface MainContentProps {
-    popularArtists: ArtistItem[];
-    popularAlbums: AlbumItem[];
-    popularEpisodes: EpisodeItem[];
+    popularLists: PopularLists
     artistsAllReleasesDataList: ArtistAllReleasesData[];
 }
 
 export const MainContent = ({
-    popularArtists,
-    popularAlbums,
-    popularEpisodes,
+    popularLists,
     artistsAllReleasesDataList,
 }: MainContentProps) => {
+
+    const [popularAlbums, popularArtists, popularEpisodes] = popularLists;
 
     const { fullListType, facetType } = useParams();
 
@@ -84,17 +83,6 @@ export const MainContent = ({
                     )
 
             }
-
-            {/* <List>
-                {
-                    popularAlbums?.map(({ name, images }) => (
-                        <StyledHorizontalTile>
-                            <Picture $picture={getFirstImage(images)} />
-                            <Title>{name} </Title>
-                        </StyledHorizontalTile>
-                    ))
-                }
-            </List> */}
         </>
     )
 };
