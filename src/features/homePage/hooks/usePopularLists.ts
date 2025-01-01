@@ -1,16 +1,14 @@
-import { getSeveralAlbumsListEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
+import { geteSeveralEpisodesListEndpoint, getSeveralAlbumsListEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { albumsActions, albumsSelectors } from "../../../common/slices/albumsSlice";
 import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 import { episodesActions, episodesSelectors } from "../../../common/slices/episodesSlice";
+import { formatIdsForFetch } from "../functions/formatIdsForFetch";
 
 export const usePopularLists = () => {
-    type IdsList = readonly string[];
-    type FormattedIdsList = string;
 
-    const formatPopularListForFetch = (idsList: IdsList) => idsList.join(",");
 
-    const popularAlbumsIdsList: FormattedIdsList = formatPopularListForFetch([
+    const popularAlbumsIdsList = formatIdsForFetch([
         "47tDANOMCmdRDI5CVcjNKY",
         "7aJuG4TFXa2hmE4z1yxc3n",
         "61ulfFSmmxMhc2wCdmdMkN",
@@ -21,7 +19,7 @@ export const usePopularLists = () => {
         "4cA2a9w1gSzJEIdbhwUrsH",
     ]);
 
-    const popularArtistsIdsList: FormattedIdsList = formatPopularListForFetch([
+    const popularArtistsIdsList = formatIdsForFetch([
         "4iHNK0tOyZPYnBU7nGAgpQ",
         "5lpH0xAS4fVfLkACg9DAuM",
         "5WUlDfRSoLAfcVSX1WnrxN",
@@ -32,12 +30,12 @@ export const usePopularLists = () => {
         "38EmEgXkgK51MT2tPY0EoC",
     ]);
 
-    const popularEpisodesIdsList: FormattedIdsList = formatPopularListForFetch([
+    const popularEpisodesIdsList = formatIdsForFetch([
         "3oTmwclY2QIcCVid8dpDLe",
         "3Kg2Qmr7x6yCLNCUwPd30k",
         "4A7WCiltnjCAT57HhmO7xN",
-        "66CXWjxzNUsdJxJ2JdwvnR",
-        "0ZyH6ZQIxpfco1fJrq5Dmj",
+        "0ml54mQpzYhDAjhpAQrAHm",
+        "0ml54mQpzYhDAjhpAQrAHm",
         "37AxLdZj0ymkjW9Uxs6TLu",
         "2XDdKW7kbpABg3v5FltFri",
     ]);
@@ -69,7 +67,7 @@ export const usePopularLists = () => {
     } = useApiResource({
         actions: episodesActions,
         selectors: episodesSelectors,
-        endpoint: getSeveralArtistsListEndpoint({ id: popularEpisodesIdsList }),
+        endpoint: geteSeveralEpisodesListEndpoint({ id: popularEpisodesIdsList }),
     });
 
     const configs = [popularAlbumsConfig, popularArtistsConfig, popularEpisodesConfig];
