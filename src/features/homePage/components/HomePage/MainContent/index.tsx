@@ -8,18 +8,34 @@ import { PopularListConfig } from "../../../interfaces/PopularListConfig";
 import { useRenderFacet } from "../../../hooks/useRenderFacet";
 import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
+import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
+import { facetAllCategory, facetMusicCategory } from "../../../constants/facetCategories";
+
+interface ArtistAllReleasesData {
+    id: string;
+    name: string;
+    list: AlbumItem[];
+    listId: number;
+}
 
 interface MainContentProps {
     popularArtists: ArtistItem[];
     popularAlbums: AlbumItem[];
+    popularEpisodes: EpisodeItem[];
+    artistsAllReleasesDataList: ArtistAllReleasesData[];
 }
 
-export const MainContent = ({ popularArtists, popularAlbums }: MainContentProps) => {
-    const { fullListType } = useParams();
+export const MainContent = ({
+    popularArtists,
+    popularAlbums,
+    popularEpisodes,
+    artistsAllReleasesDataList,
+}: MainContentProps) => {
+    const { fullListType, facetType } = useParams();
 
     const renderFullList = useRenderFullList()
     const renderPopularLists = useRenderPopularLists();
-    const renderFacet = useRenderFacet(popularAlbums);
+    const renderFacet = useRenderFacet(popularAlbums, popularEpisodes);
 
     const fullListPageOptions: FullListPageOption[] = [
         { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
@@ -41,12 +57,28 @@ export const MainContent = ({ popularArtists, popularAlbums }: MainContentProps)
         },
     ];
 
+    const findMatchingPopularListConfigByFacet = (currentFacetName: any) => {
+        const array = [
+            {
+                key: facetMusicCategory,
+
+            }
+        ]
+    }
+
+
     return (
         <>
             {
                 fullListType ?
                     renderFullList(fullListPageOptions, fullListType) :
-                    renderFacet()
+                    (
+                        <>
+                            {renderFacet()}
+                            {renderPopularLists(popularListsConfig)}
+                        </>
+                    )
+
             }
 
             {/* <List>
