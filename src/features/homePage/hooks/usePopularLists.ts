@@ -3,13 +3,14 @@ import { useApiResource } from "../../../common/hooks/useApiResource";
 import { albumsActions, albumsSelectors } from "../../../common/slices/albumsSlice";
 import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 import { episodesActions, episodesSelectors } from "../../../common/slices/episodesSlice";
-import {
-    formattedPopularAlbumsIdsList,
-    formattedPopularArtistsIdsList,
-    formattedPopularEpisodesIdsList
-} from "../constants/formattedPopularListsIds";
+import { popularAlbumsIdsList, popularArtistsIdsList, popularEpisodesIdsList } from "../constants/popularListsIds";
 
 export const usePopularLists = () => {
+    const formatIdsForFetch = (idsList: readonly string[]) => idsList.join(",");
+
+    const formattedPopularAlbumsIdsList = formatIdsForFetch(popularAlbumsIdsList);
+    const formattedPopularArtistsIdsList = formatIdsForFetch(popularArtistsIdsList);
+    const formattedPopularEpisodesIdsList = formatIdsForFetch(popularEpisodesIdsList);
 
     const {
         configs: popularArtistsConfig,
