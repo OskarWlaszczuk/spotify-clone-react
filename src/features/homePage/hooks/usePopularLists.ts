@@ -1,5 +1,6 @@
 import { geteSeveralEpisodesListEndpoint, getSeveralAlbumsListEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
+import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { albumsActions, albumsSelectors } from "../../../common/slices/albumsSlice";
 import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 import { episodesActions, episodesSelectors } from "../../../common/slices/episodesSlice";
@@ -42,9 +43,13 @@ export const usePopularLists = () => {
         endpoint: geteSeveralEpisodesListEndpoint({ id: formattedPopularEpisodesIdsList }),
     });
 
-    const configs = [popularAlbumsConfig, popularArtistsConfig, popularEpisodesConfig];
-    const apiStatuses = [popularAlbumsStatus, popularArtistsStatus, popularEpisodesStatus];
-    const apiDataList = [rawPopularAlbumsList, rawPopularArtistsList, rawPopularEpisodesList]
+    const popularListsConfig = [popularAlbumsConfig, popularArtistsConfig, popularEpisodesConfig];
+    const popularListsStatuses = [popularAlbumsStatus, popularArtistsStatus, popularEpisodesStatus];
+    const popularLists = [rawPopularAlbumsList, rawPopularArtistsList, rawPopularEpisodesList]
 
-    return { configs, apiStatuses, apiDataList };
+    const homeId = "home"
+
+    useFetchAPI({ fetchConfigs: [...popularListsConfig], pageId: homeId });
+
+    return { popularListsStatuses, popularLists };
 };
