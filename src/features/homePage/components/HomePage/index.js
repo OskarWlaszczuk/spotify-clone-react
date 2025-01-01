@@ -34,9 +34,7 @@ export const HomePage = () => {
             currentFetchStatus={fetchStatus}
             content={
                 <MainContent
-                    popularArtists={popularArtistsDetailsList}
-                    popularAlbums={popularAlbumsList}
-                    popularEpisodes={popularEpisodesList}
+                    popularLists={[popularAlbumsList, popularArtistsDetailsList, popularEpisodesList]}
                     artistsAllReleasesDataList={artistsAllReleasesDataList}
                 />
             }
