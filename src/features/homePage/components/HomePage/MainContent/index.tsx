@@ -10,6 +10,7 @@ import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
 import { facetAllCategory, facetMusicCategory } from "../../../constants/facetCategories";
+import { useRenderArtistReleaseSections } from "../../../../../common/hooks/useRenderArtistReleaseSections";
 
 interface ArtistAllReleasesData {
     id: string;
@@ -37,6 +38,7 @@ export const MainContent = ({
     const renderFullList = useRenderFullList()
     const renderPopularLists = useRenderPopularLists();
     const renderFacet = useRenderFacet(popularAlbums, popularEpisodes);
+    const renderArtistsReleasesSection = useRenderArtistReleaseSections();
 
     const fullListPageOptions: FullListPageOption[] = [
         { key: popularAlbumsParam, value: popularAlbums, title: popularAlbumsTitle, isArtistsList: false },
@@ -76,7 +78,8 @@ export const MainContent = ({
                     (
                         <>
                             {renderFacet()}
-                            {renderPopularLists(popularListsConfig)}
+                            {renderArtistsReleasesSection(artistsAllReleasesDataList, popularArtists)}
+                            {/* {renderPopularLists(popularListsConfig)} */}
                         </>
                     )
 
