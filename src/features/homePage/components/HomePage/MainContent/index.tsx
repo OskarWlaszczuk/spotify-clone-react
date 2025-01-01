@@ -31,6 +31,7 @@ export const MainContent = ({
     popularEpisodes,
     artistsAllReleasesDataList,
 }: MainContentProps) => {
+    
     const { fullListType, facetType } = useParams();
 
     const renderFullList = useRenderFullList()
@@ -57,14 +58,14 @@ export const MainContent = ({
         },
     ];
 
-    const findMatchingPopularListConfigByFacet = (currentFacetName: any) => {
-        const array = [
-            {
-                key: facetMusicCategory,
+    // const findMatchingPopularListConfigByFacet = (currentFacetName: any) => {
+    //     const array = [
+    //         {
+    //             key: facetMusicCategory,
 
-            }
-        ]
-    }
+    //         }
+    //     ]
+    // }
 
 
     return (
