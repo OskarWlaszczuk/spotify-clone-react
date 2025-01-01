@@ -14,7 +14,7 @@ import { facetAllCategory, facetMusicCategory } from "../../../constants/facetCa
 interface ArtistAllReleasesData {
     id: string;
     name: string;
-    list: AlbumItem[];
+    releases: AlbumItem[];
     listId: number;
 }
 
@@ -31,7 +31,7 @@ export const MainContent = ({
     popularEpisodes,
     artistsAllReleasesDataList,
 }: MainContentProps) => {
-    
+
     const { fullListType, facetType } = useParams();
 
     const renderFullList = useRenderFullList()
