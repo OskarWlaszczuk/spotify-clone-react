@@ -11,6 +11,9 @@ export const getSeveralAlbumsListEndpoint: GetEndpointFunction = ({ id }) => `al
 export const getArtistDetailsEndpoint: GetEndpointFunction = ({ id }) => `artists/${id}`;
 export const getSeveralArtistsListEndpoint: GetEndpointFunction = ({ id }) => `artists?ids=${id}`;
 
+export const getEpisodeDetailsEdnpoint: GetEndpointFunction = ({ id }) => `episodes/${id}`;
+export const geteSeveralEpisodesListEndpoint: GetEndpointFunction = ({ id }) => `episodes?ids=${id}`;
+
 export const getArtistTopTracksEndpoint: GetEndpointFunction = ({ id }) => `artists/${id}/top-tracks`;
 
 export const getArtistReleasesEndpoint: GetEndpointFunction = ({ id, isAppearOnReleasesInclude = false }) => {
