@@ -1,7 +1,4 @@
-export interface ArtistData {
-    name: string;
-    id: string;
-}
+import { ArtistData } from "./ArtistData";
 
 export interface ArtistsList {
     artists: ArtistData[];
