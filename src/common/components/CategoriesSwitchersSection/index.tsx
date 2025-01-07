@@ -1,43 +1,35 @@
-import {isMatch} from "../../functions/isMatch"
-import {CategorySwitcher} from "./CategorySwitcher"
-import {isNotEmpty} from "../../functions/isNotEmpty";
-import {ReleaseCategory} from "../../Types/ReleaseCategory";
-import {AlbumItem} from "../../Interfaces/ListItem";
+import { isMatch } from "../../functions/isMatch"
+import { CategorySwitcher } from "./CategorySwitcher"
+import { isNotEmpty } from "../../functions/isNotEmpty";
+import { CategoryData } from "../../Interfaces/CategoryData";
+import { CategoryConfig } from "./CategoryConfig";
+import { CategoryName } from "../../Types/CategoryName";
 
-interface CategoryDataInput {
-    category: string;
-    listToDisplay: AlbumItem[]
-}
-
-type SetCurrentCategoryDataFunction = ({category, listToDisplay}: CategoryDataInput) => void
-
-interface CategoryData {
-    listToDisplay: AlbumItem[],
-    category: ReleaseCategory;
-    categorySwitcherContent: string;
-}
+type SetCurrentCategoryDataFunction = ({ categoryName, categoryView }: CategoryData) => void
 
 interface CategoriesSwitchersSection {
-    categoriesDataList: CategoryData[],
+    categoriesConfigs: CategoryConfig[],
     setCurrentCategoryData: SetCurrentCategoryDataFunction,
-    targetCategory: ReleaseCategory;
+    currentCategory: CategoryName;
+    link?:string;
 }
 
 export const CategoriesSwitchersSection = (
-    {categoriesDataList, setCurrentCategoryData, targetCategory}: CategoriesSwitchersSection
+    { categoriesConfigs, setCurrentCategoryData, currentCategory: targetCategory, link }: CategoriesSwitchersSection
 ) => {
     return (
         <>
             {
-                categoriesDataList.map(({listToDisplay, category, categorySwitcherContent}) => (
+                categoriesConfigs.map(({ categoryView, categoryName, categorySwitcherContent }) => (
                     <CategorySwitcher
-                        isListNotEmpty={isNotEmpty(listToDisplay)}
+                        isListNotEmpty={isNotEmpty(categoryView)}
                         switchCategoryFunction={() => setCurrentCategoryData({
-                            category,
-                            listToDisplay,
+                            categoryName,
+                            categoryView,
                         })}
                         switcherContent={categorySwitcherContent}
-                        isActive={isMatch(category, targetCategory)}
+                        isActive={isMatch(categoryName, targetCategory)}
+                        link={link}
                     />
                 ))
             }
