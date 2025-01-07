@@ -2,8 +2,6 @@ import { Tile } from "../components/Tile"
 import { TilesList } from "../components/TilesList"
 import { useActiveTile } from "./useActiveTile";
 import { getFirstImage } from "../functions/getFirstImage";
-import { formatAlbumSubInfo } from "../functions/formatAlbumSubInfo";
-import { AlbumItem } from "../Interfaces/AlbumItem";
 
 // const renderTileSubInfo = ({
 //     isArtistsListCondition,
@@ -36,7 +34,7 @@ export const useRenderTilesList = () => {
                         fullListData,
                         listId,
                         titleLink = undefined,
-                        extraArtistImage = undefined,
+                        extraTitleImage = undefined,
                         subTitleExtraContent = undefined,
                         overTitleExtraContent = undefined,
                         showPreviewListPart = true,
@@ -52,7 +50,7 @@ export const useRenderTilesList = () => {
                         return (
                             < TilesList
                                 titleExtraContent={{
-                                    extraArtistImage,
+                                    extraTitleImage,
                                     subTitleExtraContent,
                                     overTitleExtraContent,
                                     titleLink,
