@@ -1,5 +1,3 @@
-import { useFetchAPI } from "../../../../common/hooks/useFetchAPI";
-import { trackDetailsActions, trackDetailsSelectors } from "../../../../common/slices/trackDetailsSlice";
 import { useParams } from "react-router-dom";
 import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { Main } from "../../../../common/components/Main";
@@ -7,34 +5,18 @@ import { Banner } from "../../../../common/components/Banner";
 import { fromMillisecondsToMinutes } from "../../../../common/functions/fromMillisecondsToMinutes";
 import { useLyrics } from "../../hooks/useLyrics";
 import { getFirstImage } from "../../../../common/functions/getFirstImage";
-import { useArtistsAlbumsList } from "../../hooks/useArtistsAlbumsList";
-import { useApiResource } from "../../../../common/hooks/useApiResource";
 import { useGroupMainArtistReleases } from "../../hooks/useGroupMainArtistReleases";
 import { getFilteredTrackData } from "../../functions/getFilteredTrackData";
 import { useDependentApiFetch } from "../../hooks/useDependentApiFetch";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
 import { MainContent } from "./MainContent";
 import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
-import { getTrackDetailsEndpoint } from "../../../../common/functions/endpoints";
+import { useFetchTrackDetails } from "../../hooks/useFetchTrackDetails";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
 
-    const {
-        configs: trackDataConfigs,
-        apiStatus: trackDataStatus,
-        rawApiData: trackData
-    } = useApiResource({
-        actions: trackDetailsActions,
-        selectors: trackDetailsSelectors,
-        endpoint: getTrackDetailsEndpoint({ id: trackId }),
-    });
-
-    useFetchAPI({
-        fetchConfigs: [trackDataConfigs],
-        dependencies: [trackId],
-        pageId: trackId,
-    });
+    const { trackDetails, trackDetailsStatus } = useFetchTrackDetails(trackId)
 
     const [
         {
@@ -54,15 +36,15 @@ export const TrackDetailsPage = () => {
             name: mainArtistName,
             id: mainArtistId,
         },
-    ] = getFilteredTrackData(trackData);
+    ] = getFilteredTrackData(trackDetails);
 
     const artistsIdsList = trackArtistsList?.map(({ id }) => id);
-    const secondaryArtistsIdsList = artistsIdsList?.slice(1);
+    const secondaryArtistsDetails = trackArtistsList?.slice(1);
 
     const { dependentStatuses, dependentApiData } = useDependentApiFetch({
         mainArtistId,
         artistsIdsList,
-        fetchCondition: !!trackData,
+        fetchCondition: !!trackDetails,
     });
 
     const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
@@ -78,19 +60,18 @@ export const TrackDetailsPage = () => {
         topTracksAsAlbumsList: artistTopTracksAsAlbumsList
     });
 
-    const {
-        artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
-        artistsAllReleasesDataListStatus: secondaryArtistsAllReleasesListStatus
-    } = useArtistsAlbumsList({
-        artistsIdsList: secondaryArtistsIdsList,
-        artistsDetailsList: trackArtistsList,
-        trackId: trackId
-    });
+    // const {
+    //     artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
+    //     artistsAllReleasesDataListStatus: secondaryArtistsAllReleasesListStatus
+    // } = useArtistsAlbumsList({
+    //     artistsDetailsList: secondaryArtistsDetails,
+    //     trackId: trackId
+    // });
 
     const fetchStatus = useFetchStatus([
         artistTopTracksStatus,
-        trackDataStatus,
-        secondaryArtistsAllReleasesListStatus,
+        trackDetailsStatus,
+        // secondaryArtistsAllReleasesListStatus,
         ...dependentStatuses,
     ]);
 
@@ -99,7 +80,7 @@ export const TrackDetailsPage = () => {
     const { metaDataContent, subTitleContent } = renderBannerContent({
         metaData: {
             releaseDate: albumReleaseDate,
-            duration: fromMillisecondsToMinutes(trackDurationInMs).replace(".", ":"),
+            duration: fromMillisecondsToMinutes(trackDurationInMs)?.toFixed(2).replace(".", ":"),
             uniqueData: `${trackPopularityScale} / 100`,
         },
         subTitleData: {
@@ -131,17 +112,18 @@ export const TrackDetailsPage = () => {
                     />
                 }
                 content={
-                    <MainContent
-                        mainArtistData={{
-                            id: mainArtistId,
-                            name: mainArtistName,
-                            topTracksList: artistTopTracksList,
-                            groupedReleasesList: mainArtistGroupedReleasesList,
-                        }}
-                        lyrics={lyrics}
-                        artistsDetailsList={artistsDetailsList?.artists}
-                        secondaryArtistsAllReleasesList={secondaryArtistsAllReleasesList}
-                    />
+                    // <MainContent
+                    //     mainArtistData={{
+                    //         id: mainArtistId,
+                    //         name: mainArtistName,
+                    //         topTracksList: artistTopTracksList,
+                    //         groupedReleasesList: mainArtistGroupedReleasesList,
+                    //     }}
+                    //     lyrics={lyrics}
+                    //     artistsDetailsList={artistsDetailsList?.artists}
+                    //     secondaryArtistsAllReleasesList={secondaryArtistsAllReleasesList}
+                    // />
+                    <></>
                 }
             />
         </>
