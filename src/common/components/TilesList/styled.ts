@@ -1,9 +1,26 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+interface ListProps {
+    $horizontatItems?: boolean;
+}
+
+interface TitleSectionProps {
+    $extraTitleImageAvailable?: boolean;
+}
 
 export const StyledSection = styled.section`
     display: grid;
     grid-gap: 25px;
+`;
+
+export const TitleSection = styled.article<TitleSectionProps>`
+   ${({ $extraTitleImageAvailable }) => $extraTitleImageAvailable && css`
+        display: grid;
+        grid-template-columns:auto 1fr;
+        gap: 7px;
+        align-items: center;
+   `}
 `;
 
 export const TitleContent = styled.div`
@@ -41,13 +58,25 @@ export const FullListLink = styled(Link)`
     };
 `;
 
-export const List = styled.div`
+export const List = styled.div<ListProps>`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
     grid-gap: 15px 0;
+
+    ${({ $horizontatItems }) => $horizontatItems && css`
+        grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+        grid-auto-rows: minmax(60px, auto);
+        grid-gap: 15px;
+    `}
 `;
 
 export const ExtraSubContentSection = styled.section`
     display: flex;
     gap: 8px;
+`;
+
+export const OverExtraContent = styled.p`
+    font-size: 10px;
+    color: ${({ theme }) => theme.colors.nobel};
+    margin: 0 0 3px;
 `;
