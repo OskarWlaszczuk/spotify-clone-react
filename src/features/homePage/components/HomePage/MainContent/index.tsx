@@ -14,10 +14,13 @@ import { allFacetParam, FacetParam, musicFacetParam, podcastsFacetParam } from "
 import { useState } from "react";
 import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { useFetchShows } from "../../../../../common/hooks/useFetchShows";
-import { popularShowsIdsList } from "../../../constants/popularListsIds";
+import { popularEpisodesIdsList, popularShowsIdsList } from "../../../constants/popularListsIds";
 import { ShowItem } from "../../../../../common/Interfaces/ShowItem";
 import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
-import { toAlbum } from "../../../../../common/functions/routes";
+import { toAlbum, toArtist } from "../../../../../common/functions/routes";
+import { useFetchEpisodes } from "../../../../../common/hooks/useFetchEpisodes";
+import { useArtistsAlbumsList2 } from "../../../../trackDetailsPage/hooks/useArtistsAlbumsList";
+import { getFirstImage } from "../../../../../common/functions/getFirstImage";
 
 interface ArtistAllReleasesData {
     id: string;
@@ -43,6 +46,17 @@ export const MainContent = ({
         pageId: "home",
     });
 
+    const { episodesGroupedByShows, episodesGroupedByShowsStatus } = useArtistsAlbumsList2({ showsDetailsList });
+    console.log(episodesGroupedByShows, episodesGroupedByShowsStatus);
+
+    // console.log(showsDetailsList)
+    // console.log(showsDetailsList)
+
+    // const{ episodesDetailsList, episodesDetailsStatus } = useFetchEpisodes({
+    //     episodeIdsList: popularEpisodesIdsList,
+    //     pageId: "home",
+    // });
+    // console.log(episodesDetailsList)
     const [popularAlbums, popularArtists, popularEpisodes] = popularLists;
 
     const { fullListType, facetType } = useParams();
@@ -84,26 +98,26 @@ export const MainContent = ({
         isArtistsList
     }]);
 
-    const allFacetView = createPopularListConfig({
-        title: popularArtistsTitle,
-        list: [...popularEpisodes, ...popularAlbums],
-        fullListType: popularPodcastsParam,
-        isArtistsList: false,
-    });
+    // const allFacetView = createPopularListConfig({
+    //     title: popularArtistsTitle,
+    //     list: [...popularEpisodes, ...popularAlbums],
+    //     fullListType: popularPodcastsParam,
+    //     isArtistsList: false,
+    // });
 
-    const musicFacetView = createPopularListConfig({
-        title: popularAlbumsTitle,
-        list: popularAlbums,
-        fullListType: popularAlbumsParam,
-        isArtistsList: false,
-    });
+    // const musicFacetView = createPopularListConfig({
+    //     title: popularAlbumsTitle,
+    //     list: popularAlbums,
+    //     fullListType: popularAlbumsParam,
+    //     isArtistsList: false,
+    // });
 
-    const podcastsFacetView = createPopularListConfig({
-        title: popularEpisodesTitle,
-        list: popularEpisodes,
-        fullListType: popularPodcastsParam,
-        isArtistsList: false,
-    });
+    // const podcastsFacetView = createPopularListConfig({
+    //     title: popularEpisodesTitle,
+    //     list: popularEpisodes,
+    //     fullListType: popularPodcastsParam,
+    //     isArtistsList: false,
+    // });
 
     // const useSelectViewBasedOnFacetParam = (currentFacetParam: FacetParam):PopularListConfig => {
 
@@ -160,7 +174,7 @@ export const MainContent = ({
             //     text: "Show discography"
             // },
             listId: 0,
-            renderSubInfo: ({publisher}) => publisher,
+            renderSubInfo: ({ publisher }) => publisher,
         }
     ];
 
@@ -177,6 +191,29 @@ export const MainContent = ({
                             {renderTilesList(podcastsSectionsDataToRender)}
                             {renderArtistsReleasesSection(artistsAllReleasesDataList, popularArtists)}
                             {/* {renderPopularLists(popularListsConfig)} */}
+                            {
+                                episodesGroupedByShows?.map(({ releases, name, id, listId }, episodeIndex) => {
+                                    // const { publisher } = showsDetailsList?.[episodeIndex].publisher;
+
+                                    return renderTilesList([{
+                                        title: name,
+                                        list: releases,
+                                        toPageFunction: toAlbum,
+                                        // fullListData: {
+                                        //     pathname: toArtist({ id, fullListType: allReleaseParamDiscography }),
+                                        //     text: fullListLinkText
+                                        // },
+                                        listId,
+                                        overTitleExtraContent: "Popular Releases",
+                                        extraTitleImage: {
+                                            imageURL: getFirstImage(showsDetailsList?.[episodeIndex].images),
+                                            isArtistImage: false,
+                                        },
+                                        subInfo: showsDetailsList?.[episodeIndex].publisher,
+                                        // titleLink: toArtist({ id }),
+                                    }])
+                                })
+                            }
 
                         </>
                     )
