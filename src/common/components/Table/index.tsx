@@ -107,7 +107,7 @@ export const Table = ({ list, useAlbumView, discsNumbers, caption, subCaption, h
                         )}
                     </TrackDetailsWrapper>
                 </TrackOverview>
-                <TrackDuration>{fromMillisecondsToMinutes(duration_ms).replace(".", ":")}</TrackDuration>
+                <TrackDuration>{fromMillisecondsToMinutes(duration_ms).toFixed(2).replace(".", ":")}</TrackDuration>
             </ContentRow >
         ));
 
