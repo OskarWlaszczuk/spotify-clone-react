@@ -55,7 +55,7 @@ export const Tile = (
                 {displayPlayButtonOnHover((isActive && !useHorizontalLayout))}
             </Picture>
             <Title>{title}</Title>
-            {subInfo && <SubInfo >{subInfoContent}</SubInfo>}
+            {(subInfo && !useHorizontalLayout) && <SubInfo >{subInfoContent}</SubInfo>}
             {displayPlayButtonOnHover((isActive && useHorizontalLayout), true)}
         </Container>
     );
