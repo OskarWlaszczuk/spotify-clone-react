@@ -3,7 +3,7 @@ import { artistAlbumsActions, artistAlbumsSelectors } from "../slices/artistAlbu
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
 
-export const useFetchArtistReleases = ({ artistId, fetchCondition = true }) => {
+export const useFetchArtistReleases = ({ artistId, fetchCondition = true, includeAppearsOnReleases = false }) => {
     const {
         configs: artistReleasesConfig,
         apiStatus: artistReleasesStatus,
@@ -11,7 +11,7 @@ export const useFetchArtistReleases = ({ artistId, fetchCondition = true }) => {
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: getArtistReleasesEndpoint({ id: artistId }),
+        endpoint: getArtistReleasesEndpoint({ id: artistId, includeAppearsOnReleases }),
     });
 
     useFetchAPI({
