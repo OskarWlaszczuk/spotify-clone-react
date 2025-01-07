@@ -1,27 +1,40 @@
-import {Switcher} from "./styled";
+import { Switcher, SwitcherAsLink } from "./styled";
 
 interface CategorySwitcherProps {
     switchCategoryFunction: () => void;
     switcherContent: string;
     isActive: boolean;
     isListNotEmpty: boolean;
+    link?: string;
 };
 
 export const CategorySwitcher = (
-    {switchCategoryFunction, switcherContent, isActive, isListNotEmpty}:
-    CategorySwitcherProps
+    { switchCategoryFunction, switcherContent, isActive, isListNotEmpty, link }:
+        CategorySwitcherProps
 ) => {
+
+    const switcherElement = (
+        link ?
+            <SwitcherAsLink
+                onClick={switchCategoryFunction}
+                to={link}
+                $active={isActive}
+            >
+                {switcherContent}
+            </SwitcherAsLink> :
+            <Switcher
+                onClick={switchCategoryFunction}
+                $active={isActive}
+            >
+                {switcherContent}
+            </Switcher>
+    )
 
     return (
         <>
             {
                 isListNotEmpty && (
-                    <Switcher
-                        onClick={switchCategoryFunction}
-                        $active={isActive}
-                    >
-                        {switcherContent}
-                    </Switcher>
+                    switcherElement
                 )
             }
         </>
