@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-export const Container = styled(Link)`
+interface ContainerProps {
+  $useHorizontalLayout?: boolean;
+};
+
+export const Container = styled(Link) <ContainerProps>`
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -10,7 +14,14 @@ export const Container = styled(Link)`
     color: ${({ theme }) => theme.colors.white};
     text-decoration: none;
     
-
+    ${({ $useHorizontalLayout }) => $useHorizontalLayout && css`
+        display: grid;
+        align-items: center;
+        grid-template-columns: 60px 1fr; 
+        background-color: ${({ theme }) => theme.colors.brightMineShaft};
+        padding: 0px;
+    `}
+    
     &:hover {
       background-color: ${({ theme }) => theme.colors.brightMineShaft};
       cursor: pointer;
@@ -33,7 +44,17 @@ export const Title = styled.header`
   }
 `;
 
+const sharedSubInfoStyles = css`
+ font-size: 13px;
+ color: ${({ theme }) => theme.colors.nobel};
+`;
+
+
 export const SubInfo = styled.span`
-    font-size: 13px;
-    color: ${({ theme }) => theme.colors.nobel};
+  ${sharedSubInfoStyles}
+`;
+
+export const SubInfoAsLink = styled(Link)`
+  ${sharedSubInfoStyles}
+  text-decoration:none;
 `;
