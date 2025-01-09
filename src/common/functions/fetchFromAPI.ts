@@ -1,22 +1,23 @@
 import axios from "axios";
 import { throwError } from "./throwError";
+import { ApiResponse } from "../Interfaces/ApiResponse";
 interface APIFetchParams {
     endpoint: string;
     accessToken: string;
 };
 
-export const fetchFromAPI = async ({ endpoint, accessToken }: APIFetchParams) => {
+export const fetchFromAPI = async <ApiDataType>({ endpoint, accessToken }: APIFetchParams) => {
     const BASE_URL: string = "https://api.spotify.com/v1/";
+    const url = `${BASE_URL}${endpoint}`
+
+    const authHeaders = {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        }
+    };
 
     try {
-        const response = await axios.get(
-            `${BASE_URL}${endpoint}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                }
-            }
-        );
+        const response = await axios.get(url, authHeaders) as ApiResponse<ApiDataType>;
 
         return response.data;
     } catch (error: any) {
