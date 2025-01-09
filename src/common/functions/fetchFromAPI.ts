@@ -1,12 +1,9 @@
 import axios from "axios";
 import { throwError } from "./throwError";
 import { ApiResponse } from "../Interfaces/ApiResponse";
-interface APIFetchParams {
-    endpoint: string;
-    accessToken: string;
-};
+import { ApiDataToFetch } from "../Interfaces/ApiDataToFetch";
 
-export const fetchFromAPI = async <ApiDataType>({ endpoint, accessToken }: APIFetchParams) => {
+export const fetchFromAPI = async <ApiDataType>({ endpoint, accessToken }: ApiDataToFetch) => {
     const BASE_URL: string = "https://api.spotify.com/v1/";
     const url = `${BASE_URL}${endpoint}`
 
