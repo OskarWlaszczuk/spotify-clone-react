@@ -1,11 +1,7 @@
+import { ApiRequestParams } from "../Interfaces/ApiRequestParams";
 import { fetchFromAPI } from "./fetchFromAPI";
 
-interface getAPIParameters {
-    endpoint: string;
-    accessToken: string;
-}
-
-export const getApiResponse = async ({ endpoint, accessToken }: getAPIParameters) => await fetchFromAPI(
+export const getApiResponse = async ({ endpoint, accessToken }: ApiRequestParams) => await fetchFromAPI(
     {
         endpoint,
         accessToken,
