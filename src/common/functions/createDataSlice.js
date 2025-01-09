@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { error, initial, loading, success } from "../constants/fetchStatuses";
+import {createSlice} from "@reduxjs/toolkit";
+import {error, initial, loading, success} from "../constants/fetchStatuses";
 
 const initialState = {
     status: initial,
     data: null,
 };
 
-export const createDataSlice = ({ name }) => {
+export const createDataSlice = ({name}) => {
     const slice = createSlice({
         name,
         initialState,
@@ -14,7 +14,7 @@ export const createDataSlice = ({ name }) => {
             fetch: () => ({
                 status: loading,
             }),
-            fetchSuccess: (state, { payload: data }) => ({
+            fetchSuccess: (state, {payload: data}) => ({
                 ...state,
                 status: success,
                 data: data,
