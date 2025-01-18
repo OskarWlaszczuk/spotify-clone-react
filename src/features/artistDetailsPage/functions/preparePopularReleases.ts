@@ -1,4 +1,4 @@
-import { removeDuplicates } from "../../../common/functions/removeDuplicates";
+import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
 import { sortFromOldestToNewest } from "../../../common/functions/sortFromOldestToNewest";
 import { WithReleaseDate } from "../../../common/Interfaces/WithReleaseDate";
 import { newestItemReleaseDate } from "../constants/newestItemReleaseDate";
@@ -34,6 +34,6 @@ export const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWith
         ...(allReleasesWithoutAppearsOn || []),
     ];
 
-    const uniquePopularReleases = removeDuplicates({ list: popularReleases, key: "name" });
+    const uniquePopularReleases = removeDuplicatesByName(popularReleases);
     return uniquePopularReleases;
 };
