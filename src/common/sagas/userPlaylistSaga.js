@@ -1,10 +1,10 @@
 import { userPlaylistsActions } from "../slices/userPlaylistSlice";
 import { createSaga } from "../functions/createSaga";
-import { getAPI } from "../functions/getAPI";
+import { getApiResponse } from "../functions/getApiResponse";
 
 export function* watchFetchUserPlaylistsSaga() {
     yield createSaga({
-        getData: getAPI,
+        getData: getApiResponse,
         actions: userPlaylistsActions,
     });
 };

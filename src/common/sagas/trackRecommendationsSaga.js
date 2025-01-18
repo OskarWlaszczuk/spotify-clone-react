@@ -1,10 +1,10 @@
 import { trackRecommendationsActions } from "../slices/trackRecommendationsSlice";
 import { createSaga } from "../functions/createSaga";
-import { getAPI } from "../functions/getAPI";
+import { getApiResponse } from "../functions/getApiResponse";
 
 export function* watchFetchTrackRecommendation() {
     yield createSaga({
-        getData: getAPI,
+        getData: getApiResponse,
         actions: trackRecommendationsActions,
     });
 };
