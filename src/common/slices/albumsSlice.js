@@ -1,4 +1,4 @@
-import { createDataSlice } from  "../functions/createDataSlice";
+import { createDataSlice } from "../functions/createDataSlice";
 
 export const albumsSlice = createDataSlice({ name: "albums" });
 
