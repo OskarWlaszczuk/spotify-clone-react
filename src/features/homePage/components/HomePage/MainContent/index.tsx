@@ -47,7 +47,7 @@ export const MainContent = ({
     });
 
     const { episodesGroupedByShows, episodesGroupedByShowsStatus } = useArtistsAlbumsList2({ showsDetailsList });
-    console.log(episodesGroupedByShows, episodesGroupedByShowsStatus);
+    // console.log(episodesGroupedByShows, episodesGroupedByShowsStatus);
 
     // console.log(showsDetailsList)
     // console.log(showsDetailsList)
@@ -60,7 +60,7 @@ export const MainContent = ({
     const [popularAlbums, popularArtists, popularEpisodes] = popularLists;
 
     const { fullListType, facetType } = useParams();
-
+console.log(popularEpisodes)
     const renderFullList = useRenderFullList()
     const renderPopularLists = useRenderPopularLists();
     const renderFacet = useRenderFacet(popularAlbums, popularEpisodes);
