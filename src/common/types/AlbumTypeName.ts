@@ -1,0 +1,1 @@
+export type AlbumTypeName = "album" | "single" | "compilation";
