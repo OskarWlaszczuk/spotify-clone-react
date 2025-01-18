@@ -1,12 +1,12 @@
-import { albumsParamDiscography, allReleaseParamDiscography, singleParamDiscography } from "../../../common/constants/params";
+import { albumsParamDiscography, allReleaseParamDiscography, singleParamDiscography } from "../../../common/constants/artistDiscographyParams";
 import { filterReleasesByGroups } from "../../../common/functions/filterReleasesByGroups";
-import { removeDuplicates } from "../../../common/functions/removeDuplicates";
+import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
 
 export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksAsAlbumsList }) => {
     const mainArtistAllReleasesList = mainArtistAllReleasesData?.items;
 
     const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
-    const uniquePopularRelease = removeDuplicates({ list: popularReleases, key: "name" });
+    const uniquePopularRelease = removeDuplicatesByName(popularReleases);
 
     const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
 
