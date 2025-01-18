@@ -1,6 +1,6 @@
 import {findMatchingOptionByKey} from "./findMatchingOptionByKey";
-import {AlbumOrArtist} from "../Interfaces/ListItem";
 import {FullListPageOption} from "../Interfaces/FullListPageOption";
+import { AlbumOrArtist } from "../Interfaces/AlbumOrArtist";
 
 interface FullListMatchedData {
     fullListContent: AlbumOrArtist[];
@@ -8,8 +8,8 @@ interface FullListMatchedData {
     isFullListArtistsList: boolean;
 }
 
-export const getFullListMatchedData = (fullListPageOptions: FullListPageOption[], type: string): FullListMatchedData => {
-    const matchedFullListDataByType = findMatchingOptionByKey(fullListPageOptions, type)!;
+export const getFullListMatchedData = (fullListPageOptions: FullListPageOption[], fullListType: string): FullListMatchedData => {
+    const matchedFullListDataByType = findMatchingOptionByKey(fullListPageOptions, fullListType)!;
 
     const fullListContent = matchedFullListDataByType?.value;
     const fullListTitle = matchedFullListDataByType?.title;
