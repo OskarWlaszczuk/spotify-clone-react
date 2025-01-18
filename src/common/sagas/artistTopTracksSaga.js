@@ -1,10 +1,10 @@
 import { artistTopTracksActions } from "../slices/artistTopTracksSlice";
 import { createSaga } from "../functions/createSaga";
-import { getAPI } from "../functions/getAPI";
+import { getApiResponse } from "../functions/getApiResponse";
 
 export function* watchFetchArtistTopTracks() {
     yield createSaga({
-        getData: getAPI,
+        getData: getApiResponse,
         actions: artistTopTracksActions,
     });
 };
