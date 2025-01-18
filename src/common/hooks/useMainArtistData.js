@@ -4,7 +4,7 @@ import { useFetchAPI } from "./useFetchAPI";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../slices/artistAlbumsSlice";
 import { getArtistDetailsEndpoint, getArtistReleasesEndpoint } from "../functions/endpoints";
 
-export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnReleasesInclude = true }) => {
+export const useMainArtistData = ({ mainArtistId, dependencies = [], includeAppearsOnReleases = true }) => {
 
     const apiDependencies = [mainArtistId, ...dependencies]
 
@@ -17,6 +17,7 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
         selectors: artistDetailsSelectors,
         endpoint: getArtistDetailsEndpoint({id:mainArtistId})
     });
+
     const {
         configs: mainArtistReleasesConfig,
         rawApiData: mainArtistReleases,
@@ -24,7 +25,7 @@ export const useMainArtistData = ({ mainArtistId, dependencies = [], isAppearOnR
     } = useApiResource({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: getArtistReleasesEndpoint({ id: mainArtistId, isAppearOnReleasesInclude })
+        endpoint: getArtistReleasesEndpoint({ id: mainArtistId, includeAppearsOnReleases })
     });
 
     useFetchAPI({
