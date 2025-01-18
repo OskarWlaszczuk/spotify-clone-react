@@ -1,7 +1,7 @@
 import { ArtistNameLink } from "../../features/albumPage/components/AlbumPage/styled";
 import { AvatarImage } from "../components/AvatarImage";
-import { ImageURL } from "../Interfaces/ImageCollection";
-import { BasicMediaData } from "../Interfaces/MediaData";
+import { ImageURL } from "../Interfaces/ImageURL";
+import { BaseMediaItemData } from "../Interfaces/BaseMediaItemData";
 import { getFirstImage } from "./getFirstImage";
 import { getYear } from "./getYear";
 import { toAlbum, toArtist } from "./routes";
@@ -40,12 +40,12 @@ const renderMetaDataContent = ({ releaseDate, duration, uniqueData }: MetaDataCo
 ].join(" • ");
 
 interface TrackDetailsPageData {
-    mainArtistData: BasicMediaData;
-    albumData: BasicMediaData;
+    mainArtistData: BaseMediaItemData;
+    albumData: BaseMediaItemData;
 };
 
 interface AlbumDetailsPageData {
-    artistsList: BasicMediaData[];
+    artistsList: BaseMediaItemData[];
 };
 
 interface SubTitleContentData {
