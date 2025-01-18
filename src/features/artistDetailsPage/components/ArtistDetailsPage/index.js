@@ -27,7 +27,7 @@ export const ArtistDetailsPage = () => {
         name: artistName,
         followers: artistFollowers,
         images: artistImages
-    }] = getSpecificKeys(mainArtistDetails, ["name", "followers", "images"]);
+    }] = getSpecificKeys([mainArtistDetails], ["name", "followers", "images"]);
 
     const mainArtistReleasesList = mainArtistReleases?.items;
 
