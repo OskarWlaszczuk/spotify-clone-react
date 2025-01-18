@@ -1,13 +1,12 @@
-import { getArtistReleasesEndpoint, getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
+import { getSeveralArtistsListEndpoint } from "../../../common/functions/endpoints";
 import { useApiResource } from "../../../common/hooks/useApiResource";
 import { useFetchAPI } from "../../../common/hooks/useFetchAPI";
 import { useFetchArtistReleases } from "../../../common/hooks/useFetchArtistReleases";
-import { artistAlbumsActions, artistAlbumsSelectors } from "../../../common/slices/artistAlbumsSlice";
 import { artistsActions, artistsSelectors } from "../../../common/slices/artistsSlice";
 
-export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondition }) => {
+export const useDependentApiFetch = ({ pageId, mainArtistId, artistsIdsList, fetchCondition }) => {
 
-    const { artistReleasesStatus, artistReleasesData } = useFetchArtistReleases({ artistId: mainArtistId, fetchCondition });
+    // const { artistReleasesStatus, artistReleasesData } = useFetchArtistReleases({ pageId, artistId: mainArtistId, fetchCondition });
 
     const {
         configs: artistsDetailsListConfig,
@@ -18,16 +17,17 @@ export const useDependentApiFetch = ({ mainArtistId, artistsIdsList, fetchCondit
         selectors: artistsSelectors,
         endpoint: getSeveralArtistsListEndpoint({ id: artistsIdsList }),
     });
+    // console.log(artistsDetailsListConfig)
+    // const dependentConfigs = [artistsDetailsListConfig];
+    // const dependentStatuses = [artistReleasesStatus, artistsDetailsListStatus];
+    // const dependentApiData = [artistReleasesData, artistsDetailsList];
 
-    const dependentConfigs = [artistsDetailsListConfig];
-    const dependentStatuses = [artistReleasesStatus, artistsDetailsListStatus];
-    const dependentApiData = [artistReleasesData, artistsDetailsList];
     useFetchAPI({
-        fetchConfigs: dependentConfigs,
+        fetchConfigs: [artistsDetailsListConfig],
         dependencies: [mainArtistId],
         fetchCondition,
         pageId: mainArtistId,
     });
 
-    return { dependentStatuses, dependentApiData };
+    // return { dependentStatuses, dependentApiData };
 };
