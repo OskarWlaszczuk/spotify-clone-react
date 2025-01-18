@@ -12,6 +12,9 @@ import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks"
 import { MainContent } from "./MainContent";
 import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
 import { useFetchTrackDetails } from "../../hooks/useFetchTrackDetails";
+import { useFetchArtistReleases } from "../../../../common/hooks/useFetchArtistReleases";
+import { useFetchArtistDetails } from "../../../../common/hooks/useFetchArtistDetails";
+import { useFetchSeveralArtistsDetails } from "../../../../common/hooks/useFetchSeveralArtistsDetails";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -41,13 +44,20 @@ export const TrackDetailsPage = () => {
     const artistsIdsList = trackArtistsList?.map(({ id }) => id);
     const secondaryArtistsDetails = trackArtistsList?.slice(1);
 
-    const { dependentStatuses, dependentApiData } = useDependentApiFetch({
+    const fetchCondition = !!trackDetails;
+
+    // const { artistReleasesStatus, artistReleasesData } = useFetchArtistReleases({ artistId: mainArtistId, fetchCondition });
+    // const { artistDetailsStatus, artistDetails } = useFetchSeveralArtistsDetails({ artistsIds: artistsIdsList, fetchCondition })
+    // console.log(artistReleasesData, artistDetails);
+
+    useDependentApiFetch({
         mainArtistId,
         artistsIdsList,
         fetchCondition: !!trackDetails,
+        pageId: trackId
     });
-
-    const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
+    // console.log(dependentApiData)
+    // const [mainArtistAllReleasesData, artistsDetailsList] = dependentApiData;
 
     const {
         artistTopTracksStatus,
@@ -55,10 +65,10 @@ export const TrackDetailsPage = () => {
         artistTopTracksList
     } = useArtistTopTracks({ artistId: mainArtistId })
 
-    const mainArtistGroupedReleasesList = useGroupMainArtistReleases({
-        mainArtistAllReleasesData,
-        topTracksAsAlbumsList: artistTopTracksAsAlbumsList
-    });
+    // const mainArtistGroupedReleasesList = useGroupMainArtistReleases({
+    //     mainArtistAllReleasesData,
+    //     topTracksAsAlbumsList: artistTopTracksAsAlbumsList
+    // });
 
     // const {
     //     artistsAllReleasesDataList: secondaryArtistsAllReleasesList,
@@ -72,44 +82,45 @@ export const TrackDetailsPage = () => {
         artistTopTracksStatus,
         trackDetailsStatus,
         // secondaryArtistsAllReleasesListStatus,
-        ...dependentStatuses,
+        // ...dependentStatuses,
     ]);
 
     const { lyrics } = useLyrics(mainArtistName, trackName);
 
-    const { metaDataContent, subTitleContent } = renderBannerContent({
-        metaData: {
-            releaseDate: albumReleaseDate,
-            duration: fromMillisecondsToMinutes(trackDurationInMs)?.toFixed(2).replace(".", ":"),
-            uniqueData: `${trackPopularityScale} / 100`,
-        },
-        subTitleData: {
-            trackDetailsPageData: {
-                mainArtistData: {
-                    id: mainArtistId,
-                    name: mainArtistName,
-                },
-                albumData: {
-                    id: albumId,
-                    name: albumName,
-                }
-            },
-            artistImagesList: artistsDetailsList?.artists[0].images
-        },
-    });
+    // const { metaDataContent, subTitleContent } = renderBannerContent({
+    //     metaData: {
+    //         releaseDate: albumReleaseDate,
+    //         duration: fromMillisecondsToMinutes(trackDurationInMs)?.toFixed(2).replace(".", ":"),
+    //         uniqueData: `${trackPopularityScale} / 100`,
+    //     },
+    //     subTitleData: {
+    //         trackDetailsPageData: {
+    //             mainArtistData: {
+    //                 id: mainArtistId,
+    //                 name: mainArtistName,
+    //             },
+    //             albumData: {
+    //                 id: albumId,
+    //                 name: albumName,
+    //             }
+    //         },
+    //         artistImagesList: artistsDetailsList?.artists[0].images
+    //     },
+    // });
 
     return (
         <>
             <Main
                 currentFetchStatus={fetchStatus}
                 bannerContent={
-                    <Banner
-                        picture={getFirstImage(albumImages)}
-                        title={trackName}
-                        caption={trackType}
-                        subTitleContent={subTitleContent}
-                        metaData={metaDataContent}
-                    />
+                    // <Banner
+                    //     picture={getFirstImage(albumImages)}
+                    //     title={trackName}
+                    //     caption={trackType}
+                    //     subTitleContent={subTitleContent}
+                    //     metaData={metaDataContent}
+                    // />
+                    <></>
                 }
                 content={
                     // <MainContent
