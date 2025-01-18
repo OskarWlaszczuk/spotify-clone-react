@@ -7,7 +7,8 @@ import { artistAppearsOnParam } from "../../../constants/FullListPageParams";
 import { useRenderDiscography } from "../../../hooks/useRenderDiscography";
 import { prepareFullListPageOptions } from "../../../functions/prepareFullListPageOptions";
 import { filterReleasesByGroups } from "../../../../../common/functions/filterReleasesByGroups";
-import { AlbumItem } from "../../../../../common/Interfaces/ListItem";
+import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
+import { formatAlbumSubInfo } from "../../../../../common/functions/formatAlbumSubInfo";
 
 interface MainContentProps {
     artistName: string;
@@ -26,7 +27,7 @@ export const MainContent = ({
     artistTopTracksAsAlbums,
     fullListType,
 }: MainContentProps) => {
-    
+
     const renderTilesList = useRenderTilesList();
     const renderFullList = useRenderFullList();
     const renderDiscography = useRenderDiscography(artistAllReleases, artistTopTracksAsAlbums);
@@ -39,17 +40,19 @@ export const MainContent = ({
         artistTopTracksAsAlbums,
     });
 
-    const sectionsToRender = [
+    const sectionDataToRender = [
         {
             title: "Appears on",
             list: appearsOnList,
             toPageFunction: toAlbum,
             fullListData: {
-                pathname: toArtist({ id: artistId!, additionalPath: artistAppearsOnParam }),
+                pathname: toArtist({ id: artistId!, fullListType: artistAppearsOnParam }),
                 text: fullListLinkText,
-            }
+            },
+            renderSubInfo: ({ release_date, album_type }: { release_date: AlbumItem["release_date"], album_type: AlbumItem["album_type"] }) => formatAlbumSubInfo(release_date, album_type),
         },
     ];
+
 
     return (
         <>
@@ -60,7 +63,7 @@ export const MainContent = ({
                         <>
                             <Table list={artistTopTracks} caption="Popular" />
                             {renderDiscography()}
-                            {renderTilesList(sectionsToRender)}
+                            {renderTilesList(sectionDataToRender)}
                         </>
                     )
             }
