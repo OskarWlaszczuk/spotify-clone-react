@@ -10,6 +10,11 @@ import { authSaga } from "../common/sagas/authSaga";
 import { watchFetchUserPlaylistsSaga } from "../common/sagas/userPlaylistSaga";
 import { watchFetchTrackDetails } from "../common/sagas/trackDetailsSaga";
 import { watchFetchTrackRecommendation } from "../common/sagas/trackRecommendationsSaga";
+import { watchFetchEpisodesSaga } from "../common/sagas/episodesSaga";
+import { watchFetchEpisodeDetailsSaga } from "../common/sagas/episodeDetailsSaga";
+import { watchFetchShowDetailsSaga } from "../common/sagas/showDetailsSaga";
+import { watchFetchShowsSaga } from "../common/sagas/showsSaga";
+import { watchFetchShowEpisodesSaga } from "../common/sagas/showEpisodesSaga";
 
 export function* rootSaga() {
     yield all([
@@ -24,5 +29,10 @@ export function* rootSaga() {
         watchFetchUserPlaylistsSaga(),
         watchFetchTrackDetails(),
         watchFetchTrackRecommendation(),
+        watchFetchEpisodesSaga(),
+        watchFetchEpisodeDetailsSaga(),
+        watchFetchShowDetailsSaga(),
+        watchFetchShowsSaga(),
+        watchFetchShowEpisodesSaga(),
     ]);
 };
