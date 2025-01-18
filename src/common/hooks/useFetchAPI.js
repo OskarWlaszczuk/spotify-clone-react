@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAccessToken } from "../slices/authSlice";
+import {useEffect, useMemo} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {selectAccessToken} from "../slices/authSlice";
 
-export const useFetchAPI = ({ fetchConfigs, pageId, dependencies = [], fetchCondition = true }) => {
+export const useFetchAPI = ({fetchConfigs, pageId, dependencies=[], fetchCondition = true}) => {
     const dispatch = useDispatch();
     const accessToken = useSelector(selectAccessToken);
 
@@ -11,9 +11,9 @@ export const useFetchAPI = ({ fetchConfigs, pageId, dependencies = [], fetchCond
 
     useEffect(() => {
         if (!!accessToken && fetchCondition) {
-            memoizedFetchConfigs?.forEach(({ fetchAction, endpoint }) => {
+            memoizedFetchConfigs?.forEach(({fetchAction, endpoint}) => {
                 try {
-                    dispatch(fetchAction({ endpoint, accessToken }));
+                    dispatch(fetchAction({endpoint, accessToken}));
                 } catch (error) {
                     console.error(`Failed to fetch data from endpoint: ${endpoint}`, error);
                 }
@@ -21,7 +21,7 @@ export const useFetchAPI = ({ fetchConfigs, pageId, dependencies = [], fetchCond
         }
 
         return () => {
-            memoizedFetchConfigs?.forEach(({ clearAction }) => dispatch(clearAction()));
+            memoizedFetchConfigs?.forEach(({clearAction}) => dispatch(clearAction()));
         };
 
     }, [dispatch, accessToken, ...dependencies, fetchCondition, memoizedFetchConfigs, pageId]);
