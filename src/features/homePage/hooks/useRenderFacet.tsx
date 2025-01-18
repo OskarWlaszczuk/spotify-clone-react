@@ -1,37 +1,51 @@
+import { useEffect } from "react";
 import { CategoriesSwitchersSection } from "../../../common/components/CategoriesSwitchersSection";
 import { CategoryConfig } from "../../../common/components/CategoriesSwitchersSection/CategoryConfig";
-import { toAlbum } from "../../../common/functions/routes";
+import { fullListLinkText } from "../../../common/constants/fullListLinkText ";
+import { findMatchingOptionByKey } from "../../../common/functions/findMatchingOptionByKey";
+import { toAlbum, toHome } from "../../../common/functions/routes";
 import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
-import { AlbumItem, ArtistItem } from "../../../common/Interfaces/ListItem";
+import { AlbumItem } from "../../../common/Interfaces/AlbumItem";
+import { EpisodeItem } from "../../../common/Interfaces/EpisodeItem";
 import { useCurrentCategoryData } from "../../artistDetailsPage/hooks/useCurrentCategoryData";
-import { allFacetCategory, musicFacetCategory } from "../constants/facetCategories";
+import { facetAllCategory, facetMusicCategory, facetPodcastsCategory } from "../constants/facetCategories";
+import { allFacetParam, musicFacetParam, podcastsFacetParam } from "../constants/facetParams";
+import { useParams } from "react-router-dom";
 
-export const useRenderFacet = (popularArtists: ArtistItem[], popularAlbums: AlbumItem[]) => {
+export const useRenderFacet = (popularAlbums: AlbumItem[], popularEpisodes: EpisodeItem[]) => {
 
-    const partOfPopularAlbums = popularAlbums?.slice(0, 4);
-
-    const mixedPopularList = [ ...partOfPopularAlbums];
-
+    const { facetType } = useParams();
 
     const facetCategoriesConfig: CategoryConfig[] = [
         {
-            categoryView: mixedPopularList,
-            categoryName: allFacetCategory,
+            categoryView: popularAlbums,
+            categoryName: facetAllCategory,
             categorySwitcherContent: "All"
         },
         {
             categoryView: popularAlbums,
-            categoryName: musicFacetCategory,
+            categoryName: facetMusicCategory,
             categorySwitcherContent: "Music"
+        },
+        {
+            categoryView: popularEpisodes,
+            categoryName: facetPodcastsCategory,
+            categorySwitcherContent: "Podcasts"
         },
     ];
 
-    const renderTilesList = useRenderTilesList();
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
-        categoryName: allFacetCategory,
-        categoryView: mixedPopularList,
+        ...facetCategoriesConfig[1]
     });
+    const renderTilesList = useRenderTilesList();
+
+    const facetParamsGroupedByCategories = [
+        { key: facetAllCategory, value: allFacetParam },
+        { key: facetMusicCategory, value: musicFacetParam },
+        { key: facetPodcastsCategory, value: podcastsFacetParam },
+    ];
+
 
     const renderFacet = () => {
         return renderTilesList([{
@@ -40,11 +54,19 @@ export const useRenderFacet = (popularArtists: ArtistItem[], popularAlbums: Albu
                     categoriesConfigs={facetCategoriesConfig}
                     setCurrentCategoryData={setCurrentCategoryData}
                     currentCategory={currentCategoryData.categoryName}
+                // link={
+                //     toHome({
+                //         facetType: findMatchingOptionByKey(
+                //             facetParamsGroupedByCategories,
+                //             currentCategoryData.categoryName
+                //         )?.value
+                //     })
+                // }
                 />
             ),
             list: currentCategoryData.categoryView,
             toPageFunction: toAlbum,
-            areHorizontatItems:true,
+            areHorizontatItems: true,
         }]);
     };
 
