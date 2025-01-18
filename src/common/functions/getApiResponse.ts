@@ -1,9 +1,6 @@
 import { ApiRequestParams } from "../Interfaces/ApiRequestParams";
 import { fetchFromAPI } from "./fetchFromAPI";
 
-export const getApiResponse = async ({ endpoint, accessToken }: ApiRequestParams) => await fetchFromAPI(
-    {
-        endpoint,
-        accessToken,
-    }
+export const getApiResponse = async <ApiDataType>({ endpoint, accessToken }: ApiRequestParams): Promise<ApiDataType> => (
+    await fetchFromAPI<ApiDataType>({ endpoint, accessToken })
 );
