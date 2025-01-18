@@ -1,4 +1,4 @@
-import { ImageData, ImageURL } from "../Interfaces/ImageCollection";
+import { ImageURL } from "../Interfaces/ImageURL";
 import { isNotEmpty } from "./isNotEmpty";
 
 //Jeżeli zdjęcie nie istnieje, zwrócić placeholder
