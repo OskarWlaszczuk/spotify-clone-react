@@ -1,27 +1,37 @@
-import {createSlice} from "@reduxjs/toolkit";
-import {error, initial, loading, success} from "../constants/fetchStatuses";
+import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
+import { error, initial, loading, success } from "../constants/fetchStatuses";
+import { FetchStatus } from "../Types/FetchStatus";
 
-const initialState = {
-    status: initial,
-    data: null,
-};
+interface InitialState<DataType> {
+    status: FetchStatus;
+    data: DataType | null;
+}
 
-export const createDataSlice = ({name}) => {
+interface CreateDataSliceParams {
+    name: string;
+}
+
+export const createDataSlice = <DataType>({ name }: CreateDataSliceParams) => {
+
+    const initialState: InitialState<DataType> = {
+        status: initial,
+        data: null,
+    };
+
     const slice = createSlice({
         name,
         initialState,
         reducers: {
-            fetch: () => ({
-                status: loading,
-            }),
-            fetchSuccess: (state, {payload: data}) => ({
-                ...state,
-                status: success,
-                data: data,
-            }),
-            fetchError: () => ({
-                status: error,
-            }),
+            fetch: (state) => {
+                state.status = loading;
+            },
+            fetchSuccess: (state, action: PayloadAction<DataType>) => {
+                state.status = success;
+                state.data = action.payload as Draft<DataType>;
+            },
+            fetchError: (state) => {
+                state.status = error;
+            },
             clear: () => initialState,
         },
     });
@@ -30,8 +40,8 @@ export const createDataSlice = ({name}) => {
         reducer: slice.reducer,
         actions: slice.actions,
         selectors: {
-            selectData: state => state[name].data,
-            selectStatus: state => state[name].status,
+            selectData: (state) => state[name].data,
+            selectStatus: (state) => state[name].status,
         }
     };
 };
