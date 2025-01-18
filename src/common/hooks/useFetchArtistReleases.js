@@ -3,7 +3,7 @@ import { artistAlbumsActions, artistAlbumsSelectors } from "../slices/artistAlbu
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
 
-export const useFetchArtistReleases = ({ artistId, fetchCondition = true, includeAppearsOnReleases = false }) => {
+export const useFetchArtistReleases = ({ artistId, pageId,fetchCondition = true, includeAppearsOnReleases = false }) => {
     const {
         configs: artistReleasesConfig,
         apiStatus: artistReleasesStatus,
@@ -18,7 +18,7 @@ export const useFetchArtistReleases = ({ artistId, fetchCondition = true, includ
         fetchConfigs: artistReleasesConfig,
         dependencies: [artistId],
         fetchCondition,
-        pageId: artistId,
+        pageId,
     });
 
     return { artistReleasesStatus, artistReleasesData };
