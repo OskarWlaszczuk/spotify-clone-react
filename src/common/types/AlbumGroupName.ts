@@ -1,0 +1,1 @@
+export type AlbumGroupName = "album" | "compilation" | "single" | "appears_on";
