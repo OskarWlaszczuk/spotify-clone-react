@@ -60,7 +60,11 @@ export const useRenderTilesList = () => {
                                 title={title}
                                 list={list}
                                 renderItemFunction={(item, index) => {
-                                    const { name, id, images } = item;
+                                    // const { name, id, images } = item;
+                                    const name = item?.name;
+                                    const id = item?.id;
+                                    const images = item?.images;
+
                                     const computedSubInfo = (
                                         renderSubInfo ?
                                             renderSubInfo(item) :
