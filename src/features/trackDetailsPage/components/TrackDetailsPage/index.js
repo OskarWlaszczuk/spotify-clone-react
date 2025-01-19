@@ -14,7 +14,7 @@ import { renderBannerContent } from "../../../../common/functions/renderBannerCo
 import { useFetchTrackDetails } from "../../hooks/useFetchTrackDetails";
 import { useFetchArtistReleases } from "../../../../common/hooks/useFetchArtistReleases";
 import { useFetchArtistDetails } from "../../../../common/hooks/useFetchArtistDetails";
-import { useFetchSeveralArtistsDetails } from "../../../../common/hooks/useFetchSeveralArtistsDetails";
+import { useFetchSeveralArtists } from "../../../../common/hooks/useFetchSeveralArtists";
 
 export const TrackDetailsPage = () => {
     const { id: trackId } = useParams();
@@ -50,6 +50,7 @@ export const TrackDetailsPage = () => {
     // const { artistDetailsStatus, artistDetails } = useFetchSeveralArtistsDetails({ artistsIds: artistsIdsList, fetchCondition })
     // console.log(artistReleasesData, artistDetails);
 
+    
     useDependentApiFetch({
         mainArtistId,
         artistsIdsList,
