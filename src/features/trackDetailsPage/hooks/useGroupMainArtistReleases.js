@@ -3,18 +3,17 @@ import { filterReleasesByGroups } from "../../../common/functions/filterReleases
 import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
 
 export const useGroupMainArtistReleases = ({ mainArtistAllReleasesData, topTracksAsAlbumsList }) => {
-    const mainArtistAllReleasesList = mainArtistAllReleasesData?.items;
 
-    const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesList || []];
+    const popularReleases = [...topTracksAsAlbumsList || [], ...mainArtistAllReleasesData || []];
     const uniquePopularRelease = removeDuplicatesByName(popularReleases);
 
-    const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesList, ["album", "single"]);
+    const [mainArtistAlbums, mainArtistSingles] = filterReleasesByGroups(mainArtistAllReleasesData, ["album", "single"]);
 
     const mainArtistGroupedReleasesList = [
-        { type: "Releases", list: uniquePopularRelease, additionalPath: allReleaseParamDiscography, listId: 0 },
-        { type: "Albums", list: mainArtistAlbums, additionalPath: albumsParamDiscography, listId: 1 },
-        { type: "Singles and EP's", list: mainArtistSingles, additionalPath: singleParamDiscography, listId: 2 },
+        { type: "Releases", list: uniquePopularRelease, fullListType: allReleaseParamDiscography, listId: 0 },
+        { type: "Albums", list: mainArtistAlbums, fullListType: albumsParamDiscography, listId: 1 },
+        { type: "Singles and EP's", list: mainArtistSingles, fullListType: singleParamDiscography, listId: 2 },
     ];
 
-    return mainArtistGroupedReleasesList
+    return mainArtistGroupedReleasesList;
 };
