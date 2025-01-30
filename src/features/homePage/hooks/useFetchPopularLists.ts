@@ -9,6 +9,8 @@ import { formatIdsForFetch } from "../../../common/functions/formatIdsForFetch";
 import { useFetchShows } from "../../../common/hooks/useFetchShows";
 import { useFetchEpisodes } from "../../../common/hooks/useFetchEpisodes";
 import { useFetchSeveralArtists } from "../../../common/hooks/useFetchSeveralArtists";
+import { useFetchArtistReleases } from "../../../common/hooks/useFetchArtistReleases";
+import { useFetchSeveralAlbums } from "../../../common/hooks/useFetchSeveralAlbums";
 
 export const useFetchPopularLists = () => {
     const homeId = "home"
@@ -28,15 +30,15 @@ export const useFetchPopularLists = () => {
     //     endpoint: getSeveralArtistsListEndpoint({ id: formattedPopularArtistsIdsList }),
     // });
 
-    const {
-        configs: popularAlbumsConfig,
-        apiStatus: popularAlbumsStatus,
-        rawApiData: rawPopularAlbumsList
-    } = useApiResource({
-        actions: albumsActions,
-        selectors: albumsSelectors,
-        endpoint: getSeveralAlbumsListEndpoint({ id: formattedPopularAlbumsIdsList }),
-    });
+    // const {
+    //     configs: popularAlbumsConfig,
+    //     apiStatus: popularAlbumsStatus,
+    //     rawApiData: rawPopularAlbumsList
+    // } = useApiResource({
+    //     actions: albumsActions,
+    //     selectors: albumsSelectors,
+    //     endpoint: getSeveralAlbumsListEndpoint({ id: formattedPopularAlbumsIdsList }),
+    // });
 
     // const {
     //     configs: popularEpisodesConfig,
@@ -47,6 +49,14 @@ export const useFetchPopularLists = () => {
     //     selectors: episodesSelectors,
     //     endpoint: getSeveralEpisodesListEndpoint({ id: formattedPopularEpisodesIdsList }),
     // });
+
+    const {
+        albums: popularAlbums,
+        albumsStatus: popularAlbumsStatus
+    } = useFetchSeveralAlbums({
+        IDs: popularAlbumsIdsList,
+        pageID: homeId,
+    });
 
     const {
         artists: popularArtists,
@@ -63,12 +73,13 @@ export const useFetchPopularLists = () => {
         episodeIdsList: popularEpisodesIdsList,
         pageId: homeId,
     });
-    console.log(episodesDetailsList)
-    const popularListsConfig = [popularAlbumsConfig];
-    const popularListsStatuses = [popularAlbumsStatus, popularArtistsStatus, episodesDetailsStatus, popularArtistsStatus];
-    const popularLists = [rawPopularAlbumsList, popularArtists, episodesDetailsList]
 
-    useFetchAPI({ fetchConfigs: [...popularListsConfig], pageId: homeId });
+    console.log(popularAlbums)
+    // const popularListsConfig = [popularAlbumsConfig];
+    const popularListsStatuses = [popularAlbumsStatus, popularArtistsStatus, episodesDetailsStatus, popularArtistsStatus];
+    const popularLists = [popularAlbums, popularArtists, episodesDetailsList];
+
+    // useFetchAPI({ fetchConfigs: [...popularListsConfig], pageId: homeId });
 
     return { popularListsStatuses, popularLists };
 };
