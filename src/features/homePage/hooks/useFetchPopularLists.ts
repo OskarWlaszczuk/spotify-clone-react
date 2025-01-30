@@ -8,8 +8,9 @@ import { popularAlbumsIdsList, popularArtistsIdsList, popularEpisodesIdsList, po
 import { formatIdsForFetch } from "../../../common/functions/formatIdsForFetch";
 import { useFetchShows } from "../../../common/hooks/useFetchShows";
 import { useFetchEpisodes } from "../../../common/hooks/useFetchEpisodes";
+import { useFetchSeveralArtists } from "../../../common/hooks/useFetchSeveralArtists";
 
-export const usePopularLists = () => {
+export const useFetchPopularLists = () => {
     const homeId = "home"
 
     const formattedPopularAlbumsIdsList = formatIdsForFetch(popularAlbumsIdsList);
@@ -17,15 +18,15 @@ export const usePopularLists = () => {
     const formattedPopularEpisodesIdsList = formatIdsForFetch(popularEpisodesIdsList);
     // const formattedPopularShowsIdsList = formatIdsForFetch(popularShowsIdsList);
 
-    const {
-        configs: popularArtistsConfig,
-        apiStatus: popularArtistsStatus,
-        rawApiData: rawPopularArtistsList
-    } = useApiResource({
-        actions: artistsActions,
-        selectors: artistsSelectors,
-        endpoint: getSeveralArtistsListEndpoint({ id: formattedPopularArtistsIdsList }),
-    });
+    // const {
+    //     configs: popularArtistsConfig,
+    //     apiStatus: popularArtistsStatus,
+    //     rawApiData: rawPopularArtistsList
+    // } = useApiResource({
+    //     actions: artistsActions,
+    //     selectors: artistsSelectors,
+    //     endpoint: getSeveralArtistsListEndpoint({ id: formattedPopularArtistsIdsList }),
+    // });
 
     const {
         configs: popularAlbumsConfig,
@@ -47,17 +48,25 @@ export const usePopularLists = () => {
     //     endpoint: getSeveralEpisodesListEndpoint({ id: formattedPopularEpisodesIdsList }),
     // });
 
-    
-    const{ episodesDetailsList, episodesDetailsStatus } = useFetchEpisodes({
+    const {
+        artists: popularArtists,
+        artistsStatus: popularArtistsStatus
+    } = useFetchSeveralArtists({
+        IDs: popularArtistsIdsList,
+        pageID: homeId,
+    });
+
+    const {
+        episodesDetailsList,
+        episodesDetailsStatus
+    } = useFetchEpisodes({
         episodeIdsList: popularEpisodesIdsList,
         pageId: homeId,
     });
-
-    console.log(episodesDetailsList);
-
-    const popularListsConfig = [popularAlbumsConfig, popularArtistsConfig];
-    const popularListsStatuses = [popularAlbumsStatus, popularArtistsStatus, episodesDetailsStatus];
-    const popularLists = [rawPopularAlbumsList, rawPopularArtistsList, episodesDetailsList]
+    console.log(episodesDetailsList)
+    const popularListsConfig = [popularAlbumsConfig];
+    const popularListsStatuses = [popularAlbumsStatus, popularArtistsStatus, episodesDetailsStatus, popularArtistsStatus];
+    const popularLists = [rawPopularAlbumsList, popularArtists, episodesDetailsList]
 
     useFetchAPI({ fetchConfigs: [...popularListsConfig], pageId: homeId });
 
