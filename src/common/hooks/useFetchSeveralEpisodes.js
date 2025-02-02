@@ -4,7 +4,7 @@ import { episodesActions, episodesSelectors } from "../slices/episodesSlice";
 import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
 
-export const useFetchEpisodes = ({ episodeIdsList, pageId, fetchCondition = true }) => {
+export const useFetchSeveralEpisodes = ({ episodeIdsList, pageId, fetchCondition = true }) => {
     const formattedEpisodeIdsList = formatIdsForFetch(episodeIdsList);
 
     const {
