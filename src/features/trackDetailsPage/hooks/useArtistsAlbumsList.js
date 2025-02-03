@@ -1,89 +1,31 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAccessToken } from "../../../common/slices/authSlice";
-import { error, initial, loading, success } from "../../../common/constants/fetchStatuses";
-import { fetchFromAPI } from "../../../common/functions/fetchFromAPI";
-import { getArtistReleasesEndpoint, getShowEpisodes } from "../../../common/functions/endpoints";
+import {
+    clearMediaSortedByCreator,
+    fetchMediaSortedByCreator,
+    selectMediaSortedByCreatorData,
+    selectMediaSortedByCreatorStatus
+} from "../../../common/slices/mediaSortedByCreatorSlice";
 
-export const useArtistsAlbumsList = ({ artistsDetailsList, trackId = "" }) => {
+export const useFetchMediaSortedByCreators = ({ creatorsDetails }) => {
     const accessToken = useSelector(selectAccessToken);
-    const artistsIdsList = artistsDetailsList?.map(({ id }) => id);
+    const artistsIdsList = useMemo(() => creatorsDetails?.map(({ id }) => id), [creatorsDetails]);
+    const endpointType = useMemo(() => creatorsDetails?.[0].type, [creatorsDetails]);
 
-    const [artistsAllReleasesDataList, setArtistsAlbumsDataList] = useState(undefined);
-    const [artistsAllReleasesDataListStatus, setArtistsAlbumsDataListStatus] = useState(initial);
+    const mediaSortedByCreator = useSelector(selectMediaSortedByCreatorData);
+    const mediaSortedByCreatorStatus = useSelector(selectMediaSortedByCreatorStatus);
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const fetchArtistsAlbumsList = async () => {
-            if (!!accessToken && !!artistsDetailsList) {
-                try {
-                    setArtistsAlbumsDataListStatus(loading);
-                    const responses = await Promise.all(artistsIdsList.map(id => {
-                        return fetchFromAPI({
-                            endpoint: getArtistReleasesEndpoint({ id }),
-                            accessToken
-                        })
-                    }));
+        if (!!accessToken && !!artistsIdsList) {
+            dispatch(fetchMediaSortedByCreator({ creatorsIDs: artistsIdsList, accessToken, endpointType }))
+        }
 
-                    setArtistsAlbumsDataListStatus(success);
-                    setArtistsAlbumsDataList(
-                        artistsIdsList.map((artistId, index) => ({
-                            id: artistId,
-                            name: artistsDetailsList.find(({ id }) => id === artistId)?.name || '',
-                            releases: responses[index]?.items || [],
-                            listId: Math.random()
-                        }))
-                    );
+        return () => dispatch(clearMediaSortedByCreator())
 
-                } catch {
-                    setArtistsAlbumsDataListStatus(error);
-                }
-            }
-        };
-        fetchArtistsAlbumsList();
-    }, [trackId, accessToken, artistsDetailsList]);
+    }, [accessToken, dispatch, artistsIdsList, endpointType]);
 
-    return { artistsAllReleasesDataList, artistsAllReleasesDataListStatus };
-};
-
-
-
-export const useArtistsAlbumsList2 = ({ showsDetailsList, trackId = "" }) => {
-    const accessToken = useSelector(selectAccessToken);
-
-    const showsIds = showsDetailsList?.map(({ id }) => id);
-
-    const [episodesGroupedByShows, setEpisodesGroupedByShows] = useState(undefined);
-    const [episodesGroupedByShowsStatus, setEpisodesGroupedByShowsStatus] = useState(initial);
-
-    useEffect(() => {
-        const fetchArtistsAlbumsList = async () => {
-            if (!!accessToken && !!showsDetailsList) {
-                try {
-                    setEpisodesGroupedByShowsStatus(loading);
-                    const responses = await Promise.all(showsIds.map(id => {
-                        return fetchFromAPI({
-                            endpoint: getShowEpisodes({ id }),
-                            accessToken
-                        })
-                    }));
-                    // console.log(responses)
-                    setEpisodesGroupedByShowsStatus(success);
-                    setEpisodesGroupedByShows(
-                        showsIds.map((showId, index) => ({
-                            id: showId,
-                            name: showsDetailsList.find(({ id }) => id === showId)?.name || '',
-                            releases: responses[index]?.items || [],
-                            listId: Math.random()
-                        }))
-                    );
-
-                } catch {
-                    setEpisodesGroupedByShowsStatus(error);
-                }
-            }
-        };
-        fetchArtistsAlbumsList();
-    }, [trackId, accessToken, showsDetailsList]);
-
-    return { episodesGroupedByShows, episodesGroupedByShowsStatus };
+    return { mediaSortedByCreator, mediaSortedByCreatorStatus };
 };
