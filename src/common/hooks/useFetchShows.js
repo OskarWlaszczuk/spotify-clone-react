@@ -1,25 +1,19 @@
 import { getSeveralShowsListEndpoint } from "../functions/endpoints";
 import { formatIdsForFetch } from "../functions/formatIdsForFetch";
 import { showsActions, showsSelectors } from "../slices/showsSlice";
-import { useApiResource } from "./useApiResource";
-import { useFetchAPI } from "./useFetchAPI";
+import { useFetch } from "./useFetchAPI";
 
-export const useFetchShows = ({ showsIdsList, pageId, fetchCondition = true }) => {
-    const formattedShowsIdsList = formatIdsForFetch(showsIdsList);
+export const useFetchShows = ({ IDs, fetchCondition = true }) => {
+    const formattedIDs = formatIdsForFetch(IDs);
 
-    const {
-        configs: showsConfig,
-        rawApiData: rawShowsDetails,
-        apiStatus: showDetailsStatus
-    } = useApiResource({
+    const { APIFetchStatus: showsStatus, APIData } = useFetch({
         actions: showsActions,
         selectors: showsSelectors,
-        endpoint: getSeveralShowsListEndpoint({ id: formattedShowsIdsList })
+        endpoint: getSeveralShowsListEndpoint({ id: formattedIDs }),
+        fetchCondition
     });
 
-    useFetchAPI({ fetchConfigs: [showsConfig], fetchCondition, dependencies: [showsIdsList], pageId });
+    const shows = APIData?.shows;
 
-    const showsDetailsList = rawShowsDetails?.shows;
-
-    return { showsDetailsList, showDetailsStatus }
+    return { shows, showsStatus };
 };
