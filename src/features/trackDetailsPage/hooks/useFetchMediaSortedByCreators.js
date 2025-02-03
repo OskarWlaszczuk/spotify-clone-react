@@ -10,8 +10,11 @@ import {
 
 export const useFetchMediaSortedByCreators = ({ creatorsDetails }) => {
     const accessToken = useSelector(selectAccessToken);
-    const artistsIdsList = useMemo(() => creatorsDetails?.map(({ id }) => id), [creatorsDetails]);
-    const endpointType = useMemo(() => creatorsDetails?.[0].type, [creatorsDetails]);
+
+    const fetchActionPayload = useMemo(() => ({
+        creatorsIDs: creatorsDetails?.map(({ id }) => id),
+        endpointType: creatorsDetails?.[0].type,
+    }), [creatorsDetails]);
 
     const mediaSortedByCreator = useSelector(selectMediaSortedByCreatorData);
     const mediaSortedByCreatorStatus = useSelector(selectMediaSortedByCreatorStatus);
@@ -19,13 +22,13 @@ export const useFetchMediaSortedByCreators = ({ creatorsDetails }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!!accessToken && !!artistsIdsList) {
-            dispatch(fetchMediaSortedByCreator({ creatorsIDs: artistsIdsList, accessToken, endpointType }))
+        if (!!accessToken && !!fetchActionPayload.creatorsIDs) {
+            dispatch(fetchMediaSortedByCreator({ accessToken, ...fetchActionPayload }))
         }
 
         return () => dispatch(clearMediaSortedByCreator())
 
-    }, [accessToken, dispatch, artistsIdsList, endpointType]);
+    }, [accessToken, fetchActionPayload, dispatch]);
 
     return { mediaSortedByCreator, mediaSortedByCreatorStatus };
 };
