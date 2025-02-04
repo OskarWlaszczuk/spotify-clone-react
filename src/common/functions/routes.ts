@@ -16,3 +16,4 @@ export const toSearch: ToPage = () => "/search";
 export const toAlbum = ({ id }: { id: string } = { id: "" }) => `/album/${id}`;
 export const toArtist: ToDetailsPage = ({ id, fullListType = '' } = { id: '', fullListType: '' }) => `/artist/${id}/${fullListType}`;
 export const toTrack = ({ id }: { id: string } = { id: "" }) => `/track/${id}`;
+export const toShow: ToDetailsPage = ({ id }: { id: string } = { id: "" }) => `/show/${id}`;
