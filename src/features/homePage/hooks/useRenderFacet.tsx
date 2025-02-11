@@ -1,14 +1,13 @@
-import { useParams } from "react-router-dom";
 import { CategoriesSwitchersSection } from "../../../common/components/CategoriesSwitchersSection";
 import { CategoryConfig } from "../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
 import { useCurrentCategoryData } from "../../artistDetailsPage/hooks/useCurrentCategoryData";
+import { FacetCategory } from "../constants/facetCategories";
 
-export const useRenderFacet = (facetCategoriesConfig: CategoryConfig[]) => {
-
-    const { facetType } = useParams();
+export const useRenderFacet = (facetCategoriesConfig: CategoryConfig[], facetType: FacetCategory) => {
 
     const facetIndexBasedOnCurrentType = facetCategoriesConfig.findIndex(({ categoryName }) => categoryName === facetType) || 0;
+
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
         ...facetCategoriesConfig[facetIndexBasedOnCurrentType]
     });
