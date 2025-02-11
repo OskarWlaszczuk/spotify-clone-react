@@ -1,28 +1,19 @@
 import { useParams } from "react-router-dom"
-import { popularAlbumsParam, popularArtistsParam } from "../../../constants/fullListPageParams";
-import { useRenderFullList } from "../../../../../common/functions/useRenderFullList";
-import { popularAlbumsTitle, popularArtistsTitle } from "../../../constants/popularListsTitles";
-import { useRenderPopularLists } from "../../../hooks/useRenderPopularLists";
-import { FullListPageOption } from "../../../../../common/Interfaces/FullListPageOption";
-import { PopularListConfig } from "../../../interfaces/PopularListConfig";
 import { useRenderFacet } from "../../../hooks/useRenderFacet";
 import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
-import { useRenderArtistReleaseSections } from "../../../../../common/hooks/useRenderArtistReleaseSections";
 import { ShowItem } from "../../../../../common/Interfaces/ShowItem";
 import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
-import { toAlbum, toArtist, toHome, toShow } from "../../../../../common/functions/routes";
+import { toArtist, toHome, toShow } from "../../../../../common/functions/routes";
 import { getFirstImage } from "../../../../../common/functions/getFirstImage";
 import { MediaItem } from "../../../../../common/Interfaces/MediaItem";
 import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
-import { facetAllCategory, FacetCategory, facetMusicCategory, facetPodcastsCategory } from "../../../constants/facetCategories";
-import { useCurrentCategoryData } from "../../../../artistDetailsPage/hooks/useCurrentCategoryData";
-import { allFacetParam, musicFacetParam, podcastsFacetParam } from "../../../constants/facetParams";
+import { facetAllCategory, facetMusicCategory, facetPodcastsCategory } from "../../../constants/facetCategories";
 import { allReleaseParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
 import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
-import { renderArtistLink } from "../../../../../common/functions/renderArtistLinks";
 import { getAlbumArtists } from "../../../../../common/functions/getAlbumArtists";
+import { ArtistsList } from "../../../../../common/Interfaces/ArtistsList";
 
 const mixLists = (count: number, ...arrays: MediaItem[][]): MediaItem[] => {
     const mixedList: MediaItem[] = [];
@@ -53,11 +44,8 @@ interface MainContentProps {
 }
 
 export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentProps) => {
-    interface FacetType {
-        facetType?: FacetCategory;
-    }
 
-    const { facetType } = useParams<FacetType>();
+    const { facetType } = useParams();
     const { episodes, albums, artists, shows } = popularLists;
 
     const allViewFacetList = mixLists(2, albums, shows, artists, episodes);
@@ -105,7 +93,7 @@ export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentP
                         imageURL: getFirstImage(images),
                         isArtistImage: true,
                     },
-                    renderSubInfo: ({ artists }) => getAlbumArtists(artists),
+                    renderSubInfo: ({ artists }: ArtistsList) => getAlbumArtists(artists),
                     titleLink: toArtist({ id }),
                 }])
             );
