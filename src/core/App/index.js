@@ -9,6 +9,9 @@ import { ArtistDetailsPage } from "../../features/artistDetailsPage/components/A
 import { TrackDetailsPage } from "../../features/trackDetailsPage/components/TrackDetailsPage";
 import { useAuth } from "./hooks/useAuth";
 import { ShowPage } from "../../features/showsPage/ShowPage";
+import { EpisodePage } from "../../features/episodePage/EpisodePage";
+import { allFacetParam } from "../../features/homePage/constants/facetParams";
+import { facetAllCategory } from "../../features/homePage/constants/facetCategories";
 
 export const App = () => {
     useAuth();
@@ -18,13 +21,14 @@ export const App = () => {
             <NavigationPanel />
             <Library />
             <Routes>
-                <Route path="/home/:fullListType?/:facetType?" element={<HomePage />} />
+                <Route path="/home/:facetType?/:fullListType?" element={<HomePage />} />
                 <Route path={toSearch()} element={<Search />} />
                 <Route path="/track/:id" element={<TrackDetailsPage />} />
                 <Route path="/album/:id" element={<AlbumPage />} />
                 <Route path="/show/:id" element={<ShowPage />} />
+                <Route path="/episode/:id" element={<EpisodePage />} />
                 <Route path="/artist/:id/:fullListType?" element={<ArtistDetailsPage />} />
-                <Route path="*" element={<Navigate to={toHome()} />} />
+                <Route path="*" element={<Navigate to={toHome({ facetType: facetAllCategory })} />} />
             </Routes>
         </HashRouter>
     );
