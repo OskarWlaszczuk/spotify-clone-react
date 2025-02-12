@@ -4,30 +4,40 @@ import { MainContent } from "./MainContent";
 import { useParams } from "react-router-dom";
 import { useFetchPopularLists } from "../../hooks/useFetchPopularLists";
 import { useFetchMediaSortedByCreators } from "../../../trackDetailsPage/hooks/useFetchMediaSortedByCreators";
+import { facetMusicCategory, facetPodcastsCategory } from "../../constants/facetCategories";
+import { useFetchNewReleases } from "../../hooks/useFetchNewReleases";
 
 export const HomePage = () => {
-    const { fullListType } = useParams();
+    const { facetType, fullListType } = useParams();
 
     const { popularListsStatuses, popularLists } = useFetchPopularLists();
 
+
+    const mediaSortedByCreatorsParameters = {
+        creatorsDetails: facetType === facetMusicCategory ? popularLists?.artists : facetType === facetPodcastsCategory ? popularLists?.shows : [],
+        dataName: facetType === facetMusicCategory ? "album" : "episode",
+    };
+
+    const { newReleasesStatus, newReleases } = useFetchNewReleases();
     const {
-        mediaSortedByCreator: releasesSortedByArtists,
-        mediaSortedByCreatorStatus: releasesSortedByArtistsStatus
-    } = useFetchMediaSortedByCreators({ creatorsDetails: popularLists[0] });
+        mediaSortedByCreator,
+        mediaSortedByCreatorStatus
+    } = useFetchMediaSortedByCreators(mediaSortedByCreatorsParameters);
 
-    const fetchStatus = useFetchStatus([...popularListsStatuses, releasesSortedByArtistsStatus]);
+    const fetchStatus = useFetchStatus([...popularListsStatuses, newReleasesStatus]);
 
+    console.log(newReleasesStatus, newReleases);
     return (
-        // <Main
-        //     useGradient={!fullListType}
-        //     currentFetchStatus={fetchStatus}
-        //     content={
-        //         <MainContent
-        //             popularLists={popularLists}
-        //             artistsAllReleasesDataList={artistsReleases}
-        //         />
-        //     }
-        // />
-        <></>
+        <Main
+            useGradient={!fullListType}
+            currentFetchStatus={fetchStatus}
+            content={
+                <MainContent
+                    popularLists={popularLists}
+                    mediaSortedByCreator={mediaSortedByCreator}
+                    newReleases={newReleases}
+                />
+            }
+        />
     );
 };
