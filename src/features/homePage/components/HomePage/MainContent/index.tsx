@@ -4,16 +4,11 @@ import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
 import { ShowItem } from "../../../../../common/Interfaces/ShowItem";
-import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
-import { toArtist, toHome, toShow } from "../../../../../common/functions/routes";
-import { getFirstImage } from "../../../../../common/functions/getFirstImage";
+import { toHome } from "../../../../../common/functions/routes";
 import { MediaItem } from "../../../../../common/Interfaces/MediaItem";
 import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { facetAllCategory, facetMusicCategory, facetPodcastsCategory } from "../../../constants/facetCategories";
-import { allReleaseParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
-import { fullListLinkText } from "../../../../../common/constants/fullListLinkText ";
-import { getAlbumArtists } from "../../../../../common/functions/getAlbumArtists";
-import { ArtistsList } from "../../../../../common/Interfaces/ArtistsList";
+import { useSelectFacetConfigBasedOnType } from "../../../functions/selectFacetConfigBasedOnType";
 
 const mixLists = (count: number, ...arrays: MediaItem[][]): MediaItem[] => {
     const mixedList: MediaItem[] = [];
@@ -44,7 +39,6 @@ interface MainContentProps {
 }
 
 export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentProps) => {
-
     const { facetType } = useParams();
     const { episodes, albums, artists, shows } = popularLists;
 
@@ -73,77 +67,17 @@ export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentP
     ];
 
     const renderFacet = useRenderFacet(facetCategoriesConfig2, facetType);
-    const renderTilesList = useRenderTilesList();
 
-    const renderArtistsReleasesSections = () => (
-        mediaSortedByCreator?.map((artistReleases, index) => {
-            const { images, name, id } = artists[index]
-
-            return (
-                renderTilesList([{
-                    title: name,
-                    list: artistReleases,
-                    fullListData: {
-                        pathname: toArtist({ id, fullListType: allReleaseParamDiscography }),
-                        text: fullListLinkText
-                    },
-                    listId: index,
-                    overTitleExtraContent: "Popular Releases",
-                    extraTitleImage: {
-                        imageURL: getFirstImage(images),
-                        isArtistImage: true,
-                    },
-                    renderSubInfo: ({ artists }: ArtistsList) => getAlbumArtists(artists),
-                    titleLink: toArtist({ id }),
-                }])
-            );
-        })
-    );
-
-    const renderShowsEpisodesSections = () => (
-        mediaSortedByCreator?.map((showsEpisodes, index) => {
-            const { name, id, publisher, images } = shows[index]
-
-            return (
-                renderTilesList([{
-                    title: name,
-                    list: showsEpisodes,
-                    // fullListData: {
-                    //     pathname: toArtist({ id, fullListType: allReleaseParamDiscography }),
-                    //     text: fullListLinkText
-                    // },
-                    listId: index,
-                    overTitleExtraContent: "Popular Episodes",
-                    extraTitleImage: {
-                        imageURL: getFirstImage(images),
-                        isArtistImage: true,
-                    },
-                    subInfo: publisher,
-                    titleLink: toShow({ id }),
-                }])
-            );
-        })
-    );
-
-
-    const selectFacetConfigBasedOnType = (currentFacetType: string | undefined) => {
-        switch (currentFacetType) {
-            case facetAllCategory:
-                return <>All</>
-            case facetMusicCategory:
-                return <>{renderArtistsReleasesSections()}</>
-            case facetPodcastsCategory:
-                return <>{renderShowsEpisodesSections()}</>
-
-            default:
-                <>sss</>
-        };
-    };
+    const selectFacetConfigBasedOnType = useSelectFacetConfigBasedOnType({
+        currentFacetType: facetType,
+        mediaSortedByCreator,
+        creatorsDetails: popularLists
+    })
 
     return (
         <>
             {renderFacet()}
-            {selectFacetConfigBasedOnType(facetType)}
+            {selectFacetConfigBasedOnType()}
         </>
     );
 };
