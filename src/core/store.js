@@ -17,6 +17,8 @@ import { episodeDetailsReducer } from '../common/slices/episodeDetailsSlice';
 import { showDetailsReducer } from '../common/slices/showDetailsSlice';
 import { showsReducer } from '../common/slices/showsSlice';
 import { showEpisodesReducer } from '../common/slices/showEpisodesSlice';
+import { mediaSortedByCreatorReducer } from '../common/slices/mediaSortedByCreatorSlice';
+import { newReleasesReducer } from '../common/slices/newReleasesSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -38,6 +40,8 @@ export const store = configureStore({
         showDetails: showDetailsReducer,
         shows: showsReducer,
         showEpisodes: showEpisodesReducer,
+        mediaSortedByCreator: mediaSortedByCreatorReducer,
+        newReleases: newReleasesReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(sagaMiddleware),
