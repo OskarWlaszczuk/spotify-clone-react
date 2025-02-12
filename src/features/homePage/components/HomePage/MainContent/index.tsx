@@ -5,27 +5,10 @@ import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
 import { ShowItem } from "../../../../../common/Interfaces/ShowItem";
 import { toHome } from "../../../../../common/functions/routes";
-import { MediaItem } from "../../../../../common/Interfaces/MediaItem";
 import { CategoryConfig } from "../../../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { facetAllCategory, facetMusicCategory, facetPodcastsCategory } from "../../../constants/facetCategories";
 import { useSelectFacetConfigBasedOnType } from "../../../functions/selectFacetConfigBasedOnType";
-
-const mixLists = (count: number, ...arrays: MediaItem[][]): MediaItem[] => {
-    const mixedList: MediaItem[] = [];
-
-    const selectedArrays = arrays?.map(arr => arr?.slice(0, count));
-
-    for (let i = 0; i < count; i++) {
-        for (const arr of selectedArrays) {
-            if (arr?.[i] !== undefined) {
-                mixedList?.push(arr[i]);
-            }
-        }
-    };
-
-    return mixedList;
-};
-
+import { mixLists } from "../../../functions/mixLists";
 interface PopularLists {
     artists: ArtistItem[];
     albums: AlbumItem[];
