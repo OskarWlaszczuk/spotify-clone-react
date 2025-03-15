@@ -1,15 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import { throwError } from "./throwError";
 
-interface Params<ApiDataType> {
-    getData:() => Promise<ApiDataType>
-    actions: {
-        fetchSuccess: () => void;
-        fetchError: () => void;
-    }
-};
-
-export function* createSaga<ApiDataType>({ getData, actions }) {
+export function* createSaga({ getData, actions }) {
 
     function* fetchDataHandler({ payload } = {}) {
         const { endpoint, accessToken } = payload;
