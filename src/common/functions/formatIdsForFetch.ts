@@ -1,1 +1,1 @@
-export const formatIdsForFetch = (idsList: readonly string[]) => idsList.join(",");
+export const formatIdsForFetch = (idsList: readonly string[]) => idsList?.join(",");
