@@ -11,16 +11,15 @@ interface CategoriesSwitchersSection {
     categoriesConfigs: CategoryConfig[],
     setCurrentCategoryData: SetCurrentCategoryDataFunction,
     currentCategory: CategoryName;
-    link?:string;
 }
 
 export const CategoriesSwitchersSection = (
-    { categoriesConfigs, setCurrentCategoryData, currentCategory: targetCategory, link }: CategoriesSwitchersSection
+    { categoriesConfigs, setCurrentCategoryData, currentCategory: targetCategory }: CategoriesSwitchersSection
 ) => {
     return (
         <>
             {
-                categoriesConfigs.map(({ categoryView, categoryName, categorySwitcherContent }) => (
+                categoriesConfigs.map(({ categoryView, categoryName, categorySwitcherContent, pathname }) => (
                     <CategorySwitcher
                         isListNotEmpty={isNotEmpty(categoryView)}
                         switchCategoryFunction={() => setCurrentCategoryData({
@@ -29,7 +28,7 @@ export const CategoriesSwitchersSection = (
                         })}
                         switcherContent={categorySwitcherContent}
                         isActive={isMatch(categoryName, targetCategory)}
-                        link={link}
+                        pathname={pathname}
                     />
                 ))
             }
