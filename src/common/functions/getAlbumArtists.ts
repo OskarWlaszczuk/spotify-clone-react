@@ -4,7 +4,7 @@ interface WithName {
 
 export const getAlbumArtists = <T extends WithName>(
     artistsDetailsList: T[],
-    separator: string = "•",
+    separator: string = " • ",
 ) => (
     artistsDetailsList?.map(({ name }) => name).join(separator)
 );
