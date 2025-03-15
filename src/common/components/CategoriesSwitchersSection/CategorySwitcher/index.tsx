@@ -5,19 +5,19 @@ interface CategorySwitcherProps {
     switcherContent: string;
     isActive: boolean;
     isListNotEmpty: boolean;
-    link?: string;
+    pathname?: string;
 };
 
 export const CategorySwitcher = (
-    { switchCategoryFunction, switcherContent, isActive, isListNotEmpty, link }:
+    { switchCategoryFunction, switcherContent, isActive, isListNotEmpty, pathname }:
         CategorySwitcherProps
 ) => {
 
     const switcherElement = (
-        link ?
+        pathname ?
             <SwitcherAsLink
                 onClick={switchCategoryFunction}
-                to={link}
+                to={pathname}
                 $active={isActive}
             >
                 {switcherContent}
