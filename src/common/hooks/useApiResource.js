@@ -1,13 +1,16 @@
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 export const useApiResource = ({ actions, selectors, endpoint }) => {
-    const { fetch, clear } = actions;
     const { selectStatus, selectData } = selectors;
 
-    const apiStatus = useSelector(selectStatus);
-    const rawApiData = useSelector(selectData)?.data;
+    const APIFetchStatus = useSelector(selectStatus);
+    const APIData = useSelector(selectData)?.data;
 
-    const configs = { fetchAction: fetch, clearAction: clear, endpoint };
+    const resourceConfig = useMemo(() => {
+        const { fetch, clear } = actions;
+        return { fetchAction: fetch, clearAction: clear, endpoint };
+    }, [actions, endpoint]);
 
-    return { configs, apiStatus, rawApiData };
+    return { resourceConfig, APIFetchStatus, APIData };
 };
