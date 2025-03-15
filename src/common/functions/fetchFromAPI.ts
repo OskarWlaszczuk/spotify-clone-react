@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ApiResponse } from "../Interfaces/ApiResponse";
+import { APIData } from "../Interfaces/ApiResponse";
 import { ApiRequestParams } from "../Interfaces/ApiRequestParams";
 
 export const fetchFromAPI = async <ApiDataType>({ endpoint, accessToken }: ApiRequestParams) => {
@@ -13,7 +13,7 @@ export const fetchFromAPI = async <ApiDataType>({ endpoint, accessToken }: ApiRe
     };
 
     try {
-        const response = await axios.get(url, authHeaders) as ApiResponse<ApiDataType>;
+        const response = await axios.get(url, authHeaders) as APIData<ApiDataType>;
 
         return response.data;
     } catch (error) {
