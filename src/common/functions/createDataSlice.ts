@@ -1,19 +1,16 @@
-import { createSlice, Draft, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, Draft, PayloadAction, Slice } from "@reduxjs/toolkit";
 import { error, initial, loading, success } from "../constants/fetchStatuses";
 import { FetchStatus } from "../Types/FetchStatus";
+import { RootState } from "../../core/store";
 
-interface InitialState<DataType> {
+interface InitialState<APIData> {
     status: FetchStatus;
-    data: DataType | null;
+    data: APIData | null
 }
 
-interface CreateDataSliceParams {
-    name: string;
-}
+export const createDataSlice = <APIData>({ name }: { name: string }) => {
 
-export const createDataSlice = <DataType>({ name }: CreateDataSliceParams) => {
-
-    const initialState: InitialState<DataType> = {
+    const initialState: InitialState<APIData> = {
         status: initial,
         data: null,
     };
@@ -25,9 +22,9 @@ export const createDataSlice = <DataType>({ name }: CreateDataSliceParams) => {
             fetch: (state) => {
                 state.status = loading;
             },
-            fetchSuccess: (state, action: PayloadAction<DataType>) => {
+            fetchSuccess: (state, { payload }: PayloadAction<APIData>) => {
                 state.status = success;
-                state.data = action.payload as Draft<DataType>;
+                state.data = payload as Draft<APIData>;
             },
             fetchError: (state) => {
                 state.status = error;
@@ -40,8 +37,8 @@ export const createDataSlice = <DataType>({ name }: CreateDataSliceParams) => {
         reducer: slice.reducer,
         actions: slice.actions,
         selectors: {
-            selectData: (state) => state[name].data,
-            selectStatus: (state) => state[name].status,
+            selectData: (state: RootState) => state[name].data,
+            selectStatus: (state: RootState) => state[name].status,
         }
     };
 };
