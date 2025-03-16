@@ -18,10 +18,11 @@ interface PopularLists {
 
 interface MainContentProps {
     mediaSortedByCreator: (AlbumItem[] | EpisodeItem[])[];
-    popularLists: PopularLists
+    popularLists: PopularLists;
+    newReleases: AlbumItem[];
 }
 
-export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentProps) => {
+export const MainContent = ({ mediaSortedByCreator, popularLists, newReleases }: MainContentProps) => {
     const { facetType } = useParams();
     const { episodes, albums, artists, shows } = popularLists;
 
@@ -54,7 +55,8 @@ export const MainContent = ({ mediaSortedByCreator, popularLists }: MainContentP
     const selectFacetConfigBasedOnType = useSelectFacetConfigBasedOnType({
         currentFacetType: facetType,
         mediaSortedByCreator,
-        creatorsDetails: popularLists
+        creatorsDetails: popularLists,
+        newReleases,
     })
 
     return (
