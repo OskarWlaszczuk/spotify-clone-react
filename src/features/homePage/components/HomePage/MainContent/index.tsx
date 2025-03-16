@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom"
 import { useRenderFacet } from "../../../hooks/useRenderFacet";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { EpisodeItem } from "../../../../../common/Interfaces/EpisodeItem";
-import { useSelectFacetConfigBasedOnType } from "../../../functions/selectFacetConfigBasedOnType";
+import { useViewByURL } from "../../../hooks/useURLBasedView ";
 import { PopularLists } from "../../../interfaces/PopularLists";
 
 interface MainContentProps {
@@ -16,7 +16,7 @@ export const MainContent = ({ mediaSortedByCreator, popularLists, newReleases }:
 
     const renderFacet = useRenderFacet(popularLists, facetType);
 
-    const selectFacetConfigBasedOnType = useSelectFacetConfigBasedOnType({
+    const selectFacetConfigBasedOnType = useViewByURL({
         currentFacetType: facetType,
         mediaSortedByCreator,
         creatorsDetails: popularLists,
