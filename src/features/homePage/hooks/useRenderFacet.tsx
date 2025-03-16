@@ -2,9 +2,8 @@ import { CategoriesSwitchersSection } from "../../../common/components/Categorie
 import { CategoryConfig } from "../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
 import { useCurrentCategoryData } from "../../artistDetailsPage/hooks/useCurrentCategoryData";
-import { FacetCategory } from "../constants/facetCategories";
 
-export const useRenderFacet = (facetCategoriesConfig: CategoryConfig[], facetType: FacetCategory) => {
+export const useRenderFacet = (facetCategoriesConfig: CategoryConfig[], facetType: string | undefined) => {
 
     const facetIndexBasedOnCurrentType = facetCategoriesConfig.findIndex(({ categoryName }) => categoryName === facetType) || 0;
 
