@@ -13,9 +13,16 @@ export const HomePage = () => {
     const { popularListsStatuses, popularLists } = useFetchPopularLists(facetType);
     const { newReleasesStatus, newReleases } = useFetchNewReleases(facetType);
 
+    const isMusicCategoryActive = facetType === facetMusicCategory;
+    const isPodcastCategoryActive = facetType === facetPodcastsCategory;
+
     const mediaSortedByCreatorsParameters = {
-        creatorsDetails: facetType === facetMusicCategory ? popularLists?.artists : facetType === facetPodcastsCategory ? popularLists?.shows : [],
-        dataName: facetType === facetMusicCategory ? "album" : "episode",
+        creatorsDetails: isMusicCategoryActive ?
+            popularLists?.artists :
+            isPodcastCategoryActive ?
+                popularLists?.shows :
+                [],
+        dataName: isMusicCategoryActive ? "album" : "episode",
     };
 
     const {
@@ -23,9 +30,13 @@ export const HomePage = () => {
         mediaSortedByCreatorStatus
     } = useFetchMediaSortedByCreators(mediaSortedByCreatorsParameters);
 
-    console.log(mediaSortedByCreator)
+    const currentSectionFetchStatus = (
+        isMusicCategoryActive || isPodcastCategoryActive ?
+            mediaSortedByCreatorStatus :
+            newReleasesStatus
+    );
 
-    const fetchStatus = useFetchStatus([...popularListsStatuses]);
+    const fetchStatus = useFetchStatus([...popularListsStatuses, currentSectionFetchStatus]);
 
     return (
         <Main
