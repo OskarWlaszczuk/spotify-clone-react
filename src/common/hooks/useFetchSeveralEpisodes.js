@@ -1,25 +1,19 @@
 import { getSeveralEpisodesListEndpoint } from "../functions/endpoints";
 import { formatIdsForFetch } from "../functions/formatIdsForFetch";
 import { episodesActions, episodesSelectors } from "../slices/episodesSlice";
-import { useApiResource } from "./useApiResource";
-import { useFetchAPI } from "./useFetchAPI";
+import { useFetch } from "./useFetchAPI";
 
-export const useFetchSeveralEpisodes = ({ episodeIdsList, pageId, fetchCondition = true }) => {
-    const formattedEpisodeIdsList = formatIdsForFetch(episodeIdsList);
+export const useFetchSeveralEpisodes = ({ IDs, fetchCondition = true }) => {
+    const formattedIDs = formatIdsForFetch(IDs);
 
-    const {
-        configs: episodeConfig,
-        rawApiData: rawEpisodesDetails,
-        apiStatus: episodesDetailsStatus
-    } = useApiResource({
+    const { APIFetchStatus: episodesStatus, APIData } = useFetch({
         actions: episodesActions,
         selectors: episodesSelectors,
-        endpoint: getSeveralEpisodesListEndpoint({ id: formattedEpisodeIdsList })
+        endpoint: getSeveralEpisodesListEndpoint({ id: formattedIDs }),
+        fetchCondition
     });
 
-    useFetchAPI({ fetchConfigs: [episodeConfig], fetchCondition, dependencies: [episodeIdsList], pageId });
+    const episodes = APIData?.episodes;
 
-    const episodesDetailsList = rawEpisodesDetails?.episodes;
-
-    return { episodesDetailsList, episodesDetailsStatus };
-}
+    return { episodes, episodesStatus };
+};
