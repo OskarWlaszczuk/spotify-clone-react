@@ -10,23 +10,23 @@ import { useFetchNewReleases } from "../../hooks/useFetchNewReleases";
 export const HomePage = () => {
     const { facetType, fullListType } = useParams();
 
-    const { popularListsStatuses, popularLists } = useFetchPopularLists();
-
+    const { popularListsStatuses, popularLists } = useFetchPopularLists(facetType);
+    const { newReleasesStatus, newReleases } = useFetchNewReleases(facetType);
 
     const mediaSortedByCreatorsParameters = {
         creatorsDetails: facetType === facetMusicCategory ? popularLists?.artists : facetType === facetPodcastsCategory ? popularLists?.shows : [],
         dataName: facetType === facetMusicCategory ? "album" : "episode",
     };
 
-    const { newReleasesStatus, newReleases } = useFetchNewReleases();
     const {
         mediaSortedByCreator,
         mediaSortedByCreatorStatus
     } = useFetchMediaSortedByCreators(mediaSortedByCreatorsParameters);
 
-    const fetchStatus = useFetchStatus([...popularListsStatuses, newReleasesStatus]);
+    console.log(mediaSortedByCreator)
 
-    console.log(newReleasesStatus, newReleases);
+    const fetchStatus = useFetchStatus([...popularListsStatuses]);
+
     return (
         <Main
             useGradient={!fullListType}
