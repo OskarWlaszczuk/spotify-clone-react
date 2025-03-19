@@ -12,16 +12,24 @@ export const useFetch = ({ actions, selectors, endpoint, fetchCondition = true }
     useEffect(() => {
         const { fetchAction, clearAction, endpoint } = resourceConfig;
 
-        if (fetchCondition && !!accessToken) {
+        if (fetchCondition && !!accessToken && !APIData) {
             dispatch(fetchAction({ endpoint, accessToken }));
         }
 
-        return () => dispatch(clearAction());
+        // return () => dispatch(clearAction());
 
-    }, [dispatch, accessToken, resourceConfig, fetchCondition]);
+    }, [dispatch, accessToken, resourceConfig, fetchCondition, APIData]);
 
     return { APIFetchStatus, APIData };
 };
+
+
+
+
+
+
+
+
 
 export const useFetchAPI = ({
     fetchConfigs,
