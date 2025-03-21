@@ -9,50 +9,62 @@ import { prepareFullListPageOptions } from "../../../functions/prepareFullListPa
 import { filterReleasesByGroups } from "../../../../../common/functions/filterReleasesByGroups";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { formatAlbumSubInfo } from "../../../../../common/functions/formatAlbumSubInfo";
+import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
+import { FetchStatus } from "../../../../../common/Types/FetchStatus";
+import { TrackItem } from "../../../../../common/Interfaces/TrackItem";
 
+interface ArtistData {
+    data: ArtistItem;
+    releases: {
+        items: AlbumItem[];
+    };
+    statuses: FetchStatus[];
+}
+
+interface TopTracks {
+    status: FetchStatus;
+    tracks: TrackItem[];
+    albums: AlbumItem[];
+}
 interface MainContentProps {
-    artistName: string;
-    artistId: string;
-    artistAllReleases: AlbumItem[];
-    artistTopTracks: AlbumItem[];
-    artistTopTracksAsAlbums: AlbumItem[];
+    artistData: ArtistData;
+    topTracks: TopTracks;
     fullListType: string;
 };
 
 export const MainContent = ({
-    artistName,
-    artistId,
-    artistAllReleases,
-    artistTopTracks,
-    artistTopTracksAsAlbums,
+    artistData,
+    topTracks,
     fullListType,
 }: MainContentProps) => {
+    const releasesList = artistData.releases.items;
 
     const renderTilesList = useRenderTilesList();
     const renderFullList = useRenderFullList();
-    const renderDiscography = useRenderDiscography(artistAllReleases, artistTopTracksAsAlbums);
+    const renderDiscography = useRenderDiscography(releasesList, topTracks.albums);
 
-    const [appearsOnList] = filterReleasesByGroups(artistAllReleases, ["appears_on"]);
+    const [appearsOnList] = filterReleasesByGroups(releasesList, ["appears_on"]);
 
     const fullListPageOptions = prepareFullListPageOptions({
-        artistName,
-        artistAllReleases,
-        artistTopTracksAsAlbums,
+        artistName: artistData.data?.name,
+        artistAllReleases: releasesList,
+        artistTopTracksAsAlbums: topTracks.albums,
     });
 
-    const sectionDataToRender = [
+    console.log(releasesList)
+
+    const sectionsDataToRender = [
         {
             title: "Appears on",
             list: appearsOnList,
             toPageFunction: toAlbum,
             fullListData: {
-                pathname: toArtist({ id: artistId!, fullListType: artistAppearsOnParam }),
+                pathname: toArtist({ id: artistData.data?.id!, fullListType: artistAppearsOnParam }),
                 text: fullListLinkText,
             },
             renderSubInfo: ({ release_date, album_type }: { release_date: AlbumItem["release_date"], album_type: AlbumItem["album_type"] }) => formatAlbumSubInfo(release_date, album_type),
         },
     ];
-
 
     return (
         <>
@@ -61,9 +73,9 @@ export const MainContent = ({
                     renderFullList(fullListPageOptions, fullListType) :
                     (
                         <>
-                            <Table list={artistTopTracks} caption="Popular" />
+                            <Table list={topTracks.tracks} caption="Popular" />
                             {renderDiscography()}
-                            {renderTilesList(sectionDataToRender)}
+                            {renderTilesList(sectionsDataToRender)}
                         </>
                     )
             }
