@@ -4,52 +4,33 @@ import { useFetchStatus } from "../../../../common/hooks/useFetchStatuses";
 import { MainContent } from "./MainContent";
 import { Banner } from "../../../../common/components/Banner";
 import { useArtistTopTracks } from "../../../../common/hooks/useArtistTopTracks";
-import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 
 export const ArtistDetailsPage = () => {
-    const { fullListType, id: artistId } = useParams();
+    const { fullListType, id: artistID } = useParams();
 
-    const { mainArtistDetails, mainArtistReleases, mainArtistDataStatuses } = useMainArtistData({
-        mainArtistId: artistId,
-    });
-
-    const {
-        artistTopTracksStatus,
-        artistTopTracksAsAlbumsList,
-        artistTopTracksList
-    } = useArtistTopTracks({ artistId });
-
-    const fetchStatus = useFetchStatus([artistTopTracksStatus, ...mainArtistDataStatuses]);
-
-    const [{
-        name: artistName,
-        followers: artistFollowers,
-        images: artistImages
-    }] = getSpecificKeys([mainArtistDetails], ["name", "followers", "images"]);
-
-    const mainArtistReleasesList = mainArtistReleases?.items;
+    const artistData = useMainArtistData({ artistID });
+    const topTracks = useArtistTopTracks({ artistID });
+    const fetchStatus = useFetchStatus([topTracks.status, ...artistData.statuses]);
 
     return (
         <Main
             currentFetchStatus={fetchStatus}
             bannerContent={!fullListType && (
                 <Banner
-                    picture={getFirstImage(artistImages)}
-                    title={artistName}
+                    picture={getFirstImage(artistData.data?.images)}
+                    title={artistData.data?.name}
                     caption="Verified artist"
-                    subTitleContent={`${artistFollowers?.total} followers`}
+                    subTitleContent={`${artistData.data?.followers.total} followers`}
                     useArtistPictureStyle
                 />)
             }
             content={
                 <MainContent
                     fullListType={fullListType}
-                    artistName={artistName}
-                    artistAllReleases={mainArtistReleasesList}
-                    artistTopTracks={artistTopTracksList}
-                    artistTopTracksAsAlbums={artistTopTracksAsAlbumsList}
+                    artistData={artistData}
+                    topTracks={topTracks}
                 />
             }
         />
