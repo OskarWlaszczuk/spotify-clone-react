@@ -6,18 +6,16 @@ import { useRenderFullList } from "../../../../../common/functions/useRenderFull
 import { artistAppearsOnParam } from "../../../constants/FullListPageParams";
 import { useRenderDiscography } from "../../../hooks/useRenderDiscography";
 import { prepareFullListPageOptions } from "../../../functions/prepareFullListPageOptions";
-import { filterReleasesByGroups } from "../../../../../common/functions/filterReleasesByGroups";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { formatAlbumSubInfo } from "../../../../../common/functions/formatAlbumSubInfo";
 import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { FetchStatus } from "../../../../../common/Types/FetchStatus";
 import { TrackItem } from "../../../../../common/Interfaces/TrackItem";
+import { preparePopularReleases } from "../../../functions/preparePopularReleases";
 
 interface ArtistData {
     data: ArtistItem;
-    releases: {
-        items: AlbumItem[];
-    };
+    releases: AlbumItem[];
     statuses: FetchStatus[];
 }
 
@@ -37,26 +35,26 @@ export const MainContent = ({
     topTracks,
     fullListType,
 }: MainContentProps) => {
-    const releasesList = artistData.releases.items;
 
+    const { releases, data } = artistData;
+
+    const appearsOn = releases.filter(({ album_group }) => album_group === "appears_on");
+
+    const popularReleases = preparePopularReleases(topTracks.albums, releases);
     const renderTilesList = useRenderTilesList();
     const renderFullList = useRenderFullList();
-    const renderDiscography = useRenderDiscography(releasesList, topTracks.albums);
-
-    const [appearsOnList] = filterReleasesByGroups(releasesList, ["appears_on"]);
+    const renderDiscography = useRenderDiscography(releases, popularReleases);
 
     const fullListPageOptions = prepareFullListPageOptions({
-        artistName: artistData.data?.name,
-        artistAllReleases: releasesList,
-        artistTopTracksAsAlbums: topTracks.albums,
+        artistName: data?.name,
+        groupedReleases: releases,
+        popularReleases,
     });
-
-    console.log(releasesList)
 
     const sectionsDataToRender = [
         {
             title: "Appears on",
-            list: appearsOnList,
+            list: appearsOn,
             toPageFunction: toAlbum,
             fullListData: {
                 pathname: toArtist({ id: artistData.data?.id!, fullListType: artistAppearsOnParam }),
