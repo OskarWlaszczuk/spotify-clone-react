@@ -1,56 +1,58 @@
-import { allReleaseParamDiscography, albumsParamDiscography, compilationParamDiscography, singleParamDiscography } from "../../../common/constants/artistDiscographyParams";
+import {
+    allReleaseParamDiscography,
+    albumsParamDiscography,
+    compilationParamDiscography,
+    singleParamDiscography
+} from "../../../common/constants/artistDiscographyParams";
 import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
-import { popularReleasesCategory, albumsCategory, compilationsCategory, singlesCategory } from "../constants/releasesCategories";
+import {
+    popularReleasesCategory,
+    albumsCategory,
+    compilationsCategory,
+    singlesCategory
+} from "../constants/releasesCategories";
 import { CategoriesSwitchersSection } from "../../../common/components/CategoriesSwitchersSection";
 import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
 import { toAlbum, toArtist } from "../../../common/functions/routes";
 import { useCurrentCategoryData } from "./useCurrentCategoryData";
-import { preparePopularReleases } from "../functions/preparePopularReleases";
-import { divideReleases } from "../functions/divideReleases";
 import { AlbumItem } from "../../../common/Interfaces/AlbumItem";
 import { findMatchingOptionByKey } from "../../../common/functions/findMatchingOptionByKey";
 import { fullListLinkText } from "../../../common/constants/fullListLinkText ";
 import { useParams } from "react-router-dom";
 import { CategoryConfig } from "../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { formatAlbumSubInfo } from "../../../common/functions/formatAlbumSubInfo";
+import { groupReleases } from "../../../common/functions/groupReleases";
 
-export const useRenderDiscography = (artistAllReleases: AlbumItem[], artistTopTracksAsAlbums: AlbumItem[]) => {
+export const useRenderDiscography = (releases: AlbumItem[], popularReleases: AlbumItem[]) => {
     const { id: artistId } = useParams();
     const renderTilesList = useRenderTilesList();
 
-    const {
-        albumsList,
-        compilationsList,
-        singlesList,
-        allReleasesWithoutAppearsOn,
-    } = divideReleases(artistAllReleases);
-
-    const uniquePopularReleases = preparePopularReleases(artistTopTracksAsAlbums, allReleasesWithoutAppearsOn);
+    const discographyReleases = groupReleases(releases, ["album", "compilation", "single"]);
 
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
         categoryName: popularReleasesCategory,
-        categoryView: uniquePopularReleases,
+        categoryView: popularReleases,
     });
 
     const renderDiscography = () => {
         const categoriesConfigs: CategoryConfig[] = [
             {
-                categoryView: uniquePopularReleases,
+                categoryView: popularReleases,
                 categoryName: popularReleasesCategory,
                 categorySwitcherContent: "Popular releases"
             },
             {
-                categoryView: albumsList,
+                categoryView: discographyReleases.album,
                 categoryName: albumsCategory,
                 categorySwitcherContent: "Albums"
             },
             {
-                categoryView: singlesList,
+                categoryView: discographyReleases.single,
                 categoryName: singlesCategory,
                 categorySwitcherContent: "Singles and EPs"
             },
             {
-                categoryView: compilationsList,
+                categoryView: discographyReleases.compilation,
                 categoryName: compilationsCategory,
                 categorySwitcherContent: "Compilations"
             },
@@ -85,7 +87,10 @@ export const useRenderDiscography = (artistAllReleases: AlbumItem[], artistTopTr
                 }),
                 text: fullListLinkText,
             },
-            renderSubInfo: ({ release_date, album_type }) => formatAlbumSubInfo(release_date, album_type),
+            renderSubInfo: (
+                { release_date, album_type }:
+                    { release_date: AlbumItem["release_date"], album_type: AlbumItem["album_type"] }
+            ) => formatAlbumSubInfo(release_date, album_type),
         }]);
     };
 
