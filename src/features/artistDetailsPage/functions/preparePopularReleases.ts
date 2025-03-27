@@ -1,32 +1,30 @@
 import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
-import { sortFromOldestToNewest } from "../../../common/functions/sortFromOldestToNewest";
-import { WithReleaseDate } from "../../../common/Interfaces/WithReleaseDate";
+import { orderByReleaseDateNewestFirst } from "../../../common/functions/orderByReleaseDateNewestFirst";
+import { AlbumItem } from "../../../common/Interfaces/AlbumItem";
 import { newestItemReleaseDate } from "../constants/newestItemReleaseDate";
 
- const isLatestReleased = <T extends WithReleaseDate>(album: T): boolean => (
-    new Date(album?.release_date).getFullYear() === new Date().getFullYear()
-);
 
- const replaceReleaseDateIfCurrentYear = <T extends WithReleaseDate>(listItem: T): T => {
-    return isLatestReleased(listItem) ?
-        { ...listItem, release_date: newestItemReleaseDate } :
-        listItem;
+const setLatestReleaseFirst = (newestPopularReleaseItem: AlbumItem, popularReleases: AlbumItem[]) => {
+    const isCurrentYearReleased = (album: AlbumItem): boolean => (
+        new Date(album?.release_date).getFullYear() === new Date().getFullYear()
+    );
+
+    const replaceReleaseDateIfCurrentYear = (listItem: AlbumItem) => {
+        return isCurrentYearReleased(listItem) ?
+            { ...listItem, release_date: newestItemReleaseDate } :
+            listItem;
+    };
+
+    return !!newestPopularReleaseItem && isCurrentYearReleased(newestPopularReleaseItem) ?
+        [replaceReleaseDateIfCurrentYear({ ...newestPopularReleaseItem }), ...(popularReleases?.slice() ?? [])] :
+        popularReleases || []
 };
 
-const setNewestPopularReleaseItemFirstIfIsLatestRelease = <T extends WithReleaseDate>(
-    newestPopularReleaseItem: T | undefined,
-    popularReleases: any
-) => (
-    !!newestPopularReleaseItem && isLatestReleased(newestPopularReleaseItem) ?
-        [replaceReleaseDateIfCurrentYear({ ...newestPopularReleaseItem }), ...(popularReleases?.slice() ?? [])]
-        : popularReleases || []
-);
-
-export const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWithoutAppearsOn: any) => {
-    const newestTopTrackAlbumItem = sortFromOldestToNewest(topTracksAlbumsList)[0];
-    const updatedTopTracksAlbumsList = setNewestPopularReleaseItemFirstIfIsLatestRelease(
+export const preparePopularReleases = (topTracksAlbums: AlbumItem[], allReleasesWithoutAppearsOn: any) => {
+    const newestTopTrackAlbumItem = orderByReleaseDateNewestFirst(topTracksAlbums)[0];
+    const updatedTopTracksAlbumsList = setLatestReleaseFirst(
         newestTopTrackAlbumItem,
-        topTracksAlbumsList
+        topTracksAlbums
     );
 
     const popularReleases = [
@@ -35,5 +33,7 @@ export const preparePopularReleases = (topTracksAlbumsList: any, allReleasesWith
     ];
 
     const uniquePopularReleases = removeDuplicatesByName(popularReleases);
-    return uniquePopularReleases;
+    const sortedUniquePopularReleases = orderByReleaseDateNewestFirst(uniquePopularReleases);
+
+    return sortedUniquePopularReleases;
 };
