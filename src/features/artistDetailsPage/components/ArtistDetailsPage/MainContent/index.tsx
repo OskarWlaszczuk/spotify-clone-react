@@ -38,14 +38,12 @@ export const MainContent = ({
 
     const { releases, data } = artistData;
 
-    const appearsOn = releases.filter(({ album_group }) => album_group === "appears_on");
-
     const popularReleases = preparePopularReleases(topTracks.albums, releases);
-    const discographyReleasesGrouped = groupReleases(releases, ["album", "compilation", "single"]);
+    const { appears_on, ...discographyReleasesGrouped } = groupReleases(releases, ["album", "compilation", "single", "appears_on"]);
 
     const discographyCaterogiesData = getDiscographyCategoriesData(discographyReleasesGrouped, popularReleases, data?.name);
     const appearsOnFullList = {
-        releaseList: appearsOn,
+        releaseList: appears_on,
         releaseType: artistAppearsOnParam,
         listTitle: "Appears on",
         isArtistsList: false,
@@ -58,7 +56,7 @@ export const MainContent = ({
     const sectionsDataToRender = [
         {
             title: "Appears on",
-            list: appearsOn,
+            list: appears_on,
             toPageFunction: toAlbum,
             fullListData: {
                 pathname: toArtist({ id: artistData.data?.id!, fullListType: artistAppearsOnParam }),
