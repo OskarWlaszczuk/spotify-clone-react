@@ -5,13 +5,14 @@ import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesLi
 import { useRenderFullList } from "../../../../../common/functions/useRenderFullList";
 import { artistAppearsOnParam } from "../../../constants/FullListPageParams";
 import { useRenderDiscography } from "../../../hooks/useRenderDiscography";
-import { prepareFullListPageOptions } from "../../../functions/prepareFullListPageOptions";
 import { AlbumItem } from "../../../../../common/Interfaces/AlbumItem";
 import { formatAlbumSubInfo } from "../../../../../common/functions/formatAlbumSubInfo";
 import { ArtistItem } from "../../../../../common/Interfaces/ArtistItem";
 import { FetchStatus } from "../../../../../common/Types/FetchStatus";
 import { TrackItem } from "../../../../../common/Interfaces/TrackItem";
 import { preparePopularReleases } from "../../../functions/preparePopularReleases";
+import { groupReleases } from "../../../../../common/functions/groupReleases";
+import { albumsParamDiscography, compilationParamDiscography, popularReleasesParamDiscography, singleParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
 
 interface ArtistData {
     data: ArtistItem;
@@ -30,6 +31,47 @@ interface MainContentProps {
     fullListType: string;
 };
 
+interface GroupedReleases {
+    album: AlbumItem[];
+    single: AlbumItem[];
+    compilation: AlbumItem[];
+}
+const getDiscographyCategoriesData = (groupedReleases: GroupedReleases, popularReleases: AlbumItem[], artistName: ArtistItem["name"]) => {
+    const baseFullListPageData = {
+        listTitle: artistName,
+        isArtistsList: false,
+    };
+
+    return [
+        {
+            releaseList: popularReleases,
+            releaseType: popularReleasesParamDiscography,
+            ...baseFullListPageData,
+            switcherButtonContent: "Popular releases",
+        },
+        {
+            releaseList: groupedReleases.album,
+            releaseType: albumsParamDiscography,
+            ...baseFullListPageData,
+            switcherButtonContent: "Albums",
+        },
+        {
+            releaseList: groupedReleases.single,
+            releaseType: singleParamDiscography,
+            ...baseFullListPageData,
+            switcherButtonContent: "Singles and EPs",
+        },
+        {
+            releaseList: groupedReleases.compilation,
+            releaseType: compilationParamDiscography,
+            ...baseFullListPageData,
+            switcherButtonContent: "Compilations",
+        },
+    ];
+};
+
+
+
 export const MainContent = ({
     artistData,
     topTracks,
@@ -41,15 +83,19 @@ export const MainContent = ({
     const appearsOn = releases.filter(({ album_group }) => album_group === "appears_on");
 
     const popularReleases = preparePopularReleases(topTracks.albums, releases);
-    const renderTilesList = useRenderTilesList();
-    const renderFullList = useRenderFullList();
-    const renderDiscography = useRenderDiscography(releases, popularReleases);
+    const discographyReleasesGrouped = groupReleases(releases, ["album", "compilation", "single"]);
 
-    const fullListPageOptions = prepareFullListPageOptions({
-        artistName: data?.name,
-        groupedReleases: releases,
-        popularReleases,
-    });
+    const discographyCaterogiesData = getDiscographyCategoriesData(discographyReleasesGrouped, popularReleases, data?.name);
+    const appearsOnFullList = {
+        releaseList: appearsOn,
+        releaseType: artistAppearsOnParam,
+        listTitle: "Appears on",
+        isArtistsList: false,
+    };
+
+    const renderTilesList = useRenderTilesList();
+    const renderFullList = useRenderFullList([...discographyCaterogiesData, appearsOnFullList], fullListType);
+    const renderDiscography = useRenderDiscography(discographyCaterogiesData);
 
     const sectionsDataToRender = [
         {
@@ -68,7 +114,7 @@ export const MainContent = ({
         <>
             {
                 fullListType ?
-                    renderFullList(fullListPageOptions, fullListType) :
+                    renderFullList() :
                     (
                         <>
                             <Table list={topTracks.tracks} caption="Popular" />
