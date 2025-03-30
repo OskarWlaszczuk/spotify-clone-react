@@ -12,8 +12,7 @@ import { FetchStatus } from "../../../../../common/Types/FetchStatus";
 import { TrackItem } from "../../../../../common/Interfaces/TrackItem";
 import { preparePopularReleases } from "../../../functions/preparePopularReleases";
 import { groupReleases } from "../../../../../common/functions/groupReleases";
-import { albumsParamDiscography, compilationParamDiscography, popularReleasesParamDiscography, singleParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
-
+import { getDiscographyCategoriesData } from "../../../functions/getDiscographyCategoriesData";
 interface ArtistData {
     data: ArtistItem;
     releases: AlbumItem[];
@@ -30,47 +29,6 @@ interface MainContentProps {
     topTracks: TopTracks;
     fullListType: string;
 };
-
-interface GroupedReleases {
-    album: AlbumItem[];
-    single: AlbumItem[];
-    compilation: AlbumItem[];
-}
-const getDiscographyCategoriesData = (groupedReleases: GroupedReleases, popularReleases: AlbumItem[], artistName: ArtistItem["name"]) => {
-    const baseFullListPageData = {
-        listTitle: artistName,
-        isArtistsList: false,
-    };
-
-    return [
-        {
-            releaseList: popularReleases,
-            releaseType: popularReleasesParamDiscography,
-            ...baseFullListPageData,
-            switcherButtonContent: "Popular releases",
-        },
-        {
-            releaseList: groupedReleases.album,
-            releaseType: albumsParamDiscography,
-            ...baseFullListPageData,
-            switcherButtonContent: "Albums",
-        },
-        {
-            releaseList: groupedReleases.single,
-            releaseType: singleParamDiscography,
-            ...baseFullListPageData,
-            switcherButtonContent: "Singles and EPs",
-        },
-        {
-            releaseList: groupedReleases.compilation,
-            releaseType: compilationParamDiscography,
-            ...baseFullListPageData,
-            switcherButtonContent: "Compilations",
-        },
-    ];
-};
-
-
 
 export const MainContent = ({
     artistData,
