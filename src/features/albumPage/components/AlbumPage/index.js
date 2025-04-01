@@ -15,7 +15,11 @@ export const AlbumPage = () => {
 
     // const { filteredAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumId);
     const album = useAlbumDetails(albumId);
-    console.log(album);
+    const artistID = album.details?.artists[0].id;
+    const tracks = album.details?.tracks.items;
+
+    const artist = useMainArtistData({ artistID });
+    console.log(artist);
     // const [{
     //     name: albumName,
     //     images: albumImages,
@@ -27,8 +31,7 @@ export const AlbumPage = () => {
     //     artists: albumArtistsList,
     // }] = filteredAlbumDetails;
 
-    // const mainArtistId = albumArtistsList?.[0].id;
-    // const tracksList = albumTracksData?.items;
+
 
     // const {
     //     mainArtistDetails,
@@ -44,10 +47,7 @@ export const AlbumPage = () => {
     //     images: mainArtistImage,
     // }] = getSpecificKeys([mainArtistDetails], ["images", "name"]);
 
-    // const fetchStatus = useFetchStatus([
-    //     albumDetailsStatus,
-    //     ...mainArtistDataStatuses,
-    // ]);
+    const fetchStatus = useFetchStatus([album.status, ...artist.statuses,]);
 
     // const { metaDataContent, subTitleContent } = renderBannerContent({
     //     metaData: {
@@ -64,34 +64,33 @@ export const AlbumPage = () => {
     // });
 
     return (
-        // <Main
-        //     currentFetchStatus={fetchStatus}
-        //     bannerContent={
-        //         <Banner
-        //             picture={getFirstImage(albumImages)}
-        //             subTitleContent={subTitleContent}
-        //             metaData={metaDataContent}
-        //             title={albumName}
-        //             caption={albumType}
-        //         />
-        //     }
-        //     content={
-        //         <>
-        //             <MainContent
-        //                 mainArtistData={{
-        //                     id: mainArtistId,
-        //                     name: mainArtistName,
-        //                     releases: mainArtistReleases?.items,
-        //                 }}
-        //                 albumData={{
-        //                     releaseDate: albumReleaseDate,
-        //                     copyrights: albumCopyrights,
-        //                 }}
-        //                 tracksList={tracksList}
-        //             />
-        //         </>
-        //     }
-        // />
-        <></>
+        <Main
+            currentFetchStatus={fetchStatus}
+            bannerContent={
+                <Banner
+                    picture={getFirstImage(album.details?.images)}
+                    subTitleContent={"subTitleContent"}
+                    metaData={"metaDataContent"}
+                    title={album.details?.name}
+                    caption={album.details?.album_type}
+                />
+            }
+            content={
+                <>
+                    <MainContent
+                        mainArtistData={{
+                            id: artistID,
+                            name: artist.details?.name,
+                            releases: artist.details?.items,
+                        }}
+                        albumData={{
+                            releaseDate: album.details?.release_date,
+                            copyrights: album.details?.copyrights,
+                        }}
+                        tracksList={tracks}
+                    />
+                </>
+            }
+        />
     );
 };
