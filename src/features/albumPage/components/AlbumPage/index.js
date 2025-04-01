@@ -15,11 +15,11 @@ export const AlbumPage = () => {
 
     // const { filteredAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumId);
     const album = useAlbumDetails(albumId);
-    const artistID = album.details?.artists[0].id;
+    const mainArtistID = album.details?.artists[0].id;
     const tracks = album.details?.tracks.items;
 
-    const artist = useMainArtistData({ artistID });
-    console.log(artist);
+    const mainArtist = useMainArtistData({ artistID: mainArtistID });
+    console.log(mainArtist);
     // const [{
     //     name: albumName,
     //     images: albumImages,
@@ -47,7 +47,7 @@ export const AlbumPage = () => {
     //     images: mainArtistImage,
     // }] = getSpecificKeys([mainArtistDetails], ["images", "name"]);
 
-    const fetchStatus = useFetchStatus([album.status, ...artist.statuses,]);
+    const fetchStatus = useFetchStatus([album.status, ...mainArtist.statuses,]);
 
     // const { metaDataContent, subTitleContent } = renderBannerContent({
     //     metaData: {
@@ -79,9 +79,9 @@ export const AlbumPage = () => {
                 <>
                     <MainContent
                         mainArtistData={{
-                            id: artistID,
-                            name: artist.details?.name,
-                            releases: artist.details?.items,
+                            id: mainArtistID,
+                            name: mainArtist.details?.name,
+                            releases: mainArtist.details?.items,
                         }}
                         albumData={{
                             releaseDate: album.details?.release_date,
