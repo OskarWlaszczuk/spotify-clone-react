@@ -6,62 +6,33 @@ import { getFirstImage } from "../../../../common/functions/getFirstImage";
 import { useAlbumDetails } from "../../hooks/useAlbumDetails";
 import { useMainArtistData } from "../../../../common/hooks/useMainArtistData";
 import { calculateTotalDuration } from "../../functions/calculateTotalDuration";
-import { getSpecificKeys } from "../../../../common/functions/getSpecificKeys";
 import { MainContent } from "./MainContent";
 import { renderBannerContent } from "../../../../common/functions/renderBannerContent";
 
 export const AlbumPage = () => {
     const { id: albumId } = useParams();
 
-    // const { filteredAlbumDetails, albumDetailsStatus } = useAlbumDetails(albumId);
     const album = useAlbumDetails(albumId);
-    const mainArtistID = album.details?.artists[0].id;
-    const tracks = album.details?.tracks.items;
+    const tracks = album.details?.tracks?.items;
+    const mainArtistID = album.details?.artists?.[0].id;
 
     const mainArtist = useMainArtistData({ artistID: mainArtistID });
-    console.log(mainArtist);
-    // const [{
-    //     name: albumName,
-    //     images: albumImages,
-    //     album_type: albumType,
-    //     release_date: albumReleaseDate,
-    //     copyrights: albumCopyrights,
-    //     total_tracks: albumTotalTracks,
-    //     tracks: albumTracksData,
-    //     artists: albumArtistsList,
-    // }] = filteredAlbumDetails;
-
-
-
-    // const {
-    //     mainArtistDetails,
-    //     mainArtistReleases,
-    //     mainArtistDataStatuses
-    // } = useMainArtistData({
-    //     mainArtistId,
-    //     dependencies: [albumId],
-    // });
-
-    // const [{
-    //     name: mainArtistName,
-    //     images: mainArtistImage,
-    // }] = getSpecificKeys([mainArtistDetails], ["images", "name"]);
 
     const fetchStatus = useFetchStatus([album.status, ...mainArtist.statuses,]);
 
-    // const { metaDataContent, subTitleContent } = renderBannerContent({
-    //     metaData: {
-    //         releaseDate: albumReleaseDate,
-    //         duration: calculateTotalDuration(tracksList),
-    //         uniqueData: `${albumTotalTracks} songs`,
-    //     },
-    //     subTitleData: {
-    //         albumDetailsPageData: {
-    //             artistsList: albumArtistsList,
-    //         },
-    //         artistImagesList: mainArtistImage,
-    //     },
-    // });
+    const { metaDataContent, subTitleContent } = renderBannerContent({
+        metaData: {
+            releaseDate: album.details?.release_date,
+            duration: calculateTotalDuration(tracks),
+            uniqueData: `${album.details?.total_tracks} songs`,
+        },
+        subTitleData: {
+            albumDetailsPageData: {
+                artistsList: album.details?.artists,
+            },
+            artistImagesList: mainArtist.details?.images,
+        },
+    });
 
     return (
         <Main
@@ -69,26 +40,15 @@ export const AlbumPage = () => {
             bannerContent={
                 <Banner
                     picture={getFirstImage(album.details?.images)}
-                    subTitleContent={"subTitleContent"}
-                    metaData={"metaDataContent"}
+                    subTitleContent={subTitleContent}
+                    metaData={metaDataContent}
                     title={album.details?.name}
                     caption={album.details?.album_type}
                 />
             }
             content={
                 <>
-                    <MainContent
-                        mainArtistData={{
-                            id: mainArtistID,
-                            name: mainArtist.details?.name,
-                            releases: mainArtist.details?.items,
-                        }}
-                        albumData={{
-                            releaseDate: album.details?.release_date,
-                            copyrights: album.details?.copyrights,
-                        }}
-                        tracksList={tracks}
-                    />
+                    <MainContent album={album} mainArtist={mainArtist} tracks={tracks} />
                 </>
             }
         />
