@@ -1,46 +1,34 @@
 import { Copyrights } from "./Copyrights"
 import { Table } from "../../../../../common/components/Table"
-import { allReleaseParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
+import { popularReleasesParamDiscography } from "../../../../../common/constants/artistDiscographyParams";
 import { toAlbum, toArtist } from "../../../../../common/functions/routes";
 import { useRenderTilesList } from "../../../../../common/hooks/useRenderTilesList";
 import { getUniqueDiscNumbers } from "../../../functions/getUniqueDiscNumbers";
 import { getYear } from "../../../../../common/functions/getYear";
 
-export const MainContent = ({
-    mainArtistData: {
-        id,
-        name,
-        releases,
-    },
-    albumData: {
-        releaseDate,
-        copyrights,
-    },
-    tracksList,
-}) => {
+export const MainContent = ({ album, mainArtist, tracks }) => {
     const renderTilesList = useRenderTilesList();
 
     const sectionsDataToRender = [
         {
-            title: `More by ${name}`,
-            list: releases,
+            title: `More by ${mainArtist?.details?.name}`,
+            list: mainArtist?.releases,
             toPageFunction: toAlbum,
             fullListData: {
                 pathname: toArtist({
-                    id,
-                    additionalPath: allReleaseParamDiscography
+                    id: mainArtist?.details?.id,
+                    additionalPath: popularReleasesParamDiscography
                 }),
                 text: "Show discography"
             },
             listId: 0,
-            renderSubInfo: ({release_date}) => getYear(release_date),
+            renderSubInfo: ({ release_date }) => getYear(release_date),
         }
     ];
-
     return (
         <>
-            <Table list={tracksList} useAlbumView discsNumbers={getUniqueDiscNumbers(tracksList)} />
-            <Copyrights date={releaseDate} copyrights={copyrights} />
+            <Table list={tracks} useAlbumView discsNumbers={getUniqueDiscNumbers(tracks)} />
+            <Copyrights date={album?.details?.release_date} copyrights={album?.details?.copyrights} />
             {renderTilesList(sectionsDataToRender)}
         </>
     );
