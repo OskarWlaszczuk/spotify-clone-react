@@ -7,6 +7,7 @@ export const popularArtistsIdsList = [
     "3sW41aChSc5bBow0Folc1S",
     "0TMvoNR0AIJV138mHY6jdE",
     "1GRpnNhXWlNMgnFf3NqEjv",
+    "15YEBTmw6GtgzijvG84ynv"
 ];
 
 export const popularAlbumsIdsList = [
@@ -34,7 +35,7 @@ export const popularShowsIdsList = [
     "79CkJF3UJTHFV8Dse3Oy0P",
     "1aIVAabjRjnmiouX0zCzF3",
     "2Eqx1kHjpiAOQ9oSxo8Tcg",
-    "2IaURnE3IsOifmReYREgho",
+    "3wMgSXoca4MTuEzBK76tud",
     "7LViRQRexAuXzLqQQMd1QV",
     "5mIRx8HQDVWtYb86WlQ4v9",
 ];
