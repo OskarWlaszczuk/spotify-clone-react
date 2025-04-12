@@ -1,8 +1,9 @@
 import { CategoryName } from "../Types/CategoryName";
 import { AlbumOrArtist } from "./AlbumOrArtist";
 import { EpisodeItem } from "./EpisodeItem";
+import { MediaItem } from "./MediaItem";
 
 export interface CategoryData {
-    categoryName: CategoryName;
-    categoryView: AlbumOrArtist[] | EpisodeItem[];
+    releaseType: CategoryName;
+    releaseList: MediaItem[];
 };
