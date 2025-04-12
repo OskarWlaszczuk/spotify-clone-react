@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAccessToken } from "../slices/authSlice";
 import { useApiResource } from "./useApiResource";
 
-export const useFetch = ({ actions, selectors, endpoint, fetchCondition = true }) => {
+export const useFetchAPI = ({ actions, selectors, endpoint, fetchCondition = true }) => {
     const { resourceConfig, APIFetchStatus, APIData } = useApiResource({ actions, selectors, endpoint });
     const dispatch = useDispatch();
     const accessToken = useSelector(selectAccessToken);

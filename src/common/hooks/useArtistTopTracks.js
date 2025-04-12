@@ -1,10 +1,10 @@
 import { artistTopTracksActions, artistTopTracksSelectors } from "../slices/artistTopTracksSlice";
 import { getArtistTopTracksEndpoint } from "../functions/endpoints";
-import { useFetch } from "./useFetchAPI";
+import { useFetchAPI } from "./useFetchAPI";
 
 export const useArtistTopTracks = ({ artistID }) => {
 
-    const { APIFetchStatus, APIData } = useFetch({
+    const { APIFetchStatus, APIData } = useFetchAPI({
         actions: artistTopTracksActions,
         selectors: artistTopTracksSelectors,
         endpoint: getArtistTopTracksEndpoint({ id: artistID }),
