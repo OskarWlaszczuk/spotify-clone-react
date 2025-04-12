@@ -10,7 +10,6 @@ import { TrackDetailsPage } from "../../features/trackDetailsPage/components/Tra
 import { useAuth } from "./hooks/useAuth";
 import { ShowPage } from "../../features/showsPage/ShowPage";
 import { EpisodePage } from "../../features/episodePage/EpisodePage";
-import { allFacetParam } from "../../features/homePage/constants/facetParams";
 import { facetAllCategory } from "../../features/homePage/constants/facetCategories";
 
 export const App = () => {
