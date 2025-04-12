@@ -14,7 +14,7 @@ import { preparePopularReleases } from "../../../functions/preparePopularRelease
 import { groupReleases } from "../../../../../common/functions/groupReleases";
 import { getDiscographyCategoriesData } from "../../../functions/getDiscographyCategoriesData";
 interface ArtistData {
-    data: ArtistItem;
+    details: ArtistItem;
     releases: AlbumItem[];
     statuses: FetchStatus[];
 }
@@ -36,12 +36,12 @@ export const MainContent = ({
     fullListType,
 }: MainContentProps) => {
 
-    const { releases, data } = artistData;
+    const { releases, details } = artistData;
 
     const popularReleases = preparePopularReleases(topTracks.albums, releases);
     const { appears_on, ...discographyReleasesGrouped } = groupReleases(releases, ["album", "compilation", "single", "appears_on"]);
 
-    const discographyCaterogiesData = getDiscographyCategoriesData(discographyReleasesGrouped, popularReleases, data?.name);
+    const discographyCaterogiesData = getDiscographyCategoriesData(discographyReleasesGrouped, popularReleases, details?.name);
     const appearsOnFullList = {
         releaseList: appears_on,
         releaseType: artistAppearsOnParam,
@@ -59,7 +59,7 @@ export const MainContent = ({
             list: appears_on,
             toPageFunction: toAlbum,
             fullListData: {
-                pathname: toArtist({ id: artistData.data?.id!, fullListType: artistAppearsOnParam }),
+                pathname: toArtist({ id: artistData.details?.id!, fullListType: artistAppearsOnParam }),
                 text: fullListLinkText,
             },
             renderSubInfo: ({ release_date, album_type }: { release_date: AlbumItem["release_date"], album_type: AlbumItem["album_type"] }) => formatAlbumSubInfo(release_date, album_type),
