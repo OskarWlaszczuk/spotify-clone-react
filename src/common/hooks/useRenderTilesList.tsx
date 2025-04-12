@@ -2,6 +2,8 @@ import { Tile } from "../components/Tile"
 import { TilesList } from "../components/TilesList"
 import { useActiveTile } from "./useActiveTile";
 import { getFirstImage } from "../functions/getFirstImage";
+import { toAlbum, toArtist, toEpisode, toShow, toTrack } from "../functions/routes";
+import { BaseMediaItemData } from "../Interfaces/BaseMediaItemData";
 
 // const renderTileSubInfo = ({
 //     isArtistsListCondition,
@@ -19,6 +21,28 @@ import { getFirstImage } from "../functions/getFirstImage";
 //         formatAlbumSubInfo(release_date, album_type)
 //     ))
 // );
+
+const selectPageFunctionBasedOnType = (type: BaseMediaItemData["type"], id: BaseMediaItemData["id"]) => {
+    switch (type) {
+        case "artist":
+            return toArtist({ id });
+        case "show":
+            return toShow({ id });
+
+        case "album":
+            return toAlbum({ id });
+
+        case "episode":
+            return toEpisode({ id });
+
+        case "track":
+            return toTrack({ id });
+
+        default:
+            const _exhaustiveCheck: never = type; // TypeScript zgłosi błąd, jeśli pojawi się nowa wartość
+            return _exhaustiveCheck
+    };
+};
 
 export const useRenderTilesList = () => {
     const { setActiveTile, isTileActive } = useActiveTile();
@@ -64,6 +88,7 @@ export const useRenderTilesList = () => {
                                     const name = item?.name;
                                     const id = item?.id;
                                     const images = item?.images;
+                                    const type = item?.type;
 
                                     const computedSubInfo = (
                                         renderSubInfo ?
@@ -84,7 +109,7 @@ export const useRenderTilesList = () => {
                                             }),
                                         }}
                                         key={index}
-                                        toPagePath={toPageFunction({ id })}
+                                        toPagePath={selectPageFunctionBasedOnType(type, id)}
                                         picture={getFirstImage(images)}
                                         title={name}
                                         subInfo={
