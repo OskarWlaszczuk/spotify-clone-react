@@ -15,6 +15,8 @@ import { watchFetchEpisodeDetailsSaga } from "../common/sagas/episodeDetailsSaga
 import { watchFetchShowDetailsSaga } from "../common/sagas/showDetailsSaga";
 import { watchFetchShowsSaga } from "../common/sagas/showsSaga";
 import { watchFetchShowEpisodesSaga } from "../common/sagas/showEpisodesSaga";
+import { mediaSortedByCreatorSaga } from "../common/sagas/mediaSortedByCreatorSaga";
+import { watchFetchNewReleasesSaga } from "../common/sagas/newReleasesSaga";
 
 export function* rootSaga() {
     yield all([
@@ -34,5 +36,7 @@ export function* rootSaga() {
         watchFetchShowDetailsSaga(),
         watchFetchShowsSaga(),
         watchFetchShowEpisodesSaga(),
+        watchFetchNewReleasesSaga(),
+        mediaSortedByCreatorSaga(),
     ]);
 };
