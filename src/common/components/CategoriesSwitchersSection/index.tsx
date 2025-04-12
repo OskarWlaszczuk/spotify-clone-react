@@ -5,7 +5,7 @@ import { CategoryData } from "../../Interfaces/CategoryData";
 import { CategoryConfig } from "./CategoryConfig";
 import { CategoryName } from "../../Types/CategoryName";
 
-type SetCurrentCategoryDataFunction = ({ categoryName, categoryView }: CategoryData) => void
+type SetCurrentCategoryDataFunction = ({ releaseType, releaseList }: CategoryData) => void
 
 interface CategoriesSwitchersSection {
     categoriesConfigs: CategoryConfig[],
@@ -19,15 +19,15 @@ export const CategoriesSwitchersSection = (
     return (
         <>
             {
-                categoriesConfigs.map(({ categoryView, categoryName, categorySwitcherContent, pathname }) => (
+                categoriesConfigs.map(({ releaseList, releaseType, switcherButtonContent, pathname }) => (
                     <CategorySwitcher
-                        isListNotEmpty={isNotEmpty(categoryView)}
+                        isListNotEmpty={isNotEmpty(releaseList)}
                         switchCategoryFunction={() => setCurrentCategoryData({
-                            categoryName,
-                            categoryView,
+                            releaseType,
+                            releaseList,
                         })}
-                        switcherContent={categorySwitcherContent}
-                        isActive={isMatch(categoryName, targetCategory)}
+                        switcherContent={switcherButtonContent}
+                        isActive={isMatch(releaseType, targetCategory)}
                         pathname={pathname}
                     />
                 ))
