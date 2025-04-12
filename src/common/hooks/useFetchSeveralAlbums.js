@@ -1,19 +1,22 @@
 import { getSeveralAlbumsListEndpoint } from "../functions/endpoints";
 import { formatIdsForFetch } from "../functions/formatIdsForFetch";
 import { albumsActions, albumsSelectors } from "../slices/albumsSlice";
-import { useFetch } from "./useFetchAPI";
+import { useFetchAPI } from "./useFetchAPI";
 
 export const useFetchSeveralAlbums = ({ IDs, fetchCondition = true }) => {
     const formattedIDs = formatIdsForFetch(IDs);
 
-    const { APIFetchStatus: albumsStatus, APIData } = useFetch({
+    const { APIFetchStatus, APIData } = useFetchAPI({
         actions: albumsActions,
         selectors: albumsSelectors,
         endpoint: getSeveralAlbumsListEndpoint({ id: formattedIDs }),
         fetchCondition
     });
 
-    const albums = APIData?.albums;
+    const albums = {
+        list: APIData?.albums,
+        status: APIFetchStatus,
+    };
 
-    return { albums, albumsStatus };
+    return albums;
 };

@@ -1,19 +1,22 @@
 import { getSeveralEpisodesListEndpoint } from "../functions/endpoints";
 import { formatIdsForFetch } from "../functions/formatIdsForFetch";
 import { episodesActions, episodesSelectors } from "../slices/episodesSlice";
-import { useFetch } from "./useFetchAPI";
+import { useFetchAPI } from "./useFetchAPI";
 
 export const useFetchSeveralEpisodes = ({ IDs, fetchCondition = true }) => {
     const formattedIDs = formatIdsForFetch(IDs);
 
-    const { APIFetchStatus: episodesStatus, APIData } = useFetch({
+    const { APIFetchStatus, APIData } = useFetchAPI({
         actions: episodesActions,
         selectors: episodesSelectors,
         endpoint: getSeveralEpisodesListEndpoint({ id: formattedIDs }),
         fetchCondition
     });
 
-    const episodes = APIData?.episodes;
+    const episodes = {
+        list: APIData?.episodes,
+        status: APIFetchStatus,
+    };
 
-    return { episodes, episodesStatus };
+    return episodes;
 };
