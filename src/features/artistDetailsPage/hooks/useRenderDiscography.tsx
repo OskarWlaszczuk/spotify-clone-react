@@ -1,89 +1,43 @@
-import {
-    allReleaseParamDiscography,
-    albumsParamDiscography,
-    compilationParamDiscography,
-    singleParamDiscography
-} from "../../../common/constants/artistDiscographyParams";
-import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
-import {
-    popularReleasesCategory,
-    albumsCategory,
-    compilationsCategory,
-    singlesCategory
-} from "../constants/releasesCategories";
 import { CategoriesSwitchersSection } from "../../../common/components/CategoriesSwitchersSection";
-import { removeDuplicatesByName } from "../../../common/functions/removeDuplicatesByName";
 import { toAlbum, toArtist } from "../../../common/functions/routes";
 import { useCurrentCategoryData } from "./useCurrentCategoryData";
 import { AlbumItem } from "../../../common/Interfaces/AlbumItem";
-import { findMatchingOptionByKey } from "../../../common/functions/findMatchingOptionByKey";
 import { fullListLinkText } from "../../../common/constants/fullListLinkText ";
 import { useParams } from "react-router-dom";
-import { CategoryConfig } from "../../../common/components/CategoriesSwitchersSection/CategoryConfig";
 import { formatAlbumSubInfo } from "../../../common/functions/formatAlbumSubInfo";
-import { groupReleases } from "../../../common/functions/groupReleases";
+import { useRenderTilesList } from "../../../common/hooks/useRenderTilesList";
 
-export const useRenderDiscography = (releases: AlbumItem[], popularReleases: AlbumItem[]) => {
+export const useRenderDiscography = (discographyCaterogiesData: any[]) => {
     const { id: artistId } = useParams();
     const renderTilesList = useRenderTilesList();
 
-    const discographyReleases = groupReleases(releases, ["album", "compilation", "single"]);
-
+    const categoriesConfig = discographyCaterogiesData.map(({ releaseType, switcherButtonContent, releaseList }) => ({ releaseType, switcherButtonContent, releaseList }));
+    const initalCategoryData = categoriesConfig[0]
+    
     const { currentCategoryData, setCurrentCategoryData } = useCurrentCategoryData({
-        categoryName: popularReleasesCategory,
-        categoryView: popularReleases,
+        releaseType: initalCategoryData.releaseType,
+        releaseList: initalCategoryData.releaseList,
     });
 
+    const currentReleaseCategory = categoriesConfig.find(({ releaseType }) => releaseType === currentCategoryData.releaseType);
+
     const renderDiscography = () => {
-        const categoriesConfigs: CategoryConfig[] = [
-            {
-                categoryView: popularReleases,
-                categoryName: popularReleasesCategory,
-                categorySwitcherContent: "Popular releases"
-            },
-            {
-                categoryView: discographyReleases.album,
-                categoryName: albumsCategory,
-                categorySwitcherContent: "Albums"
-            },
-            {
-                categoryView: discographyReleases.single,
-                categoryName: singlesCategory,
-                categorySwitcherContent: "Singles and EPs"
-            },
-            {
-                categoryView: discographyReleases.compilation,
-                categoryName: compilationsCategory,
-                categorySwitcherContent: "Compilations"
-            },
-        ];
-
-        const discographyParamsGroupedByCategories = [
-            { key: popularReleasesCategory, value: allReleaseParamDiscography },
-            { key: albumsCategory, value: albumsParamDiscography },
-            { key: compilationsCategory, value: compilationParamDiscography },
-            { key: singlesCategory, value: singleParamDiscography },
-        ];
-
         return renderTilesList([{
             title: "Discography",
             subTitleExtraContent: (
                 <CategoriesSwitchersSection
-                    categoriesConfigs={categoriesConfigs}
+                    categoriesConfigs={categoriesConfig}
                     setCurrentCategoryData={setCurrentCategoryData}
-                    currentCategory={currentCategoryData.categoryName}
+                    currentCategory={currentCategoryData.releaseType}
                 />
             ),
-            list: removeDuplicatesByName(currentCategoryData.categoryView),
+            list: currentCategoryData.releaseList,
             toPageFunction: toAlbum,
             isRenderSubInfo: true,
             fullListData: {
                 pathname: toArtist({
                     id: artistId!,
-                    fullListType: findMatchingOptionByKey(
-                        discographyParamsGroupedByCategories,
-                        currentCategoryData.categoryName
-                    )?.value,
+                    fullListType: currentReleaseCategory?.releaseType
                 }),
                 text: fullListLinkText,
             },
