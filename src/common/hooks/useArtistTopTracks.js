@@ -1,29 +1,25 @@
 import { artistTopTracksActions, artistTopTracksSelectors } from "../slices/artistTopTracksSlice";
 import { getArtistTopTracksEndpoint } from "../functions/endpoints";
-import { useApiResource } from "./useApiResource";
-import { useFetchAPI } from "./useFetchAPI";
+import { useFetch } from "./useFetchAPI";
 
-export const useArtistTopTracks = ({ artistId }) => {
+export const useArtistTopTracks = ({ artistID }) => {
 
-    const {
-        configs: artistTopTracksConfig,
-        apiStatus: artistTopTracksStatus,
-        rawApiData: artistTopTracks
-    } = useApiResource({
+    const { APIFetchStatus, APIData } = useFetch({
         actions: artistTopTracksActions,
         selectors: artistTopTracksSelectors,
-        endpoint: getArtistTopTracksEndpoint({id:artistId}),
+        endpoint: getArtistTopTracksEndpoint({ id: artistID }),
+        fetchCondition: !!artistID,
+        ID: artistID
     });
 
-    useFetchAPI({
-        fetchConfigs: [artistTopTracksConfig],
-        dependencies: [artistId],
-        fetchCondition: !!artistId,
-        pageId: artistId,
-    });
+    const topTracks = APIData?.tracks;
+    const topTracksAlbums = topTracks?.map(({ album }) => album);
 
-    const artistTopTracksList = artistTopTracks?.tracks;
-    const artistTopTracksAsAlbumsList = artistTopTracksList?.map(({ album }) => album);
+    const artistTopTracksData = {
+        status: APIFetchStatus,
+        tracks: topTracks,
+        albums: topTracksAlbums,
+    };
 
-    return { artistTopTracksStatus, artistTopTracksAsAlbumsList, artistTopTracksList };
+    return artistTopTracksData;
 };
