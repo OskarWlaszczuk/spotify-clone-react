@@ -3,8 +3,8 @@ import { ArtistItem } from "../../../common/Interfaces/ArtistItem";
 import { EpisodeItem } from "../../../common/Interfaces/EpisodeItem";
 import { ShowItem } from "../../../common/Interfaces/ShowItem";
 import { facetAllCategory, facetMusicCategory, facetPodcastsCategory } from "../constants/facetCategories";
-import { useRenderMediaSectionsSortedByCreators } from "../hooks/useRenderArtistsReleasesSections";
-import { useRenderNewReleases } from "../hooks/useRenderNewReleases";
+import { useRenderMediaSectionsSortedByCreators } from "./useRenderArtistsReleasesSections";
+import { useRenderNewReleases } from "./useRenderNewReleases";
 import { FacetType } from "../interfaces/FacetType";
 import { MediaSortedByCreator } from "../types/MediaSortedByCreator";
 
@@ -15,19 +15,19 @@ interface PopularLists {
     shows: ShowItem[];
 }
 
-interface UseSelectFacetConfigBasedOnTypeParams {
+interface useViewByURLParams {
     currentFacetType: FacetType;
     mediaSortedByCreator: MediaSortedByCreator;
     creatorsDetails: Pick<PopularLists, "artists" | "shows">;
     newReleases: AlbumItem[];
 }
 
-export const useSelectFacetConfigBasedOnType = ({ currentFacetType, mediaSortedByCreator, creatorsDetails, newReleases }: UseSelectFacetConfigBasedOnTypeParams) => {
+export const useViewByURL = ({ currentFacetType, mediaSortedByCreator, creatorsDetails, newReleases }: useViewByURLParams) => {
 
     const renderMediaSectionsSortedByCreators = useRenderMediaSectionsSortedByCreators();
     const renderNewReleasesSection = useRenderNewReleases(newReleases);
 
-    const selectFacetConfigBasedOnType = () => {
+    const selectViewByURL = () => {
         switch (currentFacetType) {
             case facetAllCategory:
                 return <>{renderNewReleasesSection()}</>
@@ -41,5 +41,5 @@ export const useSelectFacetConfigBasedOnType = ({ currentFacetType, mediaSortedB
         };
     };
 
-    return selectFacetConfigBasedOnType;
+    return selectViewByURL;
 };
