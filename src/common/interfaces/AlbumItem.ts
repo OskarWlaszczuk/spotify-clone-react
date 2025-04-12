@@ -12,3 +12,9 @@ export interface AlbumItem extends BaseMediaItemData, ArtistsList {
         items: TrackItem[];
     };
 }
+
+export interface AlbumItemWithTrack extends AlbumItem {
+    tracks: {
+        items: TrackItem[];
+    };
+};
