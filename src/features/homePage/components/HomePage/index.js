@@ -11,7 +11,7 @@ export const HomePage = () => {
     const { facetType, fullListType } = useParams();
 
     const { popularListsStatuses, popularLists } = useFetchPopularLists(facetType);
-    const { newReleasesStatus, newReleases } = useFetchNewReleases(facetType);
+    const newReleases = useFetchNewReleases(facetType);
 
     const isMusicCategoryActive = facetType === facetMusicCategory;
     const isPodcastCategoryActive = facetType === facetPodcastsCategory;
@@ -25,19 +25,16 @@ export const HomePage = () => {
         dataName: isMusicCategoryActive ? "album" : "episode",
     };
 
-    const {
-        mediaSortedByCreator,
-        mediaSortedByCreatorStatus
-    } = useFetchMediaSortedByCreators(mediaSortedByCreatorsParameters);
+    const mediaSortedByCreator = useFetchMediaSortedByCreators({ ...mediaSortedByCreatorsParameters, clearDataOnLeave: false });
 
     const currentSectionFetchStatus = (
         isMusicCategoryActive || isPodcastCategoryActive ?
-            mediaSortedByCreatorStatus :
-            newReleasesStatus
+            mediaSortedByCreator.status :
+            newReleases.status
     );
 
     const fetchStatus = useFetchStatus([...popularListsStatuses, currentSectionFetchStatus]);
-
+    
     return (
         <Main
             useGradient={!fullListType}
@@ -45,8 +42,8 @@ export const HomePage = () => {
             content={
                 <MainContent
                     popularLists={popularLists}
-                    mediaSortedByCreator={mediaSortedByCreator}
-                    newReleases={newReleases}
+                    mediaSortedByCreator={mediaSortedByCreator.data}
+                    newReleases={newReleases.list}
                 />
             }
         />
