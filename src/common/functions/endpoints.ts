@@ -23,7 +23,7 @@ export const getArtistTopTracksEndpoint: GetEndpointFunction = ({ id }) => `arti
 export const getArtistReleasesEndpoint: GetEndpointFunction = ({ id, includeAppearsOnReleases = false }) => {
     const baseEndpoint = `artists/${id}/albums?include_groups=album%2Csingle%2Ccompilation&limit=50`;
     const withAppearsOn = `artists/${id}/albums?include_groups=album%2Csingle%2Cappears_on%2Ccompilation&limit=50`;
-
+    
     return includeAppearsOnReleases ? withAppearsOn : baseEndpoint;
 };
 
