@@ -8,27 +8,52 @@ import {
     selectMediaSortedByCreatorStatus
 } from "../../../common/slices/mediaSortedByCreatorSlice";
 
-export const useFetchMediaSortedByCreators = ({ creatorsDetails }) => {
+export const useFetchMediaSortedByCreators = ({ creatorsDetails, dataName, clearDataOnLeave = true }) => {
     const accessToken = useSelector(selectAccessToken);
 
-    const fetchActionPayload = useMemo(() => ({
-        creatorsIDs: creatorsDetails?.map(({ id }) => id),
-        endpointType: creatorsDetails?.[0].type,
-    }), [creatorsDetails]);
+    const creatorsIDs = useMemo(() => creatorsDetails?.map(({ id }) => id), [creatorsDetails]);
 
-    const mediaSortedByCreator = useSelector(selectMediaSortedByCreatorData);
-    const mediaSortedByCreatorStatus = useSelector(selectMediaSortedByCreatorStatus);
+    const data = useSelector(state => selectMediaSortedByCreatorData(state, dataName));
+    const status = useSelector(state => selectMediaSortedByCreatorStatus(state, dataName));
+
+    const mediaSortedByCreator = useMemo(() => ({
+        data,
+        status,
+    }), [data, status]);
 
     const dispatch = useDispatch();
 
+    const baseFetchCondition = !!accessToken && !!creatorsIDs?.length;
+    const fetchConditionOnLeave = clearDataOnLeave ? baseFetchCondition : baseFetchCondition && !data;
+
+    const baseDependenciesArray = [accessToken, creatorsIDs, dispatch, dataName];
+    const dependenciesArray = clearDataOnLeave ? baseDependenciesArray : [...baseDependenciesArray, data];
+
+    const clearFunction = () => clearDataOnLeave ? dispatch(clearMediaSortedByCreator({ dataName })) : {};
+
+    console.log(clearFunction);
+
     useEffect(() => {
-        if (!!accessToken && !!fetchActionPayload.creatorsIDs) {
-            dispatch(fetchMediaSortedByCreator({ accessToken, ...fetchActionPayload }))
+        if (fetchConditionOnLeave) {
+            dispatch(fetchMediaSortedByCreator({ accessToken, creatorsIDs, dataName }))
         }
 
-        return () => dispatch(clearMediaSortedByCreator())
+        return () => clearFunction();
 
-    }, [accessToken, fetchActionPayload, dispatch]);
+    }, dependenciesArray);
 
-    return { mediaSortedByCreator, mediaSortedByCreatorStatus };
+    return mediaSortedByCreator;
 };
+
+
+
+// useEffect(() => {
+//     if (!!accessToken && !!creatorsIDs?.length) {
+//         dispatch(fetchMediaSortedByCreator({ accessToken, creatorsIDs, dataName }))
+//     }
+
+//     return () => dispatch(clearMediaSortedByCreator({ dataName }));
+
+// }, [accessToken, creatorsIDs, dispatch, dataName]);
+
+// return mediaSortedByCreator;

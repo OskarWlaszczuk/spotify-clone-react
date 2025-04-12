@@ -3,27 +3,7 @@ import {removeDuplicates} from "./common/functions/removeDuplicates";
 export const Practicing = () => {
 
 
-    const myMapFunction = <InputItem, OutputItem>(
-        array: InputItem[],
-        mapFunction: (item: InputItem, index?: number, array?: InputItem[]) => OutputItem
-    ) => {
-        const newArray = [] as OutputItem[];
-
-        array.forEach((item, index, array) => {
-            newArray.push(mapFunction(item, index, array));
-        });
-
-        return newArray;
-    };
-
-    console.log(
-        myMapFunction(
-            ['apple', 'banana', 'orange'],
-            (item, index) => (
-                `${item}, ${index}`
-            )
-        )
-    );
+   
 
     // fruits.forEach((item, index, array) => {
     //     console.log(item, index, array);

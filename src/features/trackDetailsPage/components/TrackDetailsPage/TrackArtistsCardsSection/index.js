@@ -5,7 +5,6 @@ import { getFirstImage } from "../../../../../common/functions/getFirstImage"
 import { toArtist } from "../../../../../common/functions/routes"
 
 export const TrackArtistsCardsSection = ({ artistsDataList }) => {
-    console.log(artistsDataList?.[0].images)
     return (
         <ArtistsCardSection>
             {
