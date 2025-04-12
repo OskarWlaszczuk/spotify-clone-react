@@ -1,25 +1,24 @@
-import {useRenderTilesList} from "../hooks/useRenderTilesList";
-import {removeDuplicatesByName} from "./removeDuplicatesByName";
-import {toAlbum, toArtist} from "./routes";
-import {getFullListMatchedData} from "./getFullListMatchedData";
-import {FullListPageOption} from "../Interfaces/FullListPageOption";
+import { useRenderTilesList } from "../hooks/useRenderTilesList";
+import { AlbumItem } from "../Interfaces/AlbumItem";
 
-export const useRenderFullList = () => {
+interface FullListPageCategoriesData {
+    releaseList: AlbumItem[];
+    releaseType: string;
+    listTitle: string;
+    isArtistsList: boolean;
+}
+
+export const useRenderFullList = (fullListPageCategoriesData: FullListPageCategoriesData[], currentFullListType: string) => {
     const renderTilesList = useRenderTilesList();
+    const currentFullListData = fullListPageCategoriesData?.find(({ releaseType }) => releaseType === currentFullListType);
 
-    const renderFullList = (fullListPageOptions:FullListPageOption[], fullListType:string) => {
-        const {
-            fullListContent,
-            fullListTitle,
-            isFullListArtistsList
-        } = getFullListMatchedData(fullListPageOptions, fullListType);
+    const renderFullList = () => {
 
         return renderTilesList([
             {
-                title: fullListTitle,
-                list: removeDuplicatesByName(fullListContent),
-                toPageFunction: isFullListArtistsList ? toArtist : toAlbum,
-                isArtistsList: isFullListArtistsList,
+                title: currentFullListData?.listTitle,
+                list: currentFullListData?.releaseList,
+                isArtistsList: currentFullListData?.isArtistsList,
                 showPreviewListPart: false,
                 isRenderSubInfo: true,
             },
