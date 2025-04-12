@@ -12,17 +12,17 @@ export const ArtistDetailsPage = () => {
 
     const artistData = useMainArtistData({ artistID });
     const topTracks = useArtistTopTracks({ artistID });
-    const fetchStatus = useFetchStatus([topTracks.status, ...artistData.statuses]);
 
+    const fetchStatus = useFetchStatus([topTracks.status, ...artistData.statuses]);
     return (
         <Main
             currentFetchStatus={fetchStatus}
             bannerContent={!fullListType && (
                 <Banner
-                    picture={getFirstImage(artistData.data?.images)}
-                    title={artistData.data?.name}
+                    picture={getFirstImage(artistData.details?.images)}
+                    title={artistData.details?.name}
                     caption="Verified artist"
-                    subTitleContent={`${artistData.data?.followers.total} followers`}
+                    subTitleContent={`${artistData.details?.followers.total} followers`}
                     useArtistPictureStyle
                 />)
             }
