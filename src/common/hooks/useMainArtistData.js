@@ -1,41 +1,31 @@
 import { artistDetailsActions, artistDetailsSelectors } from "../slices/artistDetailsSlice";
-import { useApiResource } from "./useApiResource";
 import { useFetchAPI } from "./useFetchAPI";
 import { artistAlbumsActions, artistAlbumsSelectors } from "../slices/artistAlbumsSlice";
 import { getArtistDetailsEndpoint, getArtistReleasesEndpoint } from "../functions/endpoints";
 
-export const useMainArtistData = ({ mainArtistId, dependencies = [], includeAppearsOnReleases = true }) => {
+export const useMainArtistData = ({ artistID }) => {
 
-    const apiDependencies = [mainArtistId, ...dependencies]
+    const fetchCondition = !!artistID;
 
-    const {
-        configs: mainArtistDetailsConfig,
-        rawApiData: mainArtistDetails,
-        apiStatus: mainArtistDetailsStatus
-    } = useApiResource({
+    const { APIFetchStatus: dataStatus, APIData: details } = useFetchAPI({
         actions: artistDetailsActions,
         selectors: artistDetailsSelectors,
-        endpoint: getArtistDetailsEndpoint({id:mainArtistId})
+        endpoint: getArtistDetailsEndpoint({ id: artistID }),
+        fetchCondition,
     });
 
-    const {
-        configs: mainArtistReleasesConfig,
-        rawApiData: mainArtistReleases,
-        apiStatus: mainArtistReleasesStatus
-    } = useApiResource({
+    const { APIFetchStatus: releasesStatus, APIData: releases } = useFetchAPI({
         actions: artistAlbumsActions,
         selectors: artistAlbumsSelectors,
-        endpoint: getArtistReleasesEndpoint({ id: mainArtistId, includeAppearsOnReleases })
+        endpoint: getArtistReleasesEndpoint({ id: artistID }),
+        fetchCondition,
     });
 
-    useFetchAPI({
-        fetchConfigs: [mainArtistDetailsConfig, mainArtistReleasesConfig],
-        pageId: mainArtistId,
-        dependencies: apiDependencies,
-        fetchCondition: !!mainArtistId
-    });
+    const mainArtistData = {
+        details,
+        releases: releases?.items,
+        statuses: [dataStatus, releasesStatus]
+    };
 
-    const mainArtistDataStatuses = [mainArtistDetailsStatus, mainArtistReleasesStatus];
-
-    return { mainArtistDetails, mainArtistReleases, mainArtistDataStatuses };
+    return mainArtistData;
 };
