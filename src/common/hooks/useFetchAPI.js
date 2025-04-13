@@ -7,7 +7,7 @@ export const useFetchAPI = ({ actions, selectors, endpoint, fetchCondition = tru
     const { resourceConfig, APIFetchStatus, APIData } = useApiResource({ actions, selectors, endpoint });
     const dispatch = useDispatch();
     const accessToken = useSelector(selectAccessToken);
-console.
+
     useEffect(() => {
         const { fetchAction, clearAction, endpoint } = resourceConfig;
 
